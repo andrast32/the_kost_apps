@@ -1,0 +1,82 @@
+#panel-pemesanan-detail {
+    display: none;
+}
+
+.gallery-main-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}
+
+.addons-dropdown .dropdown-menu {
+    width: 350px;
+    padding: 1rem;
+}
+
+.addons-list {
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.kamar-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.kamar-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.addon-item-img {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    margin-right: 10px;
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    width: 120px;
+}
+.quantity-control button {
+    background-color: #e9ecef;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+}
+.quantity-control button:hover {
+    background-color: #dee2e6;
+}
+.quantity-control input {
+    border: none;
+    text-align: center;
+    flex-grow: 1;
+    padding: 0.25rem 0;
+    outline: none;
+    width: 40px;
+}
+.quantity-control .stock-info {
+    font-size: 0.8em;
+    color: #6c757d;
+    margin-left: 5px;
+    white-space: nowrap;
+}
+
+.modal-item-detail-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+}
+.dt-buttons .btn {
+    margin-left: 0.5rem;
+}

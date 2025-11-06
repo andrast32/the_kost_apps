@@ -1,0 +1,25 @@
+body {
+    background-image: url(../images/banner-01.jpg);
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+
+.form-control:focus {
+    box-shadow: none;
+    border-color: #4e54c8;
+}
+
+.input-group-text {
+    cursor: pointer;
+}
