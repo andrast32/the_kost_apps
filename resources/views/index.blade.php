@@ -237,7 +237,7 @@
                                                     </p>
 
                                                     <div class="icon-button">
-                                                        <a href="login/"><i class="fa fa-calendar"></i> Schedule a visit</a>
+                                                        <a href="{{ route('login') }}"><i class="fa fa-calendar"></i> Schedule a visit</a>
                                                     </div>
 
                                                 </div>

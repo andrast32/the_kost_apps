@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Kamar">
+<x-dashboard-layout :title="$title">
 
     <div class="page-heading header-text">
             <div class="container">
