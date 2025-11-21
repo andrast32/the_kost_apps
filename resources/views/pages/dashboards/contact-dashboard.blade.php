@@ -1,1 +1,1 @@
-<x-dashboard-layout title="Hubungi Kami"> </x-dashboard-layout>
+<x-dashboard-layout> </x-dashboard-layout>
