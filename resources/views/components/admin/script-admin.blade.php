@@ -138,6 +138,7 @@ $.widget.bridge('uibutton', $.ui.button)
 
 <!-- untuk gambar di form -->
 <script>
+
     function previewImage(input, targetId) {
         const preview = document.getElementById(targetId);
         
@@ -152,4 +153,5 @@ $.widget.bridge('uibutton', $.ui.button)
             reader.readAsDataURL(input.files[0]);
         }
     }
+
 </script>

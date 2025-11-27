@@ -100,8 +100,11 @@
                                 </td>
 
                                 <td>
-                                    <img src="{{ asset('UI/admin/images/kamar/' . $kamar->foto_kamar) }}"
-                                        alt="Foto Kamar" width="100px">
+                                    @if($kamar->foto)
+                                        <img src="{{ Storage::url('uploads/kamar/' . $kamar->foto) }}" alt="Foto" width="100px" class="img-thumbnail">
+                                    @else
+                                        <span class="text-muted">Tidak ada foto</span>
+                                    @endif
                                 </td>
 
                                 <td>
@@ -216,25 +219,23 @@
                                                             <div class="input-group">
 
                                                                 <span class="input-group-text">
-                                                                    <i class="fas fa-venus-mars"></i>
+                                                                    <i class="fas fa-info-circle"></i>
                                                                 </span>
 
-                                                                <select name="khusus" class="form-control" required>
+                                                                <select name="status" class="form-control" required>
 
-                                                                    <option value="" disabled>
-                                                                        Kamar Khusus
+                                                                    <option value="" disabled>Pilih Status</option>
+
+                                                                    <option value="Kosong" {{ $kamar->status == 'Kosong' ? 'selected' : '' }}>
+                                                                        Kosong
                                                                     </option>
 
-                                                                    <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>
-                                                                        Laki Laki
+                                                                    <option value="Terisi" {{ $kamar->status == 'Terisi' ? 'selected' : '' }}>
+                                                                        Terisi
                                                                     </option>
 
-                                                                    <option value="Perempuan" {{ $kamar->khusus == 'Perempuan' ? 'selected' : '' }}>
-                                                                        Perempuan
-                                                                    </option>
-
-                                                                    <option value="Keluarga" {{ $kamar->khusus == 'Keluarga' ? 'selected' : '' }}>
-                                                                        Keluarga
+                                                                    <option value="Dalam Perbaikan" {{ $kamar->status == 'Dalam Perbaikan' ? 'selected' : '' }}>
+                                                                        Dalam Perbaikan
                                                                     </option>
 
                                                                 </select>
@@ -264,12 +265,12 @@
                                                                         Kamar Khusus
                                                                     </option>
 
-                                                                    <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>
-                                                                        Laki Laki
-                                                                    </option>
-
                                                                     <option value="Perempuan" {{ $kamar->khusus == 'Perempuan' ? 'selected' : '' }}>
                                                                         Perempuan
+                                                                    </option>
+
+                                                                    <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>
+                                                                        Laki Laki
                                                                     </option>
 
                                                                     <option value="Keluarga" {{ $kamar->khusus == 'Keluarga' ? 'selected' : '' }}>
@@ -296,9 +297,9 @@
                                                                     <i class="fas fa-camera"></i>
                                                                 </span>
 
-                                                                <input 
-                                                                    type="file" 
-                                                                    name="foto" 
+                                                                <input
+                                                                    type="file"
+                                                                    name="foto"
                                                                     class="form-control"
                                                                     accept="image/*"
                                                                     onchange="previewImage(this, 'preview-{{ $kamar->id }}')"
@@ -322,10 +323,11 @@
                                                                     <i class="fas fa-image"></i>
                                                                 </span>
 
-                                                                <img id="preview-{{ $kamar->id }}" 
-                                                                    src="{{ $kamar->foto ? asset('storage/' . $kamar->foto) : '' }}" 
-                                                                    alt="Preview Foto" 
-                                                                    style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px;"
+                                                                <img id="preview-{{ $kamar->id }}"
+                                                                    src="{{ $kamar->foto ? Storage::url($kamar->foto) : '' }}"
+                                                                    data-original-src="{{ $kamar->foto ? Storage::url($kamar->foto) : '' }}"
+                                                                    alt="Preview Foto"
+                                                                    style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $kamar->foto ? 'display: block;' : 'display: none;' }}"
                                                                 />
 
                                                             </div>
@@ -412,10 +414,216 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
 
-            <div class="modal-header"></div>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <span class="fw-mediumbold">Tambah</span>
+                    <span class="fw-light">Data Kamar</span>
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
 
-            <div class="modal-body"></div>
+            <form action="{{ route('admin.data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-6 pe-0">
+                            <div class="form-group">
+
+                                <label for="khusus">
+                                    Kamar Khusus <span class="text-danger">*</span>
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+                                        <i class="fas fa-venus-mars"></i>
+                                    </span>
+
+                                    <select name="khusus" id="khusus_tambah" class="form-control" required>
+
+                                        <option value="" selected disabled>Pilih Kategori</option>
+
+                                        <option value="Perempuan">Perempuan</option>
+
+                                        <option value="Laki-Laki">Laki-Laki</option>
+
+                                        <option value="Keluarga">Keluarga</option>
+
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+
+                                <label for="kode">
+
+                                    Kode Kamar
+                                    
+                                    <span class="text-danger">*</span>
+
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-key"></i>
+                                    </span>
+                                    <input
+                                        type="text"
+                                        name="kode_kamar"
+                                        id="kode_kamar_tambah"
+                                        class="form-control"
+                                        placeholder="Pilih kategori dulu!"
+                                        style="background-color: #e9ecef; cursor: not-allowed;"
+                                        required
+                                        readonly
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 pe-0">
+                            <div class="form-group">
+                                <label for="harga">
+                                    Harga Kamar <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp.</span>
+                                    <input type="text" name="harga" class="form-control input-harga" placeholder="0" required>
+                                    @error('harga')
+                                        <span class="text-danger" style="font-size: 12px;">
+                                            {{ $message }}
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status">
+                                    Status Kamar <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    <select name="status" class="form-control" required>
+                                        <option value="Kosong" selected>Kosong</option>
+                                        <option value="Terisi">Terisi</option>
+                                        <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 pe-0">
+                            <div class="form-group">
+                                <label for="foto">Foto Kamar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-camera"></i>
+                                    </span>
+                                    <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-tambah')">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Preview</label>
+                                <div class="input-group">
+                                    <img id="preview-tambah"
+                                        src=""
+                                        data-original-src=""
+                                        alt="Preview"
+                                        style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; display: none;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>
+                                    Deskripsi Kamar <span class="text-danger">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-list"></i>
+                                    </span>
+                                    <textarea name="deskripsi" rows="3" class="form-control" placeholder="Masukan deskripsi kamar" required style="resize: none;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+                    <input type="submit" value="Simpan" class="btn btn-primary">
+                </div>
+
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+
+    const nextCodes = {
+        'Perempuan' : "{{ $nextA }}",
+        'Laki-Laki' : "{{ $nextB }}",
+        'Keluarga'  : "{{ $nextC }}",
+    };
+
+    document.getElementById('khusus_tambah').addEventListener('change', function() {
+
+        let kategori    = this.value;
+        let inputKode   = document.getElementById('kode_kamar_tambah');
+        let info        = document.getElementById('info_kode');
+
+        if (nextCodes[kategori]) {
+            inputKode.value = nextCodes[kategori]; // Isi otomatis (misal: A-0002)
+            info.innerText = "Kode urut otomatis dari Database";
+            info.classList.remove('text-danger');
+            info.classList.add('text-success');
+        } else {
+            inputKode.value = "";
+            info.innerText = "Silakan pilih kategori";
+        }
+
+    });
+
+    // --- SCRIPT BARU UNTUK RESET MODAL SAAT DITUTUP ---
+    $(document).ready(function() {
+        $('.modal').on('hidden.bs.modal', function () {
+            let form = $(this).find('form');
+            if(form.length > 0) {
+                form[0].reset();
+            }
+
+            $(this).find('input[type="file"]').val('');
+
+            let img = $(this).find('img[id^="preview-"]');
+            let originalSrc = img.attr('data-original-src');
+
+            if (originalSrc && originalSrc !== "") {
+                img.attr('src', originalSrc);
+                img.css('display', 'block');
+            } else {
+                img.attr('src', '');
+                img.css('display', 'none');
+            }
+
+            $(this).find('#info_kode').text('Pilih kategori dulu').removeClass('text-success text-danger').addClass('text-muted');
+            $(this).find('#kode_kamar_tambah').val('');
+        });
+    });
+
+</script>

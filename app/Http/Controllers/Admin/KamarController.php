@@ -15,11 +15,35 @@ class KamarController extends Controller
     {
         view()->share('title', 'Data Kamar');
 
-        $kamars = Kamar::latest()->get();
+        $kamars = Kamar::orderBy('kode_kamar', 'ASC')->get();
 
         $jumlahSampah = Kamar::onlyTrashed()->count();
 
-        return view('pages.admins.data-kost.kamar.data-kamar', compact('kamars', 'jumlahSampah'));
+        // --- LOGIKA GENERATE KODE OTOMATIS ---
+
+        $lastA = Kamar::where('kode_kamar', 'like', 'A-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $nextA = $this->generateNextCode($lastA, 'A-');
+
+        $lastB = Kamar::where('kode_kamar', 'like', 'B-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $nextB = $this->generateNextCode($lastB, 'B-');
+
+        $lastC = Kamar::where('kode_kamar', 'like', 'C-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $nextC = $this->generateNextCode($lastC, 'C-');
+
+        return view('pages.admins.data-kost.kamar.data-kamar', compact('kamars', 'jumlahSampah', 'nextA', 'nextB', 'nextC'));
+    }
+
+    private function generateNextCode($lastCode, $prefix)
+    {
+
+        if (!$lastCode) {
+            return $prefix . '0001';
+        }
+
+        $number = intval(substr($lastCode, 2));
+
+        return $prefix . str_pad($number + 1, 4, '0' , STR_PAD_LEFT);
+
     }
 
     public function store(Request $request)
@@ -28,25 +52,33 @@ class KamarController extends Controller
         $request->validate([
             'kode_kamar'    => 'required|unique:kamars,kode_kamar|max:50',
             'deskripsi'     => 'nullable|string',
-            'harga'         => 'required|numeric|min:0',
+            'harga'         => 'required|string',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
             'khusus'        => 'required|in:Laki-Laki,Perempuan,Keluarga',
-            'foto'          => 'nullable|image|max:2048',
+            'foto'          => 'nullable|image|max:10240', // Maksimal 10MB
         ]);
 
-        $fotoPath = null;
-        if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('uploads.kamar', 'public');
+        $fotoName = null;
+        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+
+            $path = $request->file('foto')->store('uploads/kamar', 'public');
+
+            $fotoName = basename($path);
+
         }
 
-        Kamar::create([
+        $Kamar = Kamar::create([
             'kode_kamar'    => $request->kode_kamar,
-            'slug_kamar'    => Str::slug($request->kode_kamar, '-'),
+            'slug_kamar'    => 'temp-slug',
             'deskripsi'     => $request->deskripsi,
-            'harga'         => str_replace('Rp,', '.', '', $request->harga),
+            'harga'         => str_replace('.', '', $request->harga),
             'status'        => $request->status,
             'khusus'        => $request->khusus,
-            'foto'          => $fotoPath,
+            'foto'          => $fotoName,
+        ]);
+
+        $Kamar->update([
+            'slug_kamar'    => Str::slug($request->kode_kamar . ' ' . $request->khusus . '' . $request->id, '-')
         ]);
 
         return redirect()->back()->with('alert', [
@@ -55,6 +87,7 @@ class KamarController extends Controller
         ]);
 
     }
+
     public function update(Request $request, $id)
     {
         $kamar = Kamar::findOrFail($id);
@@ -62,30 +95,33 @@ class KamarController extends Controller
         $request->validate([
             'kode_kamar'    => 'required|max:50|unique:kamars,kode_kamar,' . $kamar->id,
             'deskripsi'     => 'nullable|string',
-            'harga'         => 'required|numeric|min:0',
+            'harga'         => 'required|string',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
             'khusus'        => 'required|in:Laki-Laki,Perempuan,Keluarga',
-            'foto'          => 'nullable|image|max:2048',
+            'foto'          => 'nullable|image|max:10240', // Maksimal 10MB
         ]);
 
-        if ($request->hasFile('foto')) {
-            if ($kamar->foto && Storage::disk('public')->exists($kamar->foto)) {
-                Storage::disk('public')->delete($kamar->foto);
+        $fotoName = $kamar->foto;
+
+        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+
+            if ($kamar->foto && Storage::disk('public')->exists('uploads/kamar/' . $kamar->foto)) {
+                Storage::disk('public')->delete('uploads/kamar/' . $kamar->foto);
             }
 
-            $fotoPath = $request->file('foto')->store('uploads.kamar', 'public');
-        } else {
-            $fotoPath = $kamar->foto;
+            $path = $request->file('foto')->store('uploads/kamar', 'public');
+
+            $fotoName = basename($path);
         }
 
         $kamar->update([
             'kode_kamar'    => $request->kode_kamar,
-            'slug_kamar'    => Str::slug($request->kode_kamar, '-'),
+            'slug_kamar'    => Str::slug($request->kode_kamar . ' ' . $request->khusus . ' ' . $kamar->id, '-'),
             'deskripsi'     => $request->deskripsi,
-            'harga'         => str_replace('Rp,', '.', '', $request->harga),
+            'harga'         => str_replace('.', '', $request->harga),
             'status'        => $request->status,
             'khusus'        => $request->khusus,
-            'foto'          => $fotoPath,
+            'foto'          => $fotoName,
         ]);
 
         return redirect()->back()->with('alert', [
