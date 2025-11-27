@@ -1,6 +1,6 @@
 <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
-        <img class="animation__shake" src="{{ asset('UI/utama/assets/images/info-icon-03.png') }}" alt="the kost logo" height="60" width="60">
+        <img class="animation__shake" src="{{ asset('UI/utama/assets/images/info-icon-03.png') }}" height="60" width="60">
     </div>
 
     <!-- Navbar -->
