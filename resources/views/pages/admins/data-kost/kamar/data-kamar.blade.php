@@ -162,6 +162,50 @@
                                                     <div class="col-md-6 pe-0">
                                                         <div class="form-group">
 
+                                                            <label for="khusus">
+                                                                Kamar Khusus
+                                                                <span class="text-danger">*</span>
+                                                            </label>
+
+                                                            <div class="input-group">
+
+                                                                <span class="input-group-text">
+                                                                    <i class="fas fa-venus-mars"></i>
+                                                                </span>
+
+                                                                <select
+                                                                    name="khusus"
+                                                                    class="form-control"
+                                                                    onchange="updateKodeEdit(this, '{{ $kamar->id }}', '{{ $kamar->kode_kamar }}', '{{ $kamar->khusus }}')"
+                                                                    required
+                                                                >
+
+                                                                    <option value="" disabled>
+                                                                        Kamar Khusus
+                                                                    </option>
+
+                                                                    <option value="Perempuan" {{ $kamar->khusus == 'Perempuan' ? 'selected' : '' }}>
+                                                                        Perempuan
+                                                                    </option>
+
+                                                                    <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>
+                                                                        Laki Laki
+                                                                    </option>
+
+                                                                    <option value="Keluarga" {{ $kamar->khusus == 'Keluarga' ? 'selected' : '' }}>
+                                                                        Keluarga
+                                                                    </option>
+
+                                                                </select>
+
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+
                                                             <label for="kode">
                                                                 Kode Kamar
                                                                 <span class="text-danger">*</span>
@@ -173,33 +217,13 @@
                                                                     <i class="fas fa-key"></i>
                                                                 </span>
 
-                                                                <input type="text" name="kode_kamar" class="form-control" value="{{ $kamar->kode_kamar }}" required readonly>
-
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-
-                                                            <label for="harga">
-                                                                Harga kamar
-                                                                <span class="text-danger">*</span>
-                                                            </label>
-
-                                                            <div class="input-group">
-
-                                                                <span class="input-group-text">
-                                                                    Rp.
-                                                                </span>
-
                                                                 <input
                                                                     type="text"
-                                                                    name="harga"
-                                                                    class="form-control input-harga"
-                                                                    value="{{ number_format($kamar->harga, 0, ',', '.') }}"
-                                                                    placeholder="0"
+                                                                    name="kode_kamar"
+                                                                    id="kode_kamar_edit_{{ $kamar->id }}"
+                                                                    class="form-control"
+                                                                    value="{{ $kamar->kode_kamar }}"
+                                                                    readonly
                                                                     required
                                                                 />
 
@@ -248,36 +272,25 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
 
-                                                            <label for="khusus">
-                                                                Kamar Khusus
+                                                            <label for="harga">
+                                                                Harga kamar
                                                                 <span class="text-danger">*</span>
                                                             </label>
 
                                                             <div class="input-group">
 
                                                                 <span class="input-group-text">
-                                                                    <i class="fas fa-venus-mars"></i>
+                                                                    Rp.
                                                                 </span>
 
-                                                                <select name="khusus" class="form-control" required>
-
-                                                                    <option value="" disabled>
-                                                                        Kamar Khusus
-                                                                    </option>
-
-                                                                    <option value="Perempuan" {{ $kamar->khusus == 'Perempuan' ? 'selected' : '' }}>
-                                                                        Perempuan
-                                                                    </option>
-
-                                                                    <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>
-                                                                        Laki Laki
-                                                                    </option>
-
-                                                                    <option value="Keluarga" {{ $kamar->khusus == 'Keluarga' ? 'selected' : '' }}>
-                                                                        Keluarga
-                                                                    </option>
-
-                                                                </select>
+                                                                <input
+                                                                    type="text"
+                                                                    name="harga"
+                                                                    class="form-control input-harga"
+                                                                    value="{{ number_format($kamar->harga, 0, ',', '.') }}"
+                                                                    placeholder="0"
+                                                                    required
+                                                                />
 
                                                             </div>
 
@@ -445,7 +458,7 @@
 
                                     <select name="khusus" id="khusus_tambah" class="form-control" required>
 
-                                        <option value="" selected disabled>Pilih Kategori</option>
+                                        <option value="" selected disabled>Pilih kategori</option>
 
                                         <option value="Perempuan">Perempuan</option>
 
@@ -465,7 +478,7 @@
                                 <label for="kode">
 
                                     Kode Kamar
-                                    
+
                                     <span class="text-danger">*</span>
 
                                 </label>
@@ -478,7 +491,7 @@
                                         name="kode_kamar"
                                         id="kode_kamar_tambah"
                                         class="form-control"
-                                        placeholder="Pilih kategori dulu!"
+                                        placeholder="Pilih kategori kamar dulu!"
                                         style="background-color: #e9ecef; cursor: not-allowed;"
                                         required
                                         readonly
@@ -582,23 +595,27 @@
         'Keluarga'  : "{{ $nextC }}",
     };
 
-    document.getElementById('khusus_tambah').addEventListener('change', function() {
+    if(document.getElementById('khusus_tambah')) {
+        document.getElementById('khusus_tambah').addEventListener('change', function() {
 
-        let kategori    = this.value;
-        let inputKode   = document.getElementById('kode_kamar_tambah');
-        let info        = document.getElementById('info_kode');
+            let kategori    = this.value;
+            let inputKode   = document.getElementById('kode_kamar_tambah');
+            let info        = document.getElementById('info_kode');
 
-        if (nextCodes[kategori]) {
-            inputKode.value = nextCodes[kategori]; // Isi otomatis (misal: A-0002)
-            info.innerText = "Kode urut otomatis dari Database";
-            info.classList.remove('text-danger');
-            info.classList.add('text-success');
-        } else {
-            inputKode.value = "";
-            info.innerText = "Silakan pilih kategori";
-        }
+            if (nextCodes[kategori]) {
+                inputKode.value = nextCodes[kategori];
+                if(info) {
+                    info.innerText = "kode urut otomatis: " + nextCodes[kategori];
+                    info.classList.remove('text-danger');
+                    info.classList.add('text-success');
+                }
+            } else {
+                inputKode.value = "";
+                if(info) info.innerText "Silahkan pilih kategori kamar terlebih dahulu";
+            }
 
-    });
+        });
+    }
 
     // --- SCRIPT BARU UNTUK RESET MODAL SAAT DITUTUP ---
     $(document).ready(function() {
