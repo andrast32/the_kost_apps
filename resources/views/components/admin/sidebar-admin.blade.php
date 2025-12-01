@@ -25,8 +25,6 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
 
-                <!-- Add icons to the links using the .nav-icon class
-                    with font-awesome or any other icon font library -->
                 <li class="nav-item">
                     <a href="{{ route('admin.dashboard') }}" class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }} ">
                         <i class="nav-icon fas fa-home"></i>
@@ -76,16 +74,16 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-kost.kamar') }}" class="nav-link {{ request()->routeIs('admin.data-kost.kamar') ? 'active' : '' }}">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Data Kamar</p>
+                            <a href="{{ route('admin.data-kost.kamar.index') }}" class="nav-link {{ request()->routeIs('admin.data-kost.kamar.*') ? 'active' : '' }}">
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Data Kamar</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
                             <a href="{{ route('admin.data-kost.fasilitas') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas') ? 'active' : '' }}">
-                            <i class="far fa-circle nav-icon"></i>
-                            <p>Data Fasilitas</p>
+                                <i class="far fa-circle nav-icon"></i>
+                                <p>Data Fasilitas</p>
                             </a>
                         </li>
 
