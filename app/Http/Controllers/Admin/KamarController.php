@@ -11,12 +11,22 @@ use Illuminate\Support\Str;
 class KamarController extends Controller
 {
 
+    public function generateNextCode($lastCode, $prefix)
+    {
+
+        if (!$lastCode) {
+            return $prefix . '0001';
+        }
+
+        $number = intval(substr($lastCode, 2));
+        return $prefix . str_pad($number + 1, 4, '0', STR_PAD_LEFT);
+
+    }
+
     public function index()
     {
         view()->share('title', 'Data Kamar');
-
         $kamars = Kamar::orderBy('kode_kamar', 'ASC')->get();
-
         $jumlahSampah = Kamar::onlyTrashed()->count();
 
         // --- LOGIKA GENERATE KODE OTOMATIS ---
@@ -33,26 +43,16 @@ class KamarController extends Controller
         return view('pages.admins.data-kost.kamar.data-kamar', compact('kamars', 'jumlahSampah', 'nextA', 'nextB', 'nextC'));
     }
 
-    private function generateNextCode($lastCode, $prefix)
-    {
-
-        if (!$lastCode) {
-            return $prefix . '0001';
-        }
-
-        $number = intval(substr($lastCode, 2));
-
-        return $prefix . str_pad($number + 1, 4, '0' , STR_PAD_LEFT);
-
-    }
-
     public function store(Request $request)
     {
+
+        $hargaBersih = str_replace('.', '', $request->harga);
+        $request->merge(['harga' => $hargaBersih]);
 
         $request->validate([
             'kode_kamar'    => 'required|unique:kamars,kode_kamar|max:50',
             'deskripsi'     => 'nullable|string',
-            'harga'         => 'required|string',
+            'harga'         => 'required|numeric|min:0',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
             'khusus'        => 'required|in:Laki-Laki,Perempuan,Keluarga',
             'foto'          => 'nullable|image|max:10240', // Maksimal 10MB
@@ -60,18 +60,15 @@ class KamarController extends Controller
 
         $fotoName = null;
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-
             $path = $request->file('foto')->store('uploads/kamar', 'public');
-
             $fotoName = basename($path);
-
         }
 
         $Kamar = Kamar::create([
             'kode_kamar'    => $request->kode_kamar,
-            'slug_kamar'    => 'temp-slug',
+            'slug_kamar'    => str::slug($request->kode_kamar),
             'deskripsi'     => $request->deskripsi,
-            'harga'         => str_replace('.', '', $request->harga),
+            'harga'         => $request->harga,
             'status'        => $request->status,
             'khusus'        => $request->khusus,
             'foto'          => $fotoName,
@@ -92,49 +89,56 @@ class KamarController extends Controller
     {
         $kamar = Kamar::findOrFail($id);
 
+        $hargaBersih = str_replace('.', '', $request->harga);
+        $request->merge(['harga' => $hargaBersih]);
+
         $request->validate([
             'kode_kamar'    => 'required|max:50|unique:kamars,kode_kamar,' . $kamar->id,
             'deskripsi'     => 'nullable|string',
-            'harga'         => 'required|string',
+            'harga'         => 'required|numeric|min:0',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
             'khusus'        => 'required|in:Laki-Laki,Perempuan,Keluarga',
             'foto'          => 'nullable|image|max:10240', // Maksimal 10MB
         ]);
 
         $fotoName = $kamar->foto;
-
         if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
-
             if ($kamar->foto && Storage::disk('public')->exists('uploads/kamar/' . $kamar->foto)) {
                 Storage::disk('public')->delete('uploads/kamar/' . $kamar->foto);
             }
-
             $path = $request->file('foto')->store('uploads/kamar', 'public');
-
             $fotoName = basename($path);
         }
 
-        $kamar->update([
+        $kamar->fill([
             'kode_kamar'    => $request->kode_kamar,
             'slug_kamar'    => Str::slug($request->kode_kamar . ' ' . $request->khusus . ' ' . $kamar->id, '-'),
             'deskripsi'     => $request->deskripsi,
-            'harga'         => str_replace('.', '', $request->harga),
+            'harga'         => $request->harga,
             'status'        => $request->status,
             'khusus'        => $request->khusus,
             'foto'          => $fotoName,
         ]);
 
-        return redirect()->back()->with('alert', [
-            'icon'  => 'success',
-            'title' => 'Data kamar telah berhasil diperbarui!'
-        ]);
+        if ($kamar->isDirty()) {
+            $kamar->save();
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Data kamar telah berhasil diperbarui!'
+            ]);
+        } else {
+            return redirect()->back()->with('alert', [
+                'icon'  => 'info',
+                'title' => 'Data kamar telah berhasil diperbarui!'
+            ]);
+        }
 
     }
 
     public function destroy(string $id)
     {
         $kamar = Kamar::findOrFail($id);
-        $kamar->delete(); // Ini otomatis jadi Soft Delete karena di Model sudah di-setting
+        $kamar->delete();
 
         return redirect()->back()->with('alert', [
             'icon'  => 'success',

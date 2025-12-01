@@ -110,48 +110,36 @@ $.widget.bridge('uibutton', $.ui.button)
     </script>
 @endif
 
-<!-- untuk format uang di form -->
-
 <script>
-    $(document).on('keyup', '.input-harga', function() {
 
-        var value = $(this).val();
-
-        var number_string = value.replace(/[^,\d]/g, '').toString();
-
-        var split = number_string.split(',');
-        var sisa = split[0].length % 3;
-        var rupiah = split[0].substr(0, sisa);
-        var ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-        if (ribuan) {
-            separator = sisa ? '.' : '';
-            rupiah += separator + ribuan.join('.');
+    // preview image
+    function previewImage(input, targetId) {
+            const preview = document.getElementById(targetId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        // format uang
+        $(document).on('keyup', '.input-harga', function() {
+            let value = $(this).val();
+            let number_string = value.replace(/[^,\d]/g, '').toString();
+            let split = number_string.split(',');
+            let sisa = split[0].length % 3;
+            let rupiah = split[0].substr(0, sisa);
+            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
 
-        $(this).val(rupiah);
-
-    });
-</script>
-
-<!-- untuk gambar di form -->
-<script>
-
-    function previewImage(input, targetId) {
-        const preview = document.getElementById(targetId);
-        
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result;
-                preview.style.display = 'block';
+            if (ribuan) {
+                separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
             }
 
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-
+            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+            $(this).val(rupiah);
+        });
 </script>
