@@ -148,11 +148,12 @@ class KamarController extends Controller
 
     public function trash()
     {
+        $jumlahSampah = Kamar::onlyTrashed()->count();
         view()->share('title', 'Sampah Kamar');
 
         $kamars = Kamar::onlyTrashed()->latest()->get();
 
-        return view('pages.admins.data-kost.kamar.sampah-kamar', compact('kamars'));
+        return view('pages.admins.data-kost.kamar.sampah-kamar', compact('kamars', 'jumlahSampah'));
     }
 
     public function restore(string $id)

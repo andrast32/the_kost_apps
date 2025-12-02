@@ -78,20 +78,6 @@ Route::middleware(['auth', 'verified', 'admin'])
             return view('pages.admins.data-user.petugas.data-petugas');
         })->name('data-user.petugas');
 
-        Route::get('/success', function () {
-            return redirect()->back()->with('alert', [
-                'icon' => 'success',
-                'title' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-            ]);
-        });
-
-        Route::get('/gagal', function () {
-            return redirect()->back()->with('alert', [
-                'icon' => 'error',
-                'title' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
-            ]);
-        });
-
     });
 
 Route::middleware('auth')->group(function () {

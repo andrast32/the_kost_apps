@@ -51,28 +51,43 @@ $.widget.bridge('uibutton', $.ui.button)
 <!-- buat tabel -->
 <script>
     $(function () {
-        $("#data").DataTable({
-            "responsive"    : true,
-            "lengthChange"  : true,
-            "autoWidth"     : false,
+
+        $('#data_tombol').DataTable({
             "paging"        : true,
+            "lengthChange"  : true,
+            "searching"     : true,
             "ordering"      : true,
             "info"          : true,
+            "autoWidth"     : false,
+            "responsive"    : true,
             "buttons"       : [
                                 "copy", "pdf", "colvis"
                             ]
-        }).buttons().container().appendTo('#data_wrapper .col-md-6:eq(0)');
-        $("#laporan").DataTable({
-            "responsive"    : true,
-            "lengthChange"  : true,
-            "autoWidth"     : false,
+        }).buttons().container().appendTo('#data_tombol_wrapper .col-md-6:eq(0)');
+
+        $('#laporan').DataTable({
             "paging"        : true,
+            "lengthChange"  : true,
+            "searching"     : true,
             "ordering"      : true,
             "info"          : true,
+            "autoWidth"     : false,
+            "responsive"    : true,
             "buttons"       : [
-                                "copy", "excel", "pdf", "colvis"
+                                "copy", "excel", "pdf", "print", "colvis"
                             ]
         }).buttons().container().appendTo('#laporan_wrapper .col-md-6:eq(0)');
+
+        $('#data').DataTable({
+            "paging"        : true,
+            "lengthChange"  : true,
+            "searching"     : true,
+            "ordering"      : true,
+            "info"          : true,
+            "autoWidth"     : false,
+            "responsive"    : true,
+        });
+
     })
 </script>
 
@@ -114,32 +129,33 @@ $.widget.bridge('uibutton', $.ui.button)
 
     // preview image
     function previewImage(input, targetId) {
-            const preview = document.getElementById(targetId);
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(input.files[0]);
+        const preview = document.getElementById(targetId);
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
             }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // format uang
+    $(document).on('keyup', '.input-harga', function() {
+        let value = $(this).val();
+        let number_string = value.replace(/[^,\d]/g, '').toString();
+        let split = number_string.split(',');
+        let sisa = split[0].length % 3;
+        let rupiah = split[0].substr(0, sisa);
+        let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+        if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
         }
 
-        // format uang
-        $(document).on('keyup', '.input-harga', function() {
-            let value = $(this).val();
-            let number_string = value.replace(/[^,\d]/g, '').toString();
-            let split = number_string.split(',');
-            let sisa = split[0].length % 3;
-            let rupiah = split[0].substr(0, sisa);
-            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+        rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+        $(this).val(rupiah);
+    });
 
-            if (ribuan) {
-                separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
-            }
-
-            rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
-            $(this).val(rupiah);
-        });
 </script>
