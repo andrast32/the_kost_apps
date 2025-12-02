@@ -23,7 +23,7 @@
         </div>
 
         <div class="card-body">
-            <table id="data" class="table table-bordered table-striped table-hover">
+            <table id="data_tombol" class="table table-bordered table-striped table-hover">
 
                 <thead class="bg-navy">
                     <tr align="center">
