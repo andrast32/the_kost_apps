@@ -17,8 +17,8 @@ class Fasilitas extends Model
         'deskripsi',
         'harga',
         'stok',
-        'foto_fasilitas',
-        'slug_fasilitas'
+        'foto',
+        'slug'
     ];
 
 }
