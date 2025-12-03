@@ -26,18 +26,18 @@ class KamarController extends Controller
     public function index()
     {
         view()->share('title', 'Data Kamar');
-        $kamars = Kamar::orderBy('kode_kamar', 'ASC')->get();
+        $kamars = Kamar::orderBy('kode', 'ASC')->get();
         $jumlahSampah = Kamar::onlyTrashed()->count();
 
         // --- LOGIKA GENERATE KODE OTOMATIS ---
 
-        $lastA = Kamar::where('kode_kamar', 'like', 'A-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $lastA = Kamar::where('kode', 'like', 'A-%')->orderBy('kode', 'desc')->value('kode');
         $nextA = $this->generateNextCode($lastA, 'A-');
 
-        $lastB = Kamar::where('kode_kamar', 'like', 'B-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $lastB = Kamar::where('kode', 'like', 'B-%')->orderBy('kode', 'desc')->value('kode');
         $nextB = $this->generateNextCode($lastB, 'B-');
 
-        $lastC = Kamar::where('kode_kamar', 'like', 'C-%')->orderBy('kode_kamar', 'desc')->value('kode_kamar');
+        $lastC = Kamar::where('kode', 'like', 'C-%')->orderBy('kode', 'desc')->value('kode');
         $nextC = $this->generateNextCode($lastC, 'C-');
 
         return view('pages.admins.data-kost.kamar.data-kamar', compact('kamars', 'jumlahSampah', 'nextA', 'nextB', 'nextC'));
@@ -50,7 +50,7 @@ class KamarController extends Controller
         $request->merge(['harga' => $hargaBersih]);
 
         $request->validate([
-            'kode_kamar'    => 'required|unique:kamars,kode_kamar|max:50',
+            'kode'          => 'required|unique:kamars,kode|max:50',
             'deskripsi'     => 'nullable|string',
             'harga'         => 'required|numeric|min:0',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
@@ -65,8 +65,8 @@ class KamarController extends Controller
         }
 
         $Kamar = Kamar::create([
-            'kode_kamar'    => $request->kode_kamar,
-            'slug_kamar'    => str::slug($request->kode_kamar),
+            'kode'          => $request->kode,
+            'slug'          => str::slug($request->kode),
             'deskripsi'     => $request->deskripsi,
             'harga'         => $request->harga,
             'status'        => $request->status,
@@ -75,7 +75,7 @@ class KamarController extends Controller
         ]);
 
         $Kamar->update([
-            'slug_kamar'    => Str::slug($request->kode_kamar . ' ' . $request->khusus . '' . $request->id, '-')
+            'slug'    => Str::slug($request->kode . ' ' . $request->khusus . '' . $request->id, '-')
         ]);
 
         return redirect()->back()->with('alert', [
@@ -93,7 +93,7 @@ class KamarController extends Controller
         $request->merge(['harga' => $hargaBersih]);
 
         $request->validate([
-            'kode_kamar'    => 'required|max:50|unique:kamars,kode_kamar,' . $kamar->id,
+            'kode'          => 'required|max:50|unique:kamars,kode,' . $kamar->id,
             'deskripsi'     => 'nullable|string',
             'harga'         => 'required|numeric|min:0',
             'status'        => 'required|in:Kosong,Terisi,Dalam Perbaikan',
@@ -111,8 +111,8 @@ class KamarController extends Controller
         }
 
         $kamar->fill([
-            'kode_kamar'    => $request->kode_kamar,
-            'slug_kamar'    => Str::slug($request->kode_kamar . ' ' . $request->khusus . ' ' . $kamar->id, '-'),
+            'kode'          => $request->kode,
+            'slug'          => Str::slug($request->kode . ' ' . $request->khusus . ' ' . $kamar->id, '-'),
             'deskripsi'     => $request->deskripsi,
             'harga'         => $request->harga,
             'status'        => $request->status,

@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kamars', function (Blueprint $table) {
+        Schema::create('fasilitas', function (Blueprint $table) {
             $table->id();
-            $table->string('kode', 50)->unique();
+            $table->string('kode', 59)->unique();
+            $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 10, 2);
-            $table->enum('status', ['Kosong', 'Terisi', 'Dalam Perbaikan'])->default('Kosong');
-            $table->enum('khusus', ['Laki-Laki', 'Perempuan', 'Keluarga']);
+            $table->integer('stok');
             $table->string('foto')->nullable();
             $table->text('slug');
             $table->timestamps();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kamars');
+        Schema::dropIfExists('fasilitas');
     }
 };

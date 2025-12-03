@@ -46,7 +46,7 @@
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
-                            <td><strong>{{ $kamar->kode_kamar }}</strong></td>
+                            <td><strong>{{ $kamar->kode }}</strong></td>
                             <td>Rp {{ number_format($kamar->harga, 0, ',', '.') }}</td>
 
                             <td>
@@ -72,7 +72,7 @@
                                         </button>
                                     </form>
 
-                                    <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $kamar->id }}, '{{ $kamar->kode_kamar }}')">
+                                    <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $kamar->id }}, '{{ $kamar->kode }}')">
                                         <i class="fas fa-times-circle"></i>
                                     </button>
 

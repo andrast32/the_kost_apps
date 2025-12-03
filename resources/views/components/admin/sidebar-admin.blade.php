@@ -35,15 +35,6 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.biodata') }}" class="nav-link {{ request()->routeIs('admin.biodata') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-book-reader"></i>
-                        <p>
-                            Biodata
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a href="{{ route('admin.pembayaran') }}" class="nav-link {{ request()->routeIs('admin.pembayaran') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-wallet"></i>
                         <p>
