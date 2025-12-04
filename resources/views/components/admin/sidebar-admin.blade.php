@@ -35,15 +35,6 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.biodata') }}" class="nav-link {{ request()->routeIs('admin.biodata') ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-book-reader"></i>
-                        <p>
-                            Biodata
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
                     <a href="{{ route('admin.pembayaran') }}" class="nav-link {{ request()->routeIs('admin.pembayaran') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-wallet"></i>
                         <p>
@@ -81,7 +72,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-kost.fasilitas') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas') ? 'active' : '' }}">
+                            <a href="{{ route('admin.data-kost.fasilitas.index') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Fasilitas</p>
                             </a>

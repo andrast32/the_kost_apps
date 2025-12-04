@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\FasilitasController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\KamarController;
 use Illuminate\Support\Facades\Route;
@@ -37,16 +38,33 @@ Route::middleware(['auth', 'verified', 'admin'])
         })->name('dashboard');
 
         // =================================================
-        // DATA KAMAR
+        //                DATA KAMAR START
         // =================================================
 
-        Route::get('data-kost/kamar/sampah', [KamarController::class, 'trash'])->name('data-kost.kamar.sampah');
-        Route::put('data-kost/kamar/restore/{id}', [KamarController::class, 'restore'])->name('data-kost.kamar.restore');
-        Route::delete('data-kost/kamar/force-delete/{id}', [KamarController::class, 'forceDelete'])->name('data-kost.kamar.force-delete');
+            Route::get('data-kost/kamar/sampah', [KamarController::class, 'trash'])->name('data-kost.kamar.sampah');
+            Route::put('data-kost/kamar/restore/{id}', [KamarController::class, 'restore'])->name('data-kost.kamar.restore');
+            Route::delete('data-kost/kamar/force-delete/{id}', [KamarController::class, 'forceDelete'])->name('data-kost.kamar.force-delete');
 
-        Route::resource('data-kost/kamar', KamarController::class)->names('data-kost.kamar');
+            Route::resource('data-kost/kamar', KamarController::class)->names('data-kost.kamar');
 
         // =================================================
+        //                DATA KAMAR END
+        // =================================================
+
+        // =================================================
+        //               DATA FASILITAS START
+        // =================================================
+
+            Route::get('data-kost/fasilitas/sampah', [FasilitasController::class, 'trash'])->name('data-kost.fasilitas.sampah');
+            Route::put('data-kost/fasilitas/restore/{id}', [FasilitasController::class, 'restore'])->name('data-kost.fasilitas.restore');
+            Route::delete('data-kost/fasilitas/force-delete', [FasilitasController::class, 'forceDelete'])->name('data-kost.fasilitas.force-delete');
+
+            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('data-kost.fasilitas');
+
+        // =================================================
+        //               DATA FASILITAS END
+        // =================================================
+
 
         Route::get('/biodata', function () {
             view()->share('title', 'Biodata Penyewa');
@@ -62,11 +80,6 @@ Route::middleware(['auth', 'verified', 'admin'])
             view()->share('title', 'Data Pemesanan');
             return view('pages.admins.pemesanan.data-pemesanan');
         })->name('pemesanan');
-
-        Route::get('/data-kost/fasilitas', function () {
-            view()->share('title', 'Data Fasilitas');
-            return view('pages.admins.data-kost.fasilitas.data-fasilitas');
-        })->name('data-kost.fasilitas');
 
         Route::get('/data-user/penyewa', function () {
             view()->share('title', 'Data Penyewa');

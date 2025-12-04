@@ -5,7 +5,7 @@
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
 
-                <h3 class="card-title">Data manajemen kamar</h3>
+                <h3 class="card-title">Manajemen data kamar</h3>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
                     <a href="{{ route('admin.data-kost.kamar.sampah') }}" class="btn btn-sm btn-outline-danger right ml-auto">
@@ -38,31 +38,31 @@
                 </thead>
 
                 <tbody>
-                    @forelse ($kamars as $kamar)
+                    @forelse ($kamars as $data)
 
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
 
-                            <td><strong>{{ $kamar->kode_kamar }}</strong></td>
+                            <td><strong>{{ $data->kode }}</strong></td>
 
-                            <td>Rp {{ number_format($kamar->harga, 0, ',', '.') }}</td>
+                            <td>Rp {{ number_format($data->harga, 0, ',', '.') }}</td>
 
                             <td>
-                                @if ($kamar->status == 'Kosong')
+                                @if ($data->status == 'Kosong')
                                     <span class="badge badge-success">
                                         <i class="fas fa-door-open"></i>
-                                        {{ $kamar->status }}
+                                        {{ $data->status }}
                                     </span>
-                                @elseif ($kamar->status == 'Terisi')
+                                @elseif ($data->status == 'Terisi')
                                     <span class="badge badge-danger">
                                         <i class="fas fa-door-closed"></i>
-                                        {{ $kamar->status }}
+                                        {{ $data->status }}
                                     </span>
-                                @elseif ($kamar->status == 'Dalam Perbaikan')
+                                @elseif ($data->status == 'Dalam Perbaikan')
                                     <span class="badge badge-warning">
                                         <i class="fas fa-tools"></i>
-                                        {{ $kamar->status }}
+                                        {{ $data->status }}
                                     </span>
                                 @else
                                     <span class="badge badge-danger">
@@ -72,20 +72,20 @@
                             </td>
 
                             <td>
-                                @if ($kamar->khusus == 'Laki-Laki')
+                                @if ($data->khusus == 'Laki-Laki')
                                     <span>
                                         <i class="fas fa-male"></i>
-                                        {{ $kamar->khusus }}
+                                        {{ $data->khusus }}
                                     </span>
-                                @elseif ($kamar->khusus == 'Perempuan')
+                                @elseif ($data->khusus == 'Perempuan')
                                     <span>
                                         <i class="fas fa-female"></i>
-                                        {{ $kamar->khusus }}
+                                        {{ $data->khusus }}
                                     </span>
-                                @elseif ($kamar->khusus == 'Keluarga')
+                                @elseif ($data->khusus == 'Keluarga')
                                     <span>
                                         <i class="fas fa-users"></i>
-                                        {{ $kamar->khusus }}
+                                        {{ $data->khusus }}
                                     </span>
                                 @else
                                     <span class="badge badge-danger">
@@ -95,8 +95,8 @@
                             </td>
 
                             <td>
-                                @if($kamar->foto)
-                                    <img src="{{ Storage::url('uploads/kamar/' . $kamar->foto) }}" alt="Foto" width="100px" class="img-thumbnail">
+                                @if($data->foto)
+                                    <img src="{{ Storage::url('uploads/kamar/' . $data->foto) }}" alt="Foto" width="100px" class="img-thumbnail">
                                 @else
                                     <span class="text-muted">Tidak ada foto</span>
                                 @endif
@@ -105,17 +105,17 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#modalEdit-{{ $kamar->id }}">
+                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#modalEdit-{{ $data->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $kamar->id }}, '{{ $kamar->kode_kamar }}')">
+                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
                                     <form
-                                        id="delete-form-{{ $kamar->id }}"
-                                        action="{{ route('admin.data-kost.kamar.destroy', $kamar->id) }}"
+                                        id="delete-form-{{ $data->id }}"
+                                        action="{{ route('admin.data-kost.kamar.destroy', $data->id) }}"
                                         method="post"
                                         style="display: none"
                                     >
@@ -127,15 +127,15 @@
 
                         </tr>
 
-                        <div class="modal fade" id="modalEdit-{{ $kamar->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal fade" id="modalEdit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
 
                                     <div class="modal-header">
 
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah data kamar</span>
-                                            <span class="fw-light">{{ $kamar->kode_kamar }}</span>
+                                            <span class="fw-mediumbold">Rubah kamar</span>
+                                            <span class="fw-light">{{ $data->kode }}</span>
                                         </h5>
 
                                         <button type="button" class="close" data-dismiss="modal">
@@ -144,7 +144,7 @@
 
                                     </div>
 
-                                    <form action="{{ route('admin.data-kost.kamar.update', $kamar->id) }}" method="post" enctype="multipart/form-data">
+                                    <form action="{{ route('admin.data-kost.kamar.update', $data->id) }}" method="post" enctype="multipart/form-data">
 
                                         @csrf
                                         @method('PUT')
@@ -158,10 +158,10 @@
                                                         <div class="input-group">
                                                             <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
                                                             <select name="khusus" class="form-control" required
-                                                                onchange="updateKodeEdit(this, '{{ $kamar->id }}', '{{ $kamar->kode_kamar }}', '{{ $kamar->khusus }}')" >
-                                                                <option value="Perempuan" {{ $kamar->khusus == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                                                                <option value="Laki-Laki" {{ $kamar->khusus == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
-                                                                <option value="Keluarga" {{ $kamar->khusus == 'Keluarga' ? 'selected' : '' }}>Keluarga</option>
+                                                                onchange="updateKodeEdit(this, '{{ $data->id }}', '{{ $data->kode }}', '{{ $data->khusus }}')" >
+                                                                <option value="Perempuan" {{ $data->khusus == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                                                <option value="Laki-Laki" {{ $data->khusus == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
+                                                                <option value="Keluarga" {{ $data->khusus == 'Keluarga' ? 'selected' : '' }}>Keluarga</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -172,7 +172,7 @@
                                                         <label>Kode Kamar</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                                            <input type="text" name="kode_kamar" id="kode_kamar_edit_{{ $kamar->id }}" class="form-control" value="{{ $kamar->kode_kamar }}" readonly required>
+                                                            <input type="text" name="kode" id="kode_edit_{{ $data->id }}" class="form-control" value="{{ $data->kode }}" readonly required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -182,7 +182,7 @@
                                                         <label>Harga <span class="text-danger">*</span></label>
                                                         <div class="input-group">
                                                             <span class="input-group-text">Rp.</span>
-                                                            <input type="text" name="harga" class="form-control input-harga" value="{{ number_format($kamar->harga, 0, ',', '.') }}" required>
+                                                            <input type="text" name="harga" class="form-control input-harga" value="{{ number_format($data->harga, 0, ',', '.') }}" required>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -193,9 +193,9 @@
                                                         <div class="input-group">
                                                             <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
                                                             <select name="status" class="form-control" required>
-                                                                <option value="Kosong" {{ $kamar->status == 'Kosong' ? 'selected' : '' }}>Kosong</option>
-                                                                <option value="Terisi" {{ $kamar->status == 'Terisi' ? 'selected' : '' }}>Terisi</option>
-                                                                <option value="Dalam Perbaikan" {{ $kamar->status == 'Dalam Perbaikan' ? 'selected' : '' }}>Dalam Perbaikan</option>
+                                                                <option value="Kosong" {{ $data->status == 'Kosong' ? 'selected' : '' }}>Kosong</option>
+                                                                <option value="Terisi" {{ $data->status == 'Terisi' ? 'selected' : '' }}>Terisi</option>
+                                                                <option value="Dalam Perbaikan" {{ $data->status == 'Dalam Perbaikan' ? 'selected' : '' }}>Dalam Perbaikan</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -207,16 +207,16 @@
                                                         <label>Foto Kamar</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                                                            <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $kamar->id }}')">
+                                                            <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $data->id }}')">
                                                         </div>
                                                     </div>
 
                                                     <div class="form-group">
                                                         <label>Preview</label>
                                                         <div class="input-group">
-                                                            <img id="preview-{{ $kamar->id }}"
-                                                                src="{{ $kamar->foto ? asset('storage/' . $kamar->foto) : '' }}"
-                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $kamar->foto ? 'display: block;' : 'display: none;' }}"
+                                                            <img id="preview-{{ $data->id }}"
+                                                                src="{{ $data->foto ? asset('storage/' . $data->foto) : '' }}"
+                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
                                                                 class="img-thumbnail"
                                                             >
                                                         </div>
@@ -229,7 +229,7 @@
                                                         <label>Deskripsi</label>
                                                         <div class="input-group">
                                                             <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                                            <textarea name="deskripsi" class="form-control" rows="3" style="resize: none">{{ $kamar->deskripsi }}</textarea>
+                                                            <textarea name="deskripsi" class="form-control" rows="3" style="resize: none">{{ $data->deskripsi }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -279,7 +279,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahLabel">Tambah data kamar baru</h5>
+                    <h5 class="modal-title" id="modalTambahLabel">Tambah kamar baru</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
@@ -310,7 +310,7 @@
                                     <label>Kode Kamar</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                        <input type="text" name="kode_kamar" id="kode_kamar_tambah" class="form-control" readonly required>
+                                        <input type="text" name="kode" id="kode_tambah" class="form-control" readonly required>
                                     </div>
                                     <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
                                 </div>
@@ -403,7 +403,7 @@
         if(document.getElementById('khusus_tambah')){
             document.getElementById('khusus_tambah').addEventListener('change', function() {
                 let kategori    = this.value;
-                let inputKode   = document.getElementById('kode_kamar_tambah');
+                let inputKode   = document.getElementById('kode_tambah');
                 let info        = document.getElementById('info_kode');
 
                 if (nextCodes[kategori]) {
@@ -420,7 +420,7 @@
 
         function updateKodeEdit(selectElement, id, originalKode, originalKategori) {
             let selectedKategori = selectElement.value;
-            let inputKode = document.getElementById('kode_kamar_edit_' + id);
+            let inputKode = document.getElementById('kode_edit_' + id);
 
             if (selectedKategori === originalKategori) {
                 inputKode.value = originalKode;
