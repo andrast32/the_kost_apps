@@ -5,7 +5,7 @@
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
 
-                <h3 class="card-title">Data manajemen kamar</h3>
+                <h3 class="card-title">Manajemen data kamar</h3>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
                     <a href="{{ route('admin.data-kost.kamar.sampah') }}" class="btn btn-sm btn-outline-danger right ml-auto">

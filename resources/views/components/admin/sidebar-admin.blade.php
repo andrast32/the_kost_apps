@@ -72,7 +72,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-kost.fasilitas') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas') ? 'active' : '' }}">
+                            <a href="{{ route('admin.data-kost.fasilitas.index') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Fasilitas</p>
                             </a>

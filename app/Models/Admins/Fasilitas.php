@@ -2,14 +2,13 @@
 
 namespace App\Models\Admins;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Fasilitas extends Model
 {
 
-    use HasFactory, SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'kode',
@@ -20,5 +19,10 @@ class Fasilitas extends Model
         'foto',
         'slug'
     ];
+
+    public static function generateCode($prefix)
+    {
+        
+    }
 
 }
