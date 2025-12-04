@@ -1,5 +1,5 @@
 <x-admin-layout>
-    
+
     <div class="card">
 
         <div class="card-header">
@@ -20,6 +20,10 @@
                 </button>
 
             </div>
+        </div>
+
+        <div class="card-body">
+            
         </div>
 
     </div>
