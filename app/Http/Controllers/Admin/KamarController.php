@@ -86,7 +86,7 @@ class KamarController extends Controller
     public function trash()
     {
 
-        view()->share('title','Sampah Data Kamar');
+        view()->share('title','Data kamar');
 
         $data = [
             'kamars'        => Kamar::onlyTrashed()->latest()->get(),

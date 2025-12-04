@@ -134,7 +134,7 @@
                                     <div class="modal-header">
 
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah data kamar</span>
+                                            <span class="fw-mediumbold">Rubah kamar</span>
                                             <span class="fw-light">{{ $data->kode }}</span>
                                         </h5>
 
@@ -279,7 +279,7 @@
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahLabel">Tambah data kamar baru</h5>
+                    <h5 class="modal-title" id="modalTambahLabel">Tambah kamar baru</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
