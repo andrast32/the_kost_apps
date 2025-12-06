@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admins\Fasilitas;
-use App\http\Requests\Admin\FasilitasFormRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\FasilitasFormRequest;
+use Illuminate\Support\Facades\Storage;
 
 class FasilitasController extends Controller
 {
@@ -43,9 +43,29 @@ class FasilitasController extends Controller
 
     }
 
-    public function update(Request $request, string $id)
+    public function update(FasilitasFormRequest $request, $id)
     {
-        //
+        $fasilitas = Fasilitas::findOrFail($id);
+        $data = $request->validated();
+
+        if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+            if ($fasilitas->foto && Storage::disk('public')->exists('uploads/fasilitas/' . $fasilitas->foto)) {
+                Storage::disk('public')->delete('uploads/fasilitas/' . $fasilitas->foto);
+            }
+
+            $path = $request->file('foto')->store('uploads/fasilitas', 'public');
+            $data['foto'] = basename($path);
+        }
+
+        $fasilitas->update($data);
+
+        $icon = $fasilitas->wasChanged() ? 'success' : 'info';
+
+        return redirect()->back()->with('alert', [
+            'icon'  => $icon,
+            'title' => 'Fasilitas telah berhasil diperbarui!'
+        ]);
+
     }
 
     public function destroy(string $id)

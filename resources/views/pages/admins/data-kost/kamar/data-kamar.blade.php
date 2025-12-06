@@ -215,8 +215,8 @@
                                                         <label>Preview</label>
                                                         <div class="input-group">
                                                             <img id="preview-{{ $data->id }}"
-                                                                src="{{ $data->foto ? asset('storage/' . $data->foto) : '' }}"
-                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: none;' : '' }}"
+                                                                src="{{ $data->foto ? asset('storage/uploads/kamar/' . $data->foto) : '' }}"
+                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
                                                                 class="img-thumbnail"
                                                             >
                                                         </div>
