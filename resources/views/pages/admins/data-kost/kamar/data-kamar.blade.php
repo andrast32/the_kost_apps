@@ -216,7 +216,7 @@
                                                         <div class="input-group">
                                                             <img id="preview-{{ $data->id }}"
                                                                 src="{{ $data->foto ? asset('storage/' . $data->foto) : '' }}"
-                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
+                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: none;' : '' }}"
                                                                 class="img-thumbnail"
                                                             >
                                                         </div>
@@ -250,8 +250,9 @@
 
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">
-                                Belum ada data kamar.
+                            <td colspan="7" class="text-center p-4">
+                                <i class="far fa-building fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Belum ada kamar.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -310,7 +311,7 @@
                                     <label>Kode Kamar</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                        <input type="text" name="kode" id="kode_tambah" class="form-control" readonly required>
+                                        <input type="text" name="kode" id="kode_tambah" class="form-control" placeholder="kode otomatis muncul setelah pilih kategori" readonly required>
                                     </div>
                                     <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
                                 </div>
@@ -373,7 +374,7 @@
                                     <label>Deskripsi</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none"></textarea>
+                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
                                     </div>
                                 </div>
                             </div>

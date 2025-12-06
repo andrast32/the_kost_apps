@@ -64,12 +64,13 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <form action="{{ route('admin.data-kost.kamar.restore', $kamar->id) }}" method="post" class="d-inline">
+                                    <button class="btn btn-outline-primary text-primary mr-2" onclick="confirmRestore({{ $kamar->id }}, '{{ $kamar->kode }}')">
+                                        <i class="fas fa-trash-restore"></i>
+                                    </button>
+
+                                    <form action="{{ route('admin.data-kost.kamar.restore', $kamar->id) }}" id="restore-form-{{ $kamar->id }}" method="post" style="display: none;">
                                         @csrf
                                         @method('PUT')
-                                        <button class="btn btn-outline-primary text-primary mr-2">
-                                            <i class="fas fa-trash-restore"></i>
-                                        </button>
                                     </form>
 
                                     <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $kamar->id }}, '{{ $kamar->kode }}')">
@@ -102,6 +103,22 @@
     </div>
 
     <script>
+        function confirmRestore(id, kode) {
+            Swal.fire({
+                title: 'Yakin mau kembalikan data ' + kode + '?',
+                text: "Data kamar " + kode + " akan dikembalikan",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Kembalikan',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('restore-form-' + id).submit();
+                }
+            })
+        }
         function confirmForceDelete(id, kode) {
             Swal.fire({
                 title: 'Yakin mau hapus Permanen?',

@@ -43,7 +43,7 @@ class KamarController extends Controller
 
         return redirect()->back()->with('alert', [
             'icon'  => 'success',
-            'title' => 'Data kamar telah berhasil ditambahkan!'
+            'title' => 'Kamar telah berhasil ditambahkan!'
         ]);
 
     }
