@@ -102,8 +102,16 @@
                                 <div class="modal-content">
 
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="modalEdtLabel">Rubah Fasilitas {{ $data->kode }}</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                                        <h5 class="modal-title">
+                                            <span class="fw-mediumbold">Rubah Fasilitas</span>
+                                            <span class="fw-light">{{ $data->kode }}</span>
+                                        </h5>
+
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+
                                     </div>
 
                                     <form action="{{ route('admin.data-kost.fasilitas.update', $data->id) }}" method="post" enctype="multipart/form-data">

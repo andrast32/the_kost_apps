@@ -14,17 +14,17 @@ class Fasilitas extends Model
 
     protected $fillable = [
         'kode',
+        'slug',
         'nama',
         'deskripsi',
         'harga',
         'stok',
-        'foto',
-        'slug'
+        'foto'
     ];
 
     public static function generateCode($prefix)
     {
-        
+
         $lastCode = self::where('kode', 'like', $prefix . '%')
                         ->orderBy('kode', 'desc')
                         ->value('kode');
@@ -42,11 +42,11 @@ class Fasilitas extends Model
     {
 
         static::creating(function ($fasilitas) {
-            $fasilitas->slug = Str::slug($fasilitas->kode);
+            $fasilitas->slug = Str::slug($fasilitas->kode . ' ' . $fasilitas->nama, '-');
         });
 
         static::updating(function ($fasilitas) {
-            $fasilitas->slug = Str::slug($fasilitas->kode . '' . $fasilitas->nama . '' . $fasilitas->id, '-');
+            $fasilitas->slug = Str::slug($fasilitas->kode . ' ' . $fasilitas->nama . ' ' . $fasilitas->id, '-');
         });
 
         static::forceDeleted(function ($fasilitas) {

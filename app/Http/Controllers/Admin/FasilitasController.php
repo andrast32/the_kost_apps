@@ -4,8 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admins\Fasilitas;
+
+// request
 use App\Http\Requests\Admin\FasilitasFormRequest;
+
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FasilitasController extends Controller
 {
@@ -18,7 +22,7 @@ class FasilitasController extends Controller
             'fasilitas'     => Fasilitas::orderBy('kode', 'ASC')->get(),
             'jumlahSampah'  => Fasilitas::onlyTrashed()->count(),
 
-            'nextCode'      => Fasilitas::generateCode('F-'),
+            'nextCode'      => Fasilitas::generateCode('D-'),
         ];
 
         return view('pages.admins.data-kost.fasilitas.data-fasilitas', $data);
@@ -70,7 +74,12 @@ class FasilitasController extends Controller
 
     public function destroy(string $id)
     {
-        //
+        Fasilitas::findOrFail($id)->delete();
+
+        return redirect()->back()->with('alert', [
+            'icon'  => 'success',
+            'title' => 'Fasilitas telah berhasil dihapus. dan dipindahkan ke sampah!'
+        ]);
     }
 
     public function trash()
@@ -81,6 +90,5 @@ class FasilitasController extends Controller
 
     public function forceDelete(string $id)
     {}
-
 
 }

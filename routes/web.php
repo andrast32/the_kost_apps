@@ -59,7 +59,7 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::put('data-kost/fasilitas/restore/{id}', [FasilitasController::class, 'restore'])->name('data-kost.fasilitas.restore');
             Route::delete('data-kost/fasilitas/force-delete', [FasilitasController::class, 'forceDelete'])->name('data-kost.fasilitas.force-delete');
 
-            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('data-kost.fasilitas');
+            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('data-kost.fasilitas')->parameters(['fasilitas' => 'fasilitas']);
 
         // =================================================
         //               DATA FASILITAS END

@@ -23,16 +23,16 @@ class FasilitasFormRequest extends FormRequest
 
     public function rules(): array
     {
-        $fasilitasId = $this->route('id') ?? $this->route('fasilitas');
+        $id = $this->route('fasilitas') ?? $this->route('id');
 
         return [
             'kode'      =>  [
                                 'required',
                                 'max:50',
-                                Rule::unique('fasilitas', 'kode')->ignore($fasilitasId)
+                                Rule::unique('fasilitas', 'kode')->ignore($id)
                             ],
             'nama'      =>  'required|string',
-            'harga'     =>  'required|numeric|min:0',
+            'harga'     =>  'required|string|numeric|min:0',
             'stok'      =>  'required|numeric|min:0',
             'foto'      =>  'nullable|image|max:10240',
             'deskripsi' =>  'nullable|string'

@@ -79,7 +79,7 @@ class KamarController extends Controller
 
         return redirect()->back()->with('alert', [
             'icon'  => 'success',
-            'title' => 'Data kamar telah berhasil dihapus. dan dipindahkan ke sampah!'
+            'title' => 'kamar telah berhasil dihapus. dan dipindahkan ke sampah!'
         ]);
     }
 
@@ -102,7 +102,7 @@ class KamarController extends Controller
 
         return redirect()->back()->with('alert', [
             'icon'  => 'success',
-            'title' => 'Data kamar telah berhasil dikembalikan!'
+            'title' => 'kamar telah berhasil dikembalikan!'
         ]);
     }
 
@@ -112,7 +112,7 @@ class KamarController extends Controller
 
         return redirect()->back()->with('alert', [
             'icon'  => 'success',
-            'title' => 'Data kamar Dihapus permanen dan tidak dapat dikembalikan!',
+            'title' => 'kamar Dihapus permanen dan tidak dapat dikembalikan!',
         ]);
     }
 
