@@ -44,7 +44,7 @@
 
                             <td>{{ $loop->iteration }}</td>
 
-                            <td><strong>{{ $data->kode }}</strong></td>
+                            <td><strong>#{{ $data->kode }}</strong></td>
 
                             <td>{{ $data->nama }}</td>
 
@@ -104,8 +104,8 @@
                                     <div class="modal-header">
 
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah Fasilitas</span>
-                                            <span class="fw-light">{{ $data->kode }}</span>
+                                            <span class="fw-mediumbold">Rubah Fasilitas dengan kode</span>
+                                            <span class="fw-light">#{{ $data->kode }}</span>
                                         </h5>
 
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -344,7 +344,7 @@
 <script>
     function confirmDelete(id, kode, nama) {
             Swal.fire({
-                title: 'Yakin mau hapus fasilitas ' + kode + '?',
+                title: 'Hapus fasilitas dengan kode #' + kode + '?',
                 text: "Fasilitas " + nama + " akan dipindahkan ke sampah!",
                 icon: 'warning',
                 showCancelButton: true,

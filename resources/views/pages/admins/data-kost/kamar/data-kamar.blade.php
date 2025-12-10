@@ -44,7 +44,7 @@
 
                             <td>{{ $loop->iteration }}</td>
 
-                            <td><strong>{{ $data->kode }}</strong></td>
+                            <td><strong>#{{ $data->kode }}</strong></td>
 
                             <td>Rp {{ number_format($data->harga, 0, ',', '.') }}</td>
 
@@ -134,8 +134,8 @@
                                     <div class="modal-header">
 
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah kamar</span>
-                                            <span class="fw-light">{{ $data->kode }}</span>
+                                            <span class="fw-mediumbold">Rubah kamar dengan kode</span>
+                                            <span class="fw-light">#{{ $data->kode }}</span>
                                         </h5>
 
                                         <button type="button" class="close" data-dismiss="modal">
@@ -266,7 +266,7 @@
                         <th>Status</th>
                         <th>Khusus</th>
                         <th>Foto</th>
-                        <th width="15%">Action</th>
+                        <th width="10%">Action</th>
                     </tr>
                 </tfoot>
 
@@ -435,7 +435,7 @@
 
         function confirmDelete(id, kode) {
             Swal.fire({
-                title: 'Yakin mau hapus kamar ' + kode + '?',
+                title: 'Hapus kamar dengan kode #' + kode + '?',
                 text: "Kamar akan dipindahkan ke sampah!",
                 icon: 'warning',
                 showCancelButton: true,

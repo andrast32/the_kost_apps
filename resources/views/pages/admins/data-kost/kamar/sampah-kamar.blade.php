@@ -1,13 +1,13 @@
 <x-admin-layout>
 
-    <div class="card border-danger">
+    <div class="card">
 
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
 
                 <h3 class="card-title">
                     <i class="fas fa-trash-alt mr-2"></i>
-                    Sampah data kamar
+                    Sampah kamar
                     <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
                 </h3>
 
@@ -30,32 +30,32 @@
 
             <table id="data" class="table table-bordered table-striped table-hover">
 
-                <thead>
+                <thead class="bg-navy">
                     <tr align="center">
                         <th>No</th>
-                        <th>Kode</th>
+                        <th>Kode kamar</th>
                         <th>Harga</th>
                         <th>Dihapus pada</th>
                         <th>Foto</th>
-                        <th width="20%">Action</th>
+                        <th width="10%">Action</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    @forelse ($kamars as $kamar)
+                    @forelse ($kamars as $data)
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
-                            <td><strong>{{ $kamar->kode }}</strong></td>
-                            <td>Rp {{ number_format($kamar->harga, 0, ',', '.') }}</td>
+                            <td><strong>#{{ $data->kode }}</strong></td>
+                            <td>Rp {{ number_format($data->harga, 0, ',', '.') }}</td>
 
                             <td>
-                                {{ \Carbon\Carbon::parse($kamar->deleted_at)->translatedFormat('d M Y') }}
+                                {{ \Carbon\Carbon::parse($data->deleted_at)->translatedFormat('d M Y') }}
                             </td>
 
                             <td>
-                                @if($kamar->foto)
-                                    <img src="{{ Storage::url('uploads/kamar/' . $kamar->foto) }}" alt="Foto" width="100px" class="img-thumbnail">
+                                @if($data->foto)
+                                    <img src="{{ Storage::url('uploads/kamar/' . $data->foto) }}" alt="Foto" width="100px" class="img-thumbnail">
                                 @else
                                     <span class="text-muted">Tidak ada foto</span>
                                 @endif
@@ -64,20 +64,20 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button class="btn btn-outline-primary text-primary mr-2" onclick="confirmRestore({{ $kamar->id }}, '{{ $kamar->kode }}')">
+                                    <button class="btn btn-outline-primary text-primary mr-2" onclick="confirmRestore({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-trash-restore"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.kamar.restore', $kamar->id) }}" id="restore-form-{{ $kamar->id }}" method="post" style="display: none;">
+                                    <form action="{{ route('admin.data-kost.kamar.restore', $data->id) }}" id="restore-form-{{ $data->id }}" method="post" style="display: none;">
                                         @csrf
                                         @method('PUT')
                                     </form>
 
-                                    <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $kamar->id }}, '{{ $kamar->kode }}')">
+                                    <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-times-circle"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.kamar.force-delete', $kamar->id) }}" id="force-delete-form-{{ $kamar->id }}" method="POST" style="display: none">
+                                    <form action="{{ route('admin.data-kost.kamar.force-delete', $data->id) }}" id="force-delete-form-{{ $data->id }}" method="POST" style="display: none">
                                         @csrf
                                         @method('DELETE')
                                     </form>
@@ -105,8 +105,8 @@
     <script>
         function confirmRestore(id, kode) {
             Swal.fire({
-                title: 'Yakin mau kembalikan data ' + kode + '?',
-                text: "Data kamar " + kode + " akan dikembalikan",
+                title: 'Kembalikan kamar dengan kode #' + kode + '?',
+                text: "Kamar akan dikembalikan",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -121,8 +121,8 @@
         }
         function confirmForceDelete(id, kode) {
             Swal.fire({
-                title: 'Yakin mau hapus Permanen?',
-                text: "Data kamar " + kode + " akan hilang selamanya",
+                title: 'Hapus kamar dengan kode #' + kode +' secara permanen?',
+                text: "Kamar akan hilang selamanya",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',

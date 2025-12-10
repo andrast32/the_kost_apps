@@ -25,7 +25,8 @@ class Fasilitas extends Model
     public static function generateCode($prefix)
     {
 
-        $lastCode = self::where('kode', 'like', $prefix . '%')
+        $lastCode = self::withTrashed()
+                        ->where('kode', 'like', $prefix . '%')
                         ->orderBy('kode', 'desc')
                         ->value('kode');
 
