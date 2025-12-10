@@ -44,7 +44,7 @@
 
                             <td>{{ $loop->iteration }}</td>
 
-                            <td><strong>{{ $data->kode }}</strong></td>
+                            <td><strong>#{{ $data->kode }}</strong></td>
 
                             <td>Rp {{ number_format($data->harga, 0, ',', '.') }}</td>
 
@@ -134,8 +134,8 @@
                                     <div class="modal-header">
 
                                         <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah kamar</span>
-                                            <span class="fw-light">{{ $data->kode }}</span>
+                                            <span class="fw-mediumbold">Rubah kamar dengan kode</span>
+                                            <span class="fw-light">#{{ $data->kode }}</span>
                                         </h5>
 
                                         <button type="button" class="close" data-dismiss="modal">
@@ -215,7 +215,7 @@
                                                         <label>Preview</label>
                                                         <div class="input-group">
                                                             <img id="preview-{{ $data->id }}"
-                                                                src="{{ $data->foto ? asset('storage/' . $data->foto) : '' }}"
+                                                                src="{{ $data->foto ? asset('storage/uploads/kamar/' . $data->foto) : '' }}"
                                                                 style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
                                                                 class="img-thumbnail"
                                                             >
@@ -250,8 +250,9 @@
 
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center">
-                                Belum ada data kamar.
+                            <td colspan="7" class="text-center p-4">
+                                <i class="far fa-building fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">Belum ada kamar.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -265,7 +266,7 @@
                         <th>Status</th>
                         <th>Khusus</th>
                         <th>Foto</th>
-                        <th width="15%">Action</th>
+                        <th width="10%">Action</th>
                     </tr>
                 </tfoot>
 
@@ -310,7 +311,7 @@
                                     <label>Kode Kamar</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                        <input type="text" name="kode" id="kode_tambah" class="form-control" readonly required>
+                                        <input type="text" name="kode" id="kode_tambah" class="form-control" placeholder="kode otomatis muncul setelah pilih kategori" readonly required>
                                     </div>
                                     <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
                                 </div>
@@ -373,7 +374,7 @@
                                     <label>Deskripsi</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none"></textarea>
+                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -434,7 +435,7 @@
 
         function confirmDelete(id, kode) {
             Swal.fire({
-                title: 'Yakin mau hapus kamar ' + kode + '?',
+                title: 'Hapus kamar dengan kode #' + kode + '?',
                 text: "Kamar akan dipindahkan ke sampah!",
                 icon: 'warning',
                 showCancelButton: true,
