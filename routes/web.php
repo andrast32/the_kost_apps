@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\FasilitasController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\KamarController;
+use App\Http\Controllers\Admin\PenyewaController;
+use App\Http\Controllers\Admin\PetugasController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman Depan
@@ -65,6 +67,30 @@ Route::middleware(['auth', 'verified', 'admin'])
         //               DATA FASILITAS END
         // =================================================
 
+        // =================================================
+        //               DATA PENYEWA START
+        // =================================================
+            Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('data-user.penyewa.sampah');
+            Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('data-user.penyewa.restore');
+            Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('data-user.penyewa.force-delete');
+
+            Route::resource('data-user/penyewa', PenyewaController::class)->names('data-user.penyewa');
+        // ================================================
+        //               DATA PENYEWA END
+        // =================================================
+
+        // =================================================
+        //               DATA PETUGAS START
+        // =================================================
+            Route::get('data-user/petugas/sampah', [PetugasController::class, 'trash'])->name('data-user.petugas.sampah');
+            Route::put('data-user/petugas/restore/{id}', [PetugasController::class, 'restore'])->name('data-user.petugas.restore');
+            Route::delete('data-user/petugas/force-delete/{id}', [PetugasController::class, 'forceDelete'])->name('data-user.petugas.force-delete');
+
+            Route::resource('data-user/petugas', PetugasController::class)->names('data-user.petugas');
+        // =================================================
+        //               DATA PETUGAS END
+        // =================================================
+
 
         Route::get('/biodata', function () {
             view()->share('title', 'Biodata Penyewa');
@@ -80,16 +106,6 @@ Route::middleware(['auth', 'verified', 'admin'])
             view()->share('title', 'Data Pemesanan');
             return view('pages.admins.pemesanan.data-pemesanan');
         })->name('pemesanan');
-
-        Route::get('/data-user/penyewa', function () {
-            view()->share('title', 'Data Penyewa');
-            return view('pages.admins.data-user.penyewa.data-penyewa');
-        })->name('data-user.penyewa');
-
-        Route::get('/data-user/petugas', function () {
-            view()->share('title', 'Data Petugas');
-            return view('pages.admins.data-user.petugas.data-petugas');
-        })->name('data-user.petugas');
 
     });
 
