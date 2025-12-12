@@ -24,7 +24,7 @@ Route::get('contact/', function () {
 
 // Group User
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('pages.users.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Group Admin
