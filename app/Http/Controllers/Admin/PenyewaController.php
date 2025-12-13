@@ -17,7 +17,7 @@ class PenyewaController extends Controller
         view()->share('title', 'Data Penyewa');
 
         $data = [
-            'users'         => User::where('role', 'penyewa')->orderBy('name', 'ASC')->get(),
+            'users'         => User::where('role', 'User')->orderBy('name', 'ASC')->get(),
             'jumlahSampah'  => User::onlyTrashed()->count(),
         ];
 

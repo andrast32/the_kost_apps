@@ -71,6 +71,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         //               DATA PENYEWA START
         // =================================================
             Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('data-user.penyewa.sampah');
+            Route::get('data-user/penyewa/biodata', [PenyewaController::class, 'show'])->name('data-user.penyewa.biodata');
             Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('data-user.penyewa.restore');
             Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('data-user.penyewa.force-delete');
 

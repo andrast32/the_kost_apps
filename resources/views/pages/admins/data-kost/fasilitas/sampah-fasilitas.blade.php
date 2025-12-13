@@ -32,7 +32,7 @@
 
                 <thead class="bg-navy">
                     <tr align="center">
-                        <th>No</th>
+                        <th width="5%">No</th>
                         <th>Kode fasilitas</th>
                         <th>Nama fasilitas</th>
                         <th>Harga</th>
