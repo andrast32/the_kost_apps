@@ -28,6 +28,7 @@
                 <thead class="bg-navy">
                     <tr align="center">
                         <th width="5%">No</th>
+                        <th>id</th>
                         <th>Nama penyewa</th>
                         <th>Email penyewa</th>
                         <th>Terdaftar sejak</th>
@@ -42,14 +43,29 @@
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
+                            <td>#{{ $data->id }}</td>
                             <td>{{ $data->name }}</td>
                             <td>{{ $data->email }}</td>
                             <td>{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d M Y ') }}</td>
 
                             <td>
-                                <a href="{{ route('admin.data-user.penyewa.biodata', $data->id) }}" class="btn btn-info btn-sm" title="Lihat Biodata">
+                                <a href="{{ route('admin.data-user.penyewa.biodata-', $data) }}" class="btn btn-info btn-sm" title="Lihat Biodata">
                                     <i class="fas fa-eye"></i>
                                 </a>
+                            </td>
+
+                            <td>
+                                <div class="btn-group">
+
+                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#modalEdit-{{ $data->id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->name }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+
+                                </div>
                             </td>
 
                         </tr>
@@ -62,6 +78,7 @@
                 <tfoot class="bg-navy">
                     <tr align="center">
                         <th width="5%">No</th>
+                        <th>id</th>
                         <th>Nama penyewa</th>
                         <th>Email penyewa</th>
                         <th>Terdaftar sejak</th>

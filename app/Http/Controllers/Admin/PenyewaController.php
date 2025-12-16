@@ -35,9 +35,12 @@ class PenyewaController extends Controller
         //
     }
 
-    public function show(string $id)
+    public function show(User $user)
     {
-        //
+
+        view()->share('title', 'Biodata Penyewa');
+
+        return view('pages.admins.data-user.penyewa.biodata.data-bio', compact('user'));
     }
 
     public function edit(string $id)

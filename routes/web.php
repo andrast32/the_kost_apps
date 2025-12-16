@@ -28,26 +28,25 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 // Group Admin
-Route::middleware(['auth', 'verified', 'admin'])
-    ->prefix('admin')
-    ->name('admin.')
+Route::prefix('admin')
+    ->middleware(['auth', 'verified'])
     ->group(function () {
 
         // Halaman Dashboard Admin
         Route::get('/dashboard', function () {
             view()->share('title', 'Dashboard Admin');
             return view('pages.admins.dashboard-admin');
-        })->name('dashboard');
+        })->name('admin.dashboard');
 
         // =================================================
         //                DATA KAMAR START
         // =================================================
 
-            Route::get('data-kost/kamar/sampah', [KamarController::class, 'trash'])->name('data-kost.kamar.sampah');
-            Route::put('data-kost/kamar/restore/{id}', [KamarController::class, 'restore'])->name('data-kost.kamar.restore');
-            Route::delete('data-kost/kamar/force-delete/{id}', [KamarController::class, 'forceDelete'])->name('data-kost.kamar.force-delete');
+            Route::get('data-kost/kamar/sampah', [KamarController::class, 'trash'])->name('admin.data-kost.kamar.sampah');
+            Route::put('data-kost/kamar/restore/{id}', [KamarController::class, 'restore'])->name('admin.data-kost.kamar.restore');
+            Route::delete('data-kost/kamar/force-delete/{id}', [KamarController::class, 'forceDelete'])->name('admin.data-kost.kamar.force-delete');
 
-            Route::resource('data-kost/kamar', KamarController::class)->names('data-kost.kamar');
+            Route::resource('data-kost/kamar', KamarController::class)->names('admin.data-kost.kamar');
 
         // =================================================
         //                DATA KAMAR END
@@ -57,11 +56,11 @@ Route::middleware(['auth', 'verified', 'admin'])
         //               DATA FASILITAS START
         // =================================================
 
-            Route::get('data-kost/fasilitas/sampah', [FasilitasController::class, 'trash'])->name('data-kost.fasilitas.sampah');
-            Route::put('data-kost/fasilitas/restore/{id}', [FasilitasController::class, 'restore'])->name('data-kost.fasilitas.restore');
-            Route::delete('data-kost/fasilitas/force-delete', [FasilitasController::class, 'forceDelete'])->name('data-kost.fasilitas.force-delete');
+            Route::get('data-kost/fasilitas/sampah', [FasilitasController::class, 'trash'])->name('admin.data-kost.fasilitas.sampah');
+            Route::put('data-kost/fasilitas/restore/{id}', [FasilitasController::class, 'restore'])->name('admin.data-kost.fasilitas.restore');
+            Route::delete('data-kost/fasilitas/force-delete', [FasilitasController::class, 'forceDelete'])->name('admin.data-kost.fasilitas.force-delete');
 
-            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('data-kost.fasilitas')->parameters(['fasilitas' => 'fasilitas']);
+            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('admin.data-kost.fasilitas')->parameters(['fasilitas' => 'fasilitas']);
 
         // =================================================
         //               DATA FASILITAS END
@@ -70,12 +69,12 @@ Route::middleware(['auth', 'verified', 'admin'])
         // =================================================
         //               DATA PENYEWA START
         // =================================================
-            Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('data-user.penyewa.sampah');
-            Route::get('data-user/penyewa/biodata', [PenyewaController::class, 'show'])->name('data-user.penyewa.biodata');
-            Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('data-user.penyewa.restore');
-            Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('data-user.penyewa.force-delete');
+            Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('admin.data-user.penyewa.sampah');
+            Route::get('data-user/penyewa/biodata/{user}', [PenyewaController::class, 'show'])->name('admin.data-user.penyewa.biodata-');
+            Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('admin.data-user.penyewa.restore');
+            Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('admin.data-user.penyewa.force-delete');
 
-            Route::resource('data-user/penyewa', PenyewaController::class)->names('data-user.penyewa');
+            Route::resource('data-user/penyewa', PenyewaController::class)->names('admin.data-user.penyewa');
         // ================================================
         //               DATA PENYEWA END
         // =================================================
@@ -83,11 +82,11 @@ Route::middleware(['auth', 'verified', 'admin'])
         // =================================================
         //               DATA PETUGAS START
         // =================================================
-            Route::get('data-user/petugas/sampah', [PetugasController::class, 'trash'])->name('data-user.petugas.sampah');
-            Route::put('data-user/petugas/restore/{id}', [PetugasController::class, 'restore'])->name('data-user.petugas.restore');
-            Route::delete('data-user/petugas/force-delete/{id}', [PetugasController::class, 'forceDelete'])->name('data-user.petugas.force-delete');
+            Route::get('data-user/petugas/sampah', [PetugasController::class, 'trash'])->name('admin.data-user.petugas.sampah');
+            Route::put('data-user/petugas/restore/{id}', [PetugasController::class, 'restore'])->name('admin.data-user.petugas.restore');
+            Route::delete('data-user/petugas/force-delete/{id}', [PetugasController::class, 'forceDelete'])->name('admin.data-user.petugas.force-delete');
 
-            Route::resource('data-user/petugas', PetugasController::class)->names('data-user.petugas');
+            Route::resource('data-user/petugas', PetugasController::class)->names('admin.data-user.petugas');
         // =================================================
         //               DATA PETUGAS END
         // =================================================
@@ -101,12 +100,12 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::get('/pembayaran', function () {
             view()->share('title', 'Data Pembayaran');
             return view('pages.admins.pembayaran.data-pembayaran');
-        })->name('pembayaran');
+        })->name('admin.pembayaran');
 
         Route::get('/pemesanan', function () {
             view()->share('title', 'Data Pemesanan');
             return view('pages.admins.pemesanan.data-pemesanan');
-        })->name('pemesanan');
+        })->name('admin.pemesanan');
 
     });
 

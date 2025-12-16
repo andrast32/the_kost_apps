@@ -57,10 +57,12 @@
                             </td>
 
                             <td>
-                                @if ($data->stok > 0)
-                                    {{ $data->stok }}
+                                @if ($data->stok == 0)
+                                    <span class="badge badge-danger">Stok habis</span>
+                                @elseif ($data->stok <= 5) 
+                                    <span> Stok hampir habis, tersisa {{ $data->stok }} lagi</span>
                                 @else
-                                    <span class="text-muted">Stok habis</span>
+                                    <span>{{ $data->stok }}</span>
                                 @endif
                             </td>
 
