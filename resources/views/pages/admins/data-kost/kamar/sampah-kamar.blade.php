@@ -1,6 +1,6 @@
 <x-admin-layout>
 
-    <div class="card">
+    <div class="card card-outline card-danger">
 
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
@@ -19,14 +19,6 @@
         </div>
 
         <div class="card-body">
-
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                <strong>Perhatian!</strong> Data yang dihapus permanen tidak dapat dikembalikan lagi.
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
 
             <table id="data" class="table table-bordered table-striped table-hover">
 

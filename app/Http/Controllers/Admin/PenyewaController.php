@@ -25,11 +25,6 @@ class PenyewaController extends Controller
 
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request)
     {
         //
@@ -41,11 +36,6 @@ class PenyewaController extends Controller
         view()->share('title', 'Biodata Penyewa');
 
         return view('pages.admins.data-user.penyewa.biodata.data-bio', compact('user'));
-    }
-
-    public function edit(string $id)
-    {
-        //
     }
 
     public function update(Request $request, string $id)
