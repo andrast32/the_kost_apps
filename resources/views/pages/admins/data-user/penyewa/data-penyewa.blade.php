@@ -7,7 +7,7 @@
 
                 <h3 class="card-title">Manajemen data penyewa</h3>
 
-                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#modalTambah">
+                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#add">
                     <i class="fas fa-plus"></i> Tambah penyewa
                 </button>
 
@@ -115,6 +115,26 @@
             </table>
         </div>
 
+    </div>
+
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+
+                <div class="modal-header"></div>
+
+                <form action="{{ route('admin.data-user.penyewa.store') }}" method="post" enctype="multipart/form-data">
+
+                    @csrf
+
+                    <div class="modal-body"></div>
+
+                    <div class="modal-footer"></div>
+
+                </form>
+
+            </div>
+        </div>
     </div>
 
 </x-admin-layout>

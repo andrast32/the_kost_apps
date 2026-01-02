@@ -7,7 +7,7 @@
 
                 <h3 class="card-title">Manajemen data fasilitas</h3>
 
-                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#modalTambah">
+                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#add">
                     <i class="fas fa-plus"></i>Tambah fasilitas
                 </button>
 
@@ -238,7 +238,7 @@
 
     </div>
 
-    <div class="modal fade" id="modalTambah" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 
