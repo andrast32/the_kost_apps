@@ -71,6 +71,7 @@ Route::prefix('admin')
         // =================================================
             Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('admin.data-user.penyewa.sampah');
             Route::get('data-user/penyewa/biodata/{user}', [PenyewaController::class, 'show'])->name('admin.data-user.penyewa.biodata-');
+            Route::get('data-user/laporan', [PenyewaController::class, 'laporan'])->name('admin.data-user.lap-penyewa');
             Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('admin.data-user.penyewa.restore');
             Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('admin.data-user.penyewa.force-delete');
 
@@ -86,7 +87,7 @@ Route::prefix('admin')
             Route::put('data-user/petugas/restore/{id}', [PetugasController::class, 'restore'])->name('admin.data-user.petugas.restore');
             Route::delete('data-user/petugas/force-delete/{id}', [PetugasController::class, 'forceDelete'])->name('admin.data-user.petugas.force-delete');
 
-            Route::resource('data-user/petugas', PetugasController::class)->names('admin.data-user.petugas');
+            Route::resource('data-user/petugas', PetugasController::class)->names('admin.data-user.petugas')->parameters(['petugas' => 'petugas']);
         // =================================================
         //               DATA PETUGAS END
         // =================================================

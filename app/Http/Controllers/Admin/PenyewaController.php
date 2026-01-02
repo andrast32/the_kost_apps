@@ -25,6 +25,19 @@ class PenyewaController extends Controller
 
     }
 
+    public function laporan()
+    {
+
+        view()->share('title', 'Laporan Data Penyewa');
+
+        $data = [
+            'users'         => User::where('role', 'User')->orderBy('name', 'ASC')->get()
+        ];
+
+        return view('pages.admins.data-user.penyewa.lap-penyewa', $data);
+
+    }
+
     public function store(Request $request)
     {
         //

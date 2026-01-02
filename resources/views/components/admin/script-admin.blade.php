@@ -52,7 +52,7 @@ $.widget.bridge('uibutton', $.ui.button)
 <script>
     $(function () {
 
-        $('#data_tombol').DataTable({
+        $('#laporan').DataTable({
             "paging"        : true,
             "lengthChange"  : true,
             "searching"     : true,
@@ -63,7 +63,7 @@ $.widget.bridge('uibutton', $.ui.button)
             "buttons"       : [
                                 "excel", "pdf", "print"
                             ]
-        }).buttons().container().appendTo('#data_tombol_wrapper .col-md-6:eq(0)');
+        }).buttons().container().appendTo('#laporan_wrapper .col-md-6:eq(0)');
 
         $('#data').DataTable({
             "paging"        : true,
