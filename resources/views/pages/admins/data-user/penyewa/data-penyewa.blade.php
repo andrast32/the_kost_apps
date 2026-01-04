@@ -127,14 +127,31 @@
 
                     @csrf
 
-                    <div class="modal-body"></div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Nama penyewa <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-at"></i></span>
+                                        <input type="text" name="name" class="form-control" placeholder="masukan nama penyewa" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="modal-footer"></div>
+                    <div class="modal-footer">
+                        <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                        <button type="submit" class="btn btn-outline-success">Submit</button>
+                    </div>
 
                 </form>
 
             </div>
         </div>
     </div>
+
+    <script></script>x
 
 </x-admin-layout>
