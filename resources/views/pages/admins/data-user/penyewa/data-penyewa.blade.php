@@ -15,7 +15,7 @@
                     <i class="fas fa-print"></i> Print data penyewa
                 </a>
 
-                @if (isset($jumlahSampah) && $jumlahSampah > 0)
+                @if (isset($jumlahSampah) && $jumlahSampah >= 0)
                     <a href="{{ route('admin.data-user.penyewa.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat sampah
@@ -94,7 +94,7 @@
                         <tr>
                             <td colspan="7" class="text-center p-4">
                                 <i class="far fa-building fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Belum ada kamar.</p>
+                                <p class="text-muted">Belum ada penyewa.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -152,6 +152,42 @@
         </div>
     </div>
 
-    <script></script>
+    <script>
+
+        function confirmReset(id, name) {
+            Swal.fire({
+                title: 'Reset password ' + name + '?',
+                text: "Password akan direset menjadi (anak kost 123)!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Reset!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('reset-' + id).submit();
+                }
+            })
+        }
+
+        function confirmDelete(id, name) {
+            Swal.fire({
+                title: 'Hapus data penyewa ini?',
+                text: "Data " + name+ " akan dipindahkan ke sampah!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-' + id).submit();
+                }
+            })
+        }
+
+    </script>
 
 </x-admin-layout>
