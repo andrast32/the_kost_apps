@@ -152,6 +152,6 @@
         </div>
     </div>
 
-    <script></script>x
+    <script></script>
 
 </x-admin-layout>
