@@ -1,29 +1,29 @@
 <x-admin-layout>
 
-    <div class="card">
+    <div class="card card-outline card-primary">
 
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
 
                 <h3 class="card-title">Manajemen data fasilitas</h3>
 
+                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#add">
+                    <i class="fas fa-plus"></i>Tambah fasilitas
+                </button>
+
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
-                    <a href="{{ route('admin.data-kost.fasilitas.sampah') }}" class="btn btn-sm btn-outline-danger right ml-auto">
+                    <a href="{{ route('admin.data-kost.fasilitas.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat Sampah
                         <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
                     </a>
                 @endif
 
-                <button class="btn btn-sm btn-round btn-outline-primary ml-2" data-toggle="modal" data-target="#modalTambah">
-                    <i class="fas fa-plus"></i>Tambah fasilitas
-                </button>
-
             </div>
         </div>
 
         <div class="card-body">
-            <table id="data_tombol" class="table table-bordered table-striped table-hover">
+            <table id="data" class="table table-bordered table-striped table-hover">
 
                 <thead class="bg-navy">
                     <tr align="center">
@@ -57,10 +57,12 @@
                             </td>
 
                             <td>
-                                @if ($data->stok > 0)
-                                    {{ $data->stok }}
+                                @if ($data->stok == 0)
+                                    <span class="badge badge-danger">Stok habis</span>
+                                @elseif ($data->stok <= 5) 
+                                    <span> Stok hampir habis, tersisa {{ $data->stok }} lagi</span>
                                 @else
-                                    <span class="text-muted">Stok habis</span>
+                                    <span>{{ $data->stok }}</span>
                                 @endif
                             </td>
 
@@ -236,7 +238,7 @@
 
     </div>
 
-    <div class="modal fade" id="modalTambah" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 

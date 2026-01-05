@@ -6,7 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes; //cek
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -17,6 +18,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'slug',
     ];
 
     protected $hidden = [
@@ -31,4 +33,23 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            $user->slug = Str::slug(Str::random(50));
+        });
+
+        static::updating(function ($user) {
+            if ($user->isDirty('name')) {
+                $user->slug = Str::slug(Str::random(50));
+            }
+        });
+    }
+
 }

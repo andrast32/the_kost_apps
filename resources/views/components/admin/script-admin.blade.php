@@ -52,19 +52,6 @@ $.widget.bridge('uibutton', $.ui.button)
 <script>
     $(function () {
 
-        $('#data_tombol').DataTable({
-            "paging"        : true,
-            "lengthChange"  : true,
-            "searching"     : true,
-            "ordering"      : true,
-            "info"          : true,
-            "autoWidth"     : false,
-            "responsive"    : true,
-            "buttons"       : [
-                                "copy", "pdf"
-                            ]
-        }).buttons().container().appendTo('#data_tombol_wrapper .col-md-6:eq(0)');
-
         $('#laporan').DataTable({
             "paging"        : true,
             "lengthChange"  : true,
@@ -74,7 +61,7 @@ $.widget.bridge('uibutton', $.ui.button)
             "autoWidth"     : false,
             "responsive"    : true,
             "buttons"       : [
-                                "copy", "excel", "pdf", "print"
+                                "excel", "pdf", "print"
                             ]
         }).buttons().container().appendTo('#laporan_wrapper .col-md-6:eq(0)');
 
