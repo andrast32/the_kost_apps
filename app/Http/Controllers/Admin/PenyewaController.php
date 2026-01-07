@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\Admin\UserFormRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Exception;
 
 class PenyewaController extends Controller
@@ -62,14 +64,51 @@ class PenyewaController extends Controller
     public function store(UserFormRequest $request)
     {
         try {
-            $nameParts = explode(' ', trim($request->name));
+            // 1. Ambil nama dan bersihkan
+            $name = trim($request->name);
+            $nameParts = explode(' ', $name);
+            
+            // Ambil nama depan
             $firstName = Str::slug($nameParts[0], '');
-        } catch (\Throwable $th) {
-            //throw $th;
+            
+            // Ambil nama belakang (jika tidak ada, gunakan nama depan)
+            $lastName = (count($nameParts) > 1) ? Str::slug(end($nameParts), '') : $firstName;
+
+            $defaultPassword = '4n4k_k0st.2026';
+
+            // 2. Generate email unik
+            do {
+                $randomNumber = rand(10, 999);
+                $autoEmail = $firstName . $lastName . $randomNumber . '@kost.com';
+            } while (User::where('email', $autoEmail)->exists());
+
+            // 3. Simpan data
+            User::create([
+                'name'     => $name,
+                'email'    => $autoEmail,
+                'password' => Hash::make($defaultPassword),
+                'role'     => 'User'
+            ]);
+
+            // 4. Kirim data email & password ke view agar bisa ditampilkan/disalin
+            return redirect()->back()->with('success_copy', [
+                'name'     => $name,
+                'email'    => $autoEmail,
+                'password' => $defaultPassword,
+            ])->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Penyewa telah berhasil ditambahkan!'
+            ]);
+
+        } catch (\Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Gagal: ' . $e->getMessage()
+            ]);
         }
     }
 
-public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         //
     }

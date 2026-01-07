@@ -15,7 +15,7 @@
                     <i class="fas fa-print"></i> Print data penyewa
                 </a>
 
-                @if (isset($jumlahSampah) && $jumlahSampah >= 0)
+                @if (isset($jumlahSampah) && $jumlahSampah > 0)
                     <a href="{{ route('admin.data-user.penyewa.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat sampah
@@ -189,5 +189,41 @@
         }
 
     </script>
+
+    @if(session('success_copy'))
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+                title: 'Penyewa Berhasil Ditambahkan!',
+                icon: 'success',
+                html: `
+                    <div style="text-align: left; background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                        <p style="margin-bottom: 5px;"><strong>Nama:</strong> {{ session('success_copy')['name'] }}</p>
+                        <p style="margin-bottom: 5px;"><strong>Email:</strong> <code id="userEmail">{{ session('success_copy')['email'] }}</code></p>
+                        <p style="margin-bottom: 0;"><strong>Password:</strong> <code>{{ session('success_copy')['password'] }}</code></p>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 13px; color: #6c757d;">Klik tombol di bawah untuk menyalin email.</p>
+                `,
+                showCancelButton: true,
+                confirmButtonText: '<i class="fas fa-copy"></i> Salin Email',
+                cancelButtonText: 'Tutup',
+                confirmButtonColor: '#3085d6',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Proses copy ke clipboard
+                    const email = "{{ session('success_copy')['email'] }}";
+                    navigator.clipboard.writeText(email).then(() => {
+                        Swal.fire({
+                            title: 'Tersalin!',
+                            text: 'Email berhasil disalin ke clipboard.',
+                            icon: 'success',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    });
+                }
+            });
+        </script>
+    @endif
 
 </x-admin-layout>
