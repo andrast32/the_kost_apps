@@ -25,6 +25,7 @@
                         <th>Email penyewa</th>
                         <th>Terdaftar sejak</th>
                         <th>Dihapus pada</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
 
@@ -39,6 +40,15 @@
                             <td>{{ $data->email }}</td>
                             <td>{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d M Y ') }}</td>
                             <td>{{ \Carbon\Carbon::parse($data->deleted_at)->translatedFormat('d M Y ') }}</td>
+
+                            <td>
+                                <div class="btn-group">
+
+                                    <button class="btn btn-outline-primary text-primary mr-2"></button>
+                                    <button class="btn btn-outline-danger text-danger mr-2"></button>
+
+                                </div>
+                            </td>
 
                         </tr>
 
@@ -60,6 +70,7 @@
                         <th>Email penyewa</th>
                         <th>Terdaftar sejak</th>
                         <th>Dihapus pada</th>
+                        <th>Action</th>
                     </tr>
                 </tfoot>
 

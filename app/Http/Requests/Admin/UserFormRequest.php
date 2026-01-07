@@ -21,15 +21,8 @@ class UserFormRequest extends FormRequest
         $id = $model ? $model->id : null;
 
         $rules = [
-            'name'  => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($id)],
+            'name'  => ['required', 'string', 'max:255']
         ];
-
-        if ($this->isMethod('post')) {
-            $rules['password'] = ['required', 'confirmed', 'min:8'];
-        } else {
-            $rules['password'] = ['nullable', 'confirmed', 'min:8'];
-        }
 
         return $rules;
     }

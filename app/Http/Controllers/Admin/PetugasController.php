@@ -17,7 +17,7 @@ class PetugasController extends Controller
 
         $data = [
             'users'         => User::where('role', 'Admin')->orderBy('name', 'ASC')->get(),
-            'jumlahSampah'  => User::onlyTrashed()->count(),
+            'jumlahSampah'  => User::where('role', 'Admin')->onlyTrashed()->count(),
         ];
 
         return view('pages.admins.data-user.petugas.data-petugas', $data);

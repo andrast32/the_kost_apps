@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     // untuk remeber me
     ->withMiddleware(function (Middleware $middleware) {
+
+        $middleware->alias([
+            'role' => \App\Http\Middleware\CheckRole::class,
+        ]);
+
         $middleware->redirectUsersTo(function () {
             $user = Auth::user();
 

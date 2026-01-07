@@ -5,7 +5,7 @@
             <div class="row">
 
                 <div class="col-lg-3 col-6">
-                    <div class="small-box">
+                    <div class="small-box card-outline card-blue">
                         <div class="inner">
                             <h3>150</h3>
                             <p>Penyewa aktif</p>
@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="col-lg-3 col-6">
-                    <div class="small-box">
+                    <div class="small-box card-outline card-info">
                         <div class="inner">
                             <h3>53<sup style="font-size: 20px">%</sup></h3>
                             <p>Kamar Terisi</p>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="col-lg-3 col-6">
-                    <div class="small-box">
+                    <div class="small-box card-outline card-success">
                         <div class="inner">
                             <h3>44</h3>
                             <p>Kamar Tersedia</p>
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="col-lg-3 col-6">
-                    <div class="small-box">
+                    <div class="small-box card-outline card-indigo">
                         <div class="inner">
                             <h3>
                                 <sup style="font-size: 25px">Rp.</sup>

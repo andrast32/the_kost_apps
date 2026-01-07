@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\Admin\UserFormRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -21,7 +20,7 @@ class PenyewaController extends Controller
 
         $data = [
             'users'         => User::where('role', 'User')->orderBy('name', 'ASC')->get(),
-            'jumlahSampah'  => User::onlyTrashed()->count(),
+            'jumlahSampah'  => User::where('role', 'User')->onlyTrashed()->count(),
         ];
 
         return view('pages.admins.data-user.penyewa.data-penyewa', $data);
@@ -33,8 +32,8 @@ class PenyewaController extends Controller
         view()->share('title', 'Data Penyewa');
 
         $data = [
-            'users'         => User::onlyTrashed()->latest()->get(),
-            'jumlahSampah'  => User::onlyTrashed()->count(),
+            'users'         => User::where('role', 'User')->onlyTrashed()->latest()->get(),
+            'jumlahSampah'  => User::where('role', 'User')->onlyTrashed()->count(),
         ];
 
         return view('pages.admins.data-user.penyewa.sampah-penyewa', $data);
@@ -64,25 +63,19 @@ class PenyewaController extends Controller
     public function store(UserFormRequest $request)
     {
         try {
-            // 1. Ambil nama dan bersihkan
-            $name = trim($request->name);
-            $nameParts = explode(' ', $name);
-            
-            // Ambil nama depan
-            $firstName = Str::slug($nameParts[0], '');
-            
-            // Ambil nama belakang (jika tidak ada, gunakan nama depan)
-            $lastName = (count($nameParts) > 1) ? Str::slug(end($nameParts), '') : $firstName;
 
+            $name = trim($request->name);
+            $parts = explode(' ', $name);
+            $first = Str::slug($parts[0], '');
+            $last = (count($parts) > 1) ? Str::slug(end($parts), '') : $first;
             $defaultPassword = '4n4k_k0st.2026';
 
-            // 2. Generate email unik
             do {
-                $randomNumber = rand(10, 999);
-                $autoEmail = $firstName . $lastName . $randomNumber . '@kost.com';
-            } while (User::where('email', $autoEmail)->exists());
+                $random = rand(10, 999);
+                $autoEmail = $first . $last . $random . '@kost.com';
+                $exists = User::where('email', $autoEmail)->exists();
+            } while ($exists);
 
-            // 3. Simpan data
             User::create([
                 'name'     => $name,
                 'email'    => $autoEmail,
@@ -90,31 +83,93 @@ class PenyewaController extends Controller
                 'role'     => 'User'
             ]);
 
-            // 4. Kirim data email & password ke view agar bisa ditampilkan/disalin
-            return redirect()->back()->with('success_copy', [
-                'name'     => $name,
-                'email'    => $autoEmail,
-                'password' => $defaultPassword,
-            ])->with('alert', [
+            return redirect()->back()->with('alert', [
                 'icon'  => 'success',
-                'title' => 'Penyewa telah berhasil ditambahkan!'
+                'title' => 'Penyewa berhasil ditambahkan.'
             ]);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
+            Log::error("Gagal tambah penyewa: " . $e->getMessage());
             return redirect()->back()->with('alert', [
                 'icon'  => 'error',
-                'title' => 'Gagal: ' . $e->getMessage()
+                'title' => 'Gagal menambahkan data!',
             ]);
         }
     }
 
-    public function update(Request $request, string $id)
+    public function update(string $id)
     {
-        //
+        try {
+
+            $user = User::findOrFail($id);
+
+            $user->update([
+                'password' => Hash::make('4n4k_k0st.2026')
+            ]);
+
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Password Direset menjadi (4n4k_k0st.2026)!'
+            ]);
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Gagal reset password!',
+            ]);
+        }
     }
 
     public function destroy(string $id)
     {
-        //
+        try {
+            
+            $user = User::findOrFail($id);
+            $user->delete();
+
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Penyewa dipindahkan ke sampah.'
+            ]);
+
+        } catch (Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Gagal menghapus data!',
+            ]);
+        }
     }
+
+    public function restore(string $id) 
+    {
+        try {
+            User::where('role', 'User')->onlyTrashed->where('id', $id)->restore();
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Data penyewa dipulihkan.'
+            ]);
+        } catch (Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon' => 'error', 
+                'title' => 'Gagal memulihkan data.'
+            ]);
+        }
+    }
+
+    public function forceDelete(string $id) 
+    {
+        try {
+            User::where('role', 'User')->onlyTrashed->where('id', $id)->forceDelete();
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Data dihapus permanen.'
+            ]);
+        } catch (Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon' => 'error', 
+                'title' => 'Gagal menghapus permanen.'
+            ]);
+        }
+    }
+
 }
