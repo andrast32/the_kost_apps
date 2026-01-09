@@ -23,13 +23,15 @@ Route::get('contact/', function () {
 })->name('contact');
 
 // Group User
-Route::get('/dashboard', function () {
-    return view('pages.users.dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware(['auth', 'verified', 'role:User'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('pages.users.dashboard');
+    })->name('dashboard');
+});
 
 // Group Admin
 Route::prefix('admin')
-    ->middleware(['auth', 'verified'])
+    ->middleware(['auth', 'verified', 'role:Admin'])
     ->group(function () {
 
         // Halaman Dashboard Admin

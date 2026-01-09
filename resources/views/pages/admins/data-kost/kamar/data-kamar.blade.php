@@ -43,9 +43,7 @@
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
-
                             <td><strong>#{{ $data->kode }}</strong></td>
-
                             <td>Rp {{ number_format($data->harga, 0, ',', '.') }}</td>
 
                             <td>
@@ -105,20 +103,15 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#modalEdit-{{ $data->id }}">
+                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->kode }}')">
+                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form
-                                        id="delete-form-{{ $data->id }}"
-                                        action="{{ route('admin.data-kost.kamar.destroy', $data->id) }}"
-                                        method="post"
-                                        style="display: none"
-                                    >
+                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-kost.kamar.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE')
                                     </form>
 
@@ -127,7 +120,7 @@
 
                         </tr>
 
-                        <div class="modal fade" id="modalEdit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal fade" id="Edit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
 
@@ -433,7 +426,7 @@
 
         }
 
-        function confirmDelete(id, kode) {
+        function Delete(id, kode) {
             Swal.fire({
                 title: 'Hapus kamar dengan kode #' + kode + '?',
                 text: "Kamar akan dipindahkan ke sampah!",
@@ -445,7 +438,7 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + id).submit();
+                    document.getElementById('delete-' + id).submit();
                 }
             })
         }

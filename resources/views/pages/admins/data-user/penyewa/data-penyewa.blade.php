@@ -60,30 +60,20 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-warning" onclick="confirmReset({{ $data->id }}, '{{ $data->name }}')">
+                                    <button type="button" class="btn btn-link text-warning" onclick="Reset({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-key"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->name }}')">
+                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form 
-                                        id="reset-{{ $data->id }}"
-                                        action="{{ route('admin.data-user.penyewa.update', $data->id) }}" 
-                                        method="post"
-                                        style="display: none"
-                                    >
-                                        @csrf @method('PUT')
+                                    <form id="reset-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.update', $data->id) }}" method="post">
+                                        @csrf @method('PUT') 
                                     </form>
 
-                                    <form 
-                                        id="delete-{{ $data->id }}"
-                                        action="{{ route('admin.data-user.penyewa.destroy', $data->id) }}" 
-                                        method="post"
-                                        style="display: none"
-                                    >
-                                        @csrf @method('DELETE')
+                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.destroy', $data->id) }}" method="post">
+                                        @csrf @method('DELETE') 
                                     </form>
 
                                 </div>
@@ -94,7 +84,7 @@
                         <tr>
                             <td colspan="7" class="text-center p-4">
                                 <i class="far fa-building fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Belum ada kamar.</p>
+                                <p class="text-muted">Belum ada penyewa.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -152,6 +142,42 @@
         </div>
     </div>
 
-    <script></script>
+    <script>
+
+        function Reset(id, name) {
+            Swal.fire({
+                title: 'Reset password ' + name + '?',
+                text: "Password akan direset menjadi (4n4k_k0st.2026)!",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Reset!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('reset-' + id).submit();
+                }
+            })
+        }
+
+        function Delete(id, name) {
+            Swal.fire({
+                title: 'Hapus data penyewa ini?',
+                text: "Data " + name+ " akan dipindahkan ke sampah!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-' + id).submit();
+                }
+            })
+        }
+
+    </script>
 
 </x-admin-layout>

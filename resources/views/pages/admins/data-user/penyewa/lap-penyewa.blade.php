@@ -44,7 +44,7 @@
                         <tr>
                             <td colspan="5" class="text-center p-4">
                                 <i class="far fa-building fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Belum ada kamar.</p>
+                                <p class="text-muted">Belum ada penyewa.</p>
                             </td>
                         </tr>
                     @endforelse
