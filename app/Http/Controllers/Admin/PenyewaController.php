@@ -29,7 +29,7 @@ class PenyewaController extends Controller
 
     public function trash()
     {
-        view()->share('title', 'Data Penyewa');
+        view()->share('title', 'Sampah Data Penyewa');
 
         $data = [
             'users'         => User::where('role', 'User')->onlyTrashed()->latest()->get(),
@@ -64,19 +64,32 @@ class PenyewaController extends Controller
     {
         try {
 
-            $name = trim($request->name);
-            $parts = explode(' ', $name);
-            $first = Str::slug($parts[0], '');
-            $last = (count($parts) > 1) ? Str::slug(end($parts), '') : $first;
-            $defaultPassword = '4n4k_k0st.2026';
+            $name               = trim($request->name);
+            $parts              = explode(' ', $name);
+            $first              = Str::slug($parts[0], '');
+            $last               = (count($parts) > 1) ? Str::slug(end($parts), '') : $first;
+            $defaultPassword    = '4n4k_k0st.2026';
+
+            $lastUser = User::where('role', 'User')
+            ->withTrashed()
+            ->whereBetween('id', [1000000, 1999999])
+            ->orderBy('id', 'desc')
+            ->first();
+
+            $newId = $lastUser ? ($lastUser->id + 1) : 1000000;
+
+            if ($newId > 1999999) {
+                throw new Exception("Kapasitas penyewa sudah penuh!");
+            }
 
             do {
-                $random = rand(10, 999);
+                $random = rand(1, 999);
                 $autoEmail = $first . $last . $random . '@kost.com';
                 $exists = User::where('email', $autoEmail)->exists();
             } while ($exists);
 
             User::create([
+                'id'       => $newId,
                 'name'     => $name,
                 'email'    => $autoEmail,
                 'password' => Hash::make($defaultPassword),
@@ -92,7 +105,7 @@ class PenyewaController extends Controller
             Log::error("Gagal tambah penyewa: " . $e->getMessage());
             return redirect()->back()->with('alert', [
                 'icon'  => 'error',
-                'title' => 'Gagal menambahkan data!',
+                'title' => $e->getMessage() ?: 'Gagal menambahkan penyewa!',
             ]);
         }
     }
@@ -129,7 +142,7 @@ class PenyewaController extends Controller
 
             return redirect()->back()->with('alert', [
                 'icon'  => 'success',
-                'title' => 'Penyewa dipindahkan ke sampah.'
+                'title' => 'Penyewa telah dihapus dan dipindahkan ke sampah.'
             ]);
 
         } catch (Exception $e) {
@@ -143,15 +156,15 @@ class PenyewaController extends Controller
     public function restore(string $id) 
     {
         try {
-            User::where('role', 'User')->onlyTrashed->where('id', $id)->restore();
+            User::where('role', 'User')->onlyTrashed()->where('id', $id)->restore();
             return redirect()->back()->with('alert', [
                 'icon'  => 'success',
-                'title' => 'Data penyewa dipulihkan.'
+                'title' => 'Data penyewa berhasil dipulihkan.'
             ]);
         } catch (Exception $e) {
             return redirect()->back()->with('alert', [
                 'icon' => 'error', 
-                'title' => 'Gagal memulihkan data.'
+                'title' => 'Data penyewa gagal dipulihkan.'
             ]);
         }
     }
@@ -159,10 +172,10 @@ class PenyewaController extends Controller
     public function forceDelete(string $id) 
     {
         try {
-            User::where('role', 'User')->onlyTrashed->where('id', $id)->forceDelete();
+            User::where('role', 'User')->onlyTrashed()->where('id', $id)->forceDelete();
             return redirect()->back()->with('alert', [
                 'icon'  => 'success',
-                'title' => 'Data dihapus permanen.'
+                'title' => 'Data penyewa telah dihapus permanen dan tidak dapat dikembalikan!'
             ]);
         } catch (Exception $e) {
             return redirect()->back()->with('alert', [

@@ -5,9 +5,9 @@
         <div class="card-header">
             <div class="d-flex align-items-center justify-content-between">
 
-                <h3 class="card-title">Sampah data penyewa</h3>
+                <h3 class="card-title">Sampah data petugas</h3>
 
-                <a href="{{ route('admin.data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info ml-2">
+                <a href="{{ route('admin.data-user.petugas.index') }}" class="btn btn-sm btn-outline-info ml-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 
@@ -20,10 +20,8 @@
                 <thead class="bg-navy">
                     <tr align="center">
                         <th width="5%">No</th>
-                        <th>id</th>
-                        <th>Nama penyewa</th>
-                        <th>Email penyewa</th>
-                        <th>Terdaftar sejak</th>
+                        <th>Nama petugas</th>
+                        <th>Email petugas</th>
                         <th>Dihapus pada</th>
                         <th>Action</th>
                     </tr>
@@ -35,10 +33,8 @@
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
-                            <td>#{{ $data->id }}</td>
                             <td>{{ $data->name }}</td>
                             <td>{{ $data->email }}</td>
-                            <td>{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d M Y ') }}</td>
                             <td>{{ \Carbon\Carbon::parse($data->deleted_at)->translatedFormat('d M Y ') }}</td>
 
                             <td>
@@ -52,12 +48,12 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     
-                                    <form action="{{ route('admin.data-user.penyewa.restore', $data->id) }}" id="restore-{{ $data->id }}" method="post" style="display: none">
+                                    <form action="{{ route('admin.data-user.petugas.restore', $data->id) }}" id="restore-{{ $data->id }}" method="post" style="display: none">
                                         @csrf
                                         @method('PUT')
                                     </form>
 
-                                    <form action="{{ route('admin.data-user.penyewa.force-delete', $data->id) }}" id="delete-{{ $data->id }}" method="post" style="display: none">
+                                    <form action="{{ route('admin.data-user.petugas.force-delete', $data->id) }}" id="delete-{{ $data->id }}" method="post" style="display: none">
                                         @csrf
                                         @method('DELETE')
                                     </form>
@@ -69,9 +65,9 @@
 
                     @empty
                         <tr>
-                            <td colspan="7" class="text-center p-4">
+                            <td colspan="5" class="text-center p-4">
                                 <i class="fas fa-trash fa-3x text-muted mb-3"></i>
-                                <p class="text-muted">Belum ada sampah penyewa.</p>
+                                <p class="text-muted">Belum ada sampah petugas.</p>
                             </td>
                         </tr>
                     @endforelse
@@ -80,10 +76,8 @@
                 <tfoot class="bg-navy">
                     <tr align="center">
                         <th width="5%">No</th>
-                        <th>id</th>
-                        <th>Nama penyewa</th>
-                        <th>Email penyewa</th>
-                        <th>Terdaftar sejak</th>
+                        <th>Nama petugas</th>
+                        <th>Email petugas</th>
                         <th>Dihapus pada</th>
                         <th>Action</th>
                     </tr>

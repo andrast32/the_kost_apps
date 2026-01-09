@@ -77,20 +77,15 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#modalEdit-{{ $data->id }}">
+                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->kode }}', '{{ $data->nama }}')">
+                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}', '{{ $data->nama }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form
-                                        id="delete-form-{{ $data->id }}"
-                                        action="{{ route('admin.data-kost.fasilitas.destroy', $data->id) }}"
-                                        method="post"
-                                        style="display: none"
-                                    >
+                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-kost.fasilitas.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE')
                                     </form>
 
@@ -99,7 +94,7 @@
 
                         </tr>
 
-                        <div class="modal fade" id="modalEdit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal fade" id="Edit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
                             <div class="modal-dialog" role="document">
                                 <div class="modal-content">
 
@@ -344,7 +339,7 @@
 </x-admin-layout>
 
 <script>
-    function confirmDelete(id, kode, nama) {
+    function Delete(id, kode, nama) {
             Swal.fire({
                 title: 'Hapus fasilitas dengan kode #' + kode + '?',
                 text: "Fasilitas " + nama + " akan dipindahkan ke sampah!",
@@ -356,7 +351,7 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form-' + id).submit();
+                    document.getElementById('delete-' + id).submit();
                 }
             })
         }

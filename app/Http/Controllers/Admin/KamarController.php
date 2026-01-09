@@ -31,6 +31,19 @@ class KamarController extends Controller
         return view('pages.admins.data-kost.kamar.data-kamar', $data);
     }
 
+    public function trash()
+    {
+
+        view()->share('title','Data kamar');
+
+        $data = [
+            'kamars'        => Kamar::onlyTrashed()->latest()->get(),
+            'jumlahSampah'  => Kamar::onlyTrashed()->count(),
+        ];
+
+        return view('pages.admins.data-kost.kamar.sampah-kamar', $data);
+    }
+
     public function store(KamarFormRequest $request)
     {
         try {
@@ -116,19 +129,6 @@ class KamarController extends Controller
             ]);
         }
 
-    }
-
-    public function trash()
-    {
-
-        view()->share('title','Data kamar');
-
-        $data = [
-            'kamars'        => Kamar::onlyTrashed()->latest()->get(),
-            'jumlahSampah'  => Kamar::onlyTrashed()->count(),
-        ];
-
-        return view('pages.admins.data-kost.kamar.sampah-kamar', $data);
     }
 
     public function restore(string $id)

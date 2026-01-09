@@ -12,6 +12,7 @@ use Exception;
 
 class FasilitasController extends Controller
 {
+
     public function index()
     {
 
@@ -25,6 +26,20 @@ class FasilitasController extends Controller
         ];
 
         return view('pages.admins.data-kost.fasilitas.data-fasilitas', $data);
+    }
+
+    public function trash()
+    {
+
+        view()->share('title','Sampah Fasilitas');
+
+        $data = [
+            'fasilitas'         => Fasilitas::onlyTrashed()->latest()->get(),
+            'jumlahSampah'      => Fasilitas::onlyTrashed()->count(),
+        ];
+
+        return view('pages.admins.data-kost.fasilitas.sampah-fasilitas', $data);
+
     }
 
     public function store(FasilitasFormRequest $request)
@@ -109,20 +124,6 @@ class FasilitasController extends Controller
                 'text'  => 'Data tidak dapat dipindahkan ke sampah.'
             ]);
         }
-    }
-
-    public function trash()
-    {
-
-        view()->share('title','Sampah Fasilitas');
-
-        $data = [
-            'fasilitas'         => Fasilitas::onlyTrashed()->latest()->get(),
-            'jumlahSampah'      => Fasilitas::onlyTrashed()->count(),
-        ];
-
-        return view('pages.admins.data-kost.fasilitas.sampah-fasilitas', $data);
-
     }
 
     public function restore(string $id)

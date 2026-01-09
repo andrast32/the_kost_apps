@@ -60,30 +60,20 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-warning" onclick="confirmReset({{ $data->id }}, '{{ $data->name }}')">
+                                    <button type="button" class="btn btn-link text-warning" onclick="Reset({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-key"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="confirmDelete({{ $data->id }}, '{{ $data->name }}')">
+                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form 
-                                        id="reset-{{ $data->id }}"
-                                        action="{{ route('admin.data-user.penyewa.update', $data->id) }}" 
-                                        method="post"
-                                        style="display: none"
-                                    >
-                                        @csrf @method('PUT')
+                                    <form id="reset-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.update', $data->id) }}" method="post">
+                                        @csrf @method('PUT') 
                                     </form>
 
-                                    <form 
-                                        id="delete-{{ $data->id }}"
-                                        action="{{ route('admin.data-user.penyewa.destroy', $data->id) }}" 
-                                        method="post"
-                                        style="display: none"
-                                    >
-                                        @csrf @method('DELETE')
+                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.destroy', $data->id) }}" method="post">
+                                        @csrf @method('DELETE') 
                                     </form>
 
                                 </div>
@@ -154,7 +144,7 @@
 
     <script>
 
-        function confirmReset(id, name) {
+        function Reset(id, name) {
             Swal.fire({
                 title: 'Reset password ' + name + '?',
                 text: "Password akan direset menjadi (4n4k_k0st.2026)!",
@@ -171,7 +161,7 @@
             })
         }
 
-        function confirmDelete(id, name) {
+        function Delete(id, name) {
             Swal.fire({
                 title: 'Hapus data penyewa ini?',
                 text: "Data " + name+ " akan dipindahkan ke sampah!",
