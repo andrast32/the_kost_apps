@@ -97,21 +97,6 @@ $.widget.bridge('uibutton', $.ui.button)
     </script>
 @endif
 
-@if ($errors->any())
-    <script>
-
-        let errorMessages = @json($errors->all());
-
-        let combined = errorMessages.json("\n");
-
-        Toast.fire({
-            icon: 'error',
-            title: combined,
-        });
-
-    </script>
-@endif
-
 <script>
 
     // preview image
