@@ -52,7 +52,7 @@
                             <td>{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d M Y ') }}</td>
 
                             <td>
-                                <a href="{{ route('admin.data-user.penyewa.biodata-', $data) }}" class="btn btn-info btn-sm" title="Lihat Biodata">
+                                <a href="{{ route('admin.data-user.biodata-', $data) }}" class="btn btn-info btn-sm" title="Lihat Biodata">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </td>
