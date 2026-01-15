@@ -65,7 +65,7 @@
                                         @method('PUT')
                                     </form>
 
-                                    <button type="button" class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $data->id }}, '{{ $data->kode }}')">
+                                    <button class="btn btn-outline-danger text-danger" onclick="confirmForceDelete({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-times-circle"></i>
                                     </button>
 

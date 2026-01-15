@@ -1,133 +1,113 @@
-<x-admin-layout title="Biodata Penyewa">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card shadow">
-                    <div class="card-header bg-primary">
-                        <h3 class="card-title">Profil Lengkap: {{ $user->name }}</h3>
-                    </div>
-                    <div class="card-body">
-                        @if(!$user->biodata)
-                            <div class="alert alert-info text-center">
-                                <h5><i class="icon fas fa-info"></i> Belum Ada Data!</h5>
-                                <p>Penyewa ini belum mengisi biodata lengkap.</p>
-                                <button class="btn btn-success" data-toggle="modal" data-target="#modalTambah">
-                                    <i class="fas fa-plus"></i> Tambah Biodata
-                                </button>
-                            </div>
-                        @else
-                            <table class="table table-striped">
-                                <tr>
-                                    <th width="30%">No. Handphone (WA)</th>
-                                    <td>{{ $user->biodata->no_hp }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Jenis Kelamin</th>
-                                    <td>{{ $user->biodata->jenis_kelamin }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Pekerjaan</th>
-                                    <td>{{ $user->biodata->pekerjaan ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Alamat Asal</th>
-                                    <td>{{ $user->biodata->alamat ?? '-' }}</td>
-                                </tr>
-                            </table>
+<x-admin-layout>
 
-                            <div class="mt-4">
-                                <button class="btn btn-warning" data-toggle="modal" data-target="#modalEdit">
-                                    <i class="fas fa-edit"></i> Edit Data
-                                </button>
-                                
-                                <form action="{{ route('biodata.destroy', $user->biodata->id) }}" method="POST" class="d-inline">
-                                    @csrf @method('DELETE')
-                                    <button class="btn btn-danger" onclick="return confirm('Apakah anda yakin ingin menghapus biodata ini?')">
-                                        <i class="fas fa-trash"></i> Hapus
-                                    </button>
-                                </form>
-                                <a href="{{ route('penyewa.index') }}" class="btn btn-secondary float-right">Kembali</a>
-                            </div>
-                        @endif
-                    </div>
-                </div>
+    <div class="card card-outline card-primary">
+
+        <div class="card-header">
+            <div class="d-flex align-items0center justify-content-between">
+
+                <h3 class="card-title">Profile lengkap {{ $user->name }}</h3>
+
+                <a href="{{ route('admin.data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info right ml-auto">
+                    <i class="fas fa-arrow-left"></i> Kembali
+                </a>
+
             </div>
         </div>
+
+        <div class="card-body">
+            @if ($user->biodata)
+                <table id="data" class="table table-bordered table-striped table-hover">
+
+                    <tr>
+                        <th><i class="fas fa-tag"></i> Nama</th>
+                        <td>{{ $user->name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="far fa-envelope"></i> Email</th>
+                        <td>{{ $user->email }}</td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="far fa-image"></i> Foto</th>
+                        <td>
+                            @if ($user->biodata->foto)
+                                <img src="{{ Storage::url('uploads/biodata/' . $user->biodata->foto) }}" alt="Foto biodata" class="img-thumbnail" width="100px">
+                            @else
+                                <span class="text-muted">Tidak ada foto</span>
+                            @endif
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="fab fa-whatsapp"></i> No. Handphone (WA)</th>
+                        <td>{{ $user->biodata->no_hp }}</td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="fas fa-venus-mars"></i> Jenis kelamin</th>
+                        <td>
+
+                            @if ($user->biodata->jenis_kelamin == 'Laki-Laki')
+                                <span>
+                                    <i class="fas fa-mars"></i>
+                                    {{ $user->biodata->jenis_kelamin }}
+                                </span>
+
+                            @elseif ($user->biodata->jenis_kelamin == 'Perempuan')
+                                <span>
+                                    <i class="fas fa-venus"></i>
+                                    {{ $user->biodata->jenis_kelamin }}
+                                </span>
+
+                            @else
+                                <span>
+                                    <i class="fas fa-genderless"></i>
+                                    Jenis kelamin tidak terdaftar
+                                </span>
+
+                            @endif
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="fas fa-briefcase"></i> Pekerjaan</th>
+                        <td>
+                            @if ($user->biodata->pekerjaan)
+                                {{ $user->biodata->pekerjaan }}
+                            @else
+                                Tidak punya kerjaan POTENSI NGUTANG TINGGI
+                            @endif
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th><i class="fas fa-map-marked-alt"></i> Alamat Asal</th>
+                        <td>{{ $user->biodata->alamat }}</td>
+                    </tr>
+
+                </table>
+
+                <div class="mt-4">
+                    <button class="btn btn-link text-primary float-right" data-toggle="modal" data-target="#edit">
+                        <i class="fas fa-edit"></i> Edit Data
+                    </button>
+
+                    <button class="btn btn-link text-danger"></button>
+
+                </div>
+            @else
+                <div class="alert text-center">
+                    <h5><i class="icon fas fa-info"></i> Belum ada data</h5>
+                    <p>{{ $user->name }} belum mengisi biodata lengkap.</p>
+                    <button class="btn btn-outline-info" data-toggle="modal" data-target="#add">
+                        <i class="fas fa-plus"></i> Tambahkan Biodata
+                    </button>
+                </div>
+            @endif
+        </div>
+
     </div>
 
-    <div class="modal fade" id="modalTambah">
-        <div class="modal-dialog">
-            <form action="{{ route('admin.data-user.biodata.store', $user->id) }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header"><h5>Tambah Biodata</h5></div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>id user</label>
-                            <input type="text" name="user_id" class="form-control" value="{{ $user->id }}" readonly required>
-                        </div>
-                        <div class="form-group">
-                            <label>No HP</label>
-                            <input type="text" name="no_hp" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Jenis Kelamin</label>
-                            <select name="jenis_kelamin" class="form-control">
-                                <option value="Laki-Laki">Laki-Laki</option>
-                                <option value="Perempuan">Perempuan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Pekerjaan</label>
-                            <input type="text" name="pekerjaan" class="form-control">
-                        </div>
-                        <div class="form-group">
-                            <label>Alamat</label>
-                            <textarea name="alamat" class="form-control" rows="3"></textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer text-right">
-                        <button class="btn btn-primary" type="submit">Simpan Data</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    @if($user->biodata)
-    <div class="modal fade" id="modalEdit">
-        <div class="modal-dialog">
-            <form action="{{ route('biodata.update', $user->biodata->id) }}" method="POST">
-                @csrf @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header"><h5>Edit Biodata</h5></div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>No HP</label>
-                            <input type="text" name="no_hp" class="form-control" value="{{ $user->biodata->no_hp }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Jenis Kelamin</label>
-                            <select name="jenis_kelamin" class="form-control">
-                                <option value="Laki-Laki" {{ $user->biodata->jenis_kelamin == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
-                                <option value="Perempuan" {{ $user->biodata->jenis_kelamin == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Pekerjaan</label>
-                            <input type="text" name="pekerjaan" class="form-control" value="{{ $user->biodata->pekerjaan }}">
-                        </div>
-                        <div class="form-group">
-                            <label>Alamat</label>
-                            <textarea name="alamat" class="form-control" rows="3">{{ $user->biodata->alamat }}</textarea>
-                        </div>
-                    </div>
-                    <div class="modal-footer text-right">
-                        <button class="btn btn-primary">Simpan Perubahan</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    @endif
 </x-admin-layout>

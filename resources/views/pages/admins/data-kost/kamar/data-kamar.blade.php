@@ -7,7 +7,7 @@
 
                 <h3 class="card-title">Manajemen data kamar</h3>
 
-                <button type="button" class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#add">
+                <button class="btn btn-sm btn-round btn-outline-primary right ml-auto" data-toggle="modal" data-target="#add">
                     <i class="fas fa-plus"></i> Tambah kamar
                 </button>
 
@@ -103,11 +103,11 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
+                                    <button class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}')">
+                                    <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
@@ -131,7 +131,7 @@
                                             <span class="fw-light">#{{ $data->kode }}</span>
                                         </h5>
 
-                                        <button type="button" class="close" data-dismiss="modal">
+                                        <button class="close" data-dismiss="modal">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -274,7 +274,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahLabel">Tambah kamar baru</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <form action="{{ route('admin.data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">

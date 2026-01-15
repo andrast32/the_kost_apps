@@ -26,15 +26,30 @@ class BiodataController extends Controller
                 'no_hp'         => 'required|max:15',
                 'jenis_kelamin' => 'required|in:Laki-Laki,Perempuan',
                 'pekerjaan'     => 'nullable|string|max:255',
-                'alamat'        => 'nullable|string'
+                'alamat'        => 'nullable|string',
+                'foto'          => 'nullable|image|max:10240'
             ]);
 
+            if ($request->hasFile('foto') && $request->file('foto')->isValid()) {
+                $filename = $request->file('foto')->hashName();
+
+                $request->file('foto')->storeAs(
+                    'uploads/biodata',
+                    $filename,
+                    'public'
+                );
+
+                $fotoPath = $filename;
+
+            }
+
             Biodata::create([
-                'user_id'       => $userId,
+                'user_id'       => $request->userId,
                 'no_hp'         => $request->no_hp,
                 'jenis_kelamin' => $request->jenis_kelamin,
                 'pekerjaan'     => $request->pekerjaan,
-                'alamat'        => $request->alamat
+                'alamat'        => $request->alamat,
+                'foto'          => $fotoPath
             ]);
 
             return redirect()->back()->with('alert', [

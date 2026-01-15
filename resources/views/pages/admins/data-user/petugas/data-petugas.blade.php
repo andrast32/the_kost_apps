@@ -46,11 +46,11 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-warning" onclick="Reset({{ $data->id }}, '{{ $data->name }}')">
+                                    <button class="btn btn-link text-warning" onclick="Reset({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-key"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->name }}')">
+                                    <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->name }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 

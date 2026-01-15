@@ -77,11 +77,11 @@
                             <td>
                                 <div class="btn-group">
 
-                                    <button type="button" class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
+                                    <button class="btn btn-link text-primary" data-toggle="modal" data-target="#Edit-{{ $data->id }}">
                                         <i class="fas fa-edit"></i>
                                     </button>
 
-                                    <button type="button" class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}', '{{ $data->nama }}')">
+                                    <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode }}', '{{ $data->nama }}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
 
@@ -105,7 +105,7 @@
                                             <span class="fw-light">#{{ $data->kode }}</span>
                                         </h5>
 
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <button class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
 
@@ -239,7 +239,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTambahLabel">Tambah Fasilitas Baru</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <form action="{{ route('admin.data-kost.fasilitas.store') }}" method="post" enctype="multipart/form-data">

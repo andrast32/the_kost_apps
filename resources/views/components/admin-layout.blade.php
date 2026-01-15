@@ -55,7 +55,7 @@
 
             <!-- /.content-wrapper -->
             <footer class="main-footer">
-                <strong> Copyright © 2048 {{ config('app.name') }} Agency Co., Ltd. All rights reserved. Design by: <a rel="nofollow" href="#">andrast_32</a>.</strong>
+                <strong> Copyright © 2026 {{ config('app.name') }} Agency Co., Ltd. All rights reserved. Design by: <a rel="nofollow" href="#">andrast_32</a>.</strong>
             </footer>
 
         </div>
