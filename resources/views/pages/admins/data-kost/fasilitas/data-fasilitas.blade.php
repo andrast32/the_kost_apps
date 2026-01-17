@@ -1,5 +1,4 @@
 <x-admin-layout>
-
     <div class="card card-outline card-primary">
 
         <div class="card-header">
@@ -39,7 +38,6 @@
 
                 <tbody>
                     @forelse ($fasilitas as $data)
-
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
@@ -93,119 +91,6 @@
                             </td>
 
                         </tr>
-
-                        <div class="modal fade" id="Edit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-
-                                        <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah Fasilitas dengan kode</span>
-                                            <span class="fw-light">#{{ $data->kode }}</span>
-                                        </h5>
-
-                                        <button class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-
-                                    </div>
-
-                                    <form action="{{ route('admin.data-kost.fasilitas.update', $data->id) }}" method="post" enctype="multipart/form-data">
-
-                                        @csrf
-                                        @method('PUT')
-
-                                        <div class="modal-body">
-                                            <div class="row">
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Nama fasilitas <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-pen"></i></span>
-                                                            <input type="text" name="nama" value="{{ $data->nama }}" class="form-control" placeholder="Masukan nama fasilitas" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Kode fasilitas <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                                            <input type="text" name="kode" value="{{ $data->kode }}" class="form-control" readonly placeholder="Kode otomatis muncul" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Harga <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text">Rp.</span>
-                                                            <input type="text" name="harga" value="{{ number_format($data->harga, 0, ',', '.') }}" class="form-control input-harga" placeholder="Masukan harga fasilitas" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Stok <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-box"></i></span>
-                                                            <input type="number" min="0" name="stok" value="{{ $data->stok }}" class="form-control" placeholder="masukan stok" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-12">
-
-                                                    <div class="form-group">
-                                                        <label>Foto fasilitas</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                                                            <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $data->id }}')">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Preview</label>
-                                                        <div class="input-group">
-                                                            <img id="preview-{{ $data->id }}"
-                                                                src="{{ $data->foto ? asset('storage/uploads/fasilitas/' . $data->foto) : '' }}"
-                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
-                                                                class="img-thumbnail"
-                                                            >
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <label>Deskripsi</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                                            <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ...">{{ $data->deskripsi }}</textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="reset" class="btn btn-outline-secondary">Reset</button>
-                                            <button type="submit" class="btn btn-outline-success">Submit</button>
-                                        </div>
-
-                                    </form>
-
-                                </div>
-                            </div>
-                        </div>
-
                     @empty
                         <tr>
                             <td colspan="7" class="text-center p-4">
@@ -232,19 +117,133 @@
         </div>
 
     </div>
+</x-admin-layout>
 
-    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Fasilitas Baru</h5>
+                <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <form action="{{ route('admin.data-kost.fasilitas.store') }}" method="post" enctype="multipart/form-data">
+
+                @csrf
+
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Nama fasilitas <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-pen"></i></span>
+                                    <input type="text" name="nama" class="form-control" placeholder="Masukan nama fasilitas" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Kode fasilitas <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <input type="text" name="kode" value="{{ $nextCode }}" class="form-control" readonly placeholder="Kode otomatis muncul" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Harga <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp.</span>
+                                    <input type="text" name="harga" class="form-control input-harga" placeholder="Masukan harga fasilitas" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Stok <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-box"></i></span>
+                                    <input type="number" min="0" name="stok" class="form-control" placeholder="masukan stok" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <div class="form-group">
+                                <label>Foto fasilitas</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-camera"></i></span>
+                                    <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-add')">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Preview</label>
+                                <div class="input-group">
+                                    <img id="preview-add"
+                                        src=""
+                                        style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; display: none;"
+                                        class="img-thumbnail"
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Deskripsi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                    <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@foreach ( $fasilitas as $edit)
+    <div class="modal fade" id="Edit-{{ $edit->id }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahLabel">Tambah Fasilitas Baru</h5>
-                    <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h5 class="modal-title">
+                        <span class="fw-mediumbold">Rubah Fasilitas dengan kode</span>
+                        <span class="fw-light">#{{ $edit->kode }}</span>
+                    </h5>
+
+                    <button class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
                 </div>
 
-                <form action="{{ route('admin.data-kost.fasilitas.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('admin.data-kost.fasilitas.update', $edit->id) }}" method="post" enctype="multipart/form-data">
 
                     @csrf
+                    @method('PUT')
 
                     <div class="modal-body">
                         <div class="row">
@@ -254,7 +253,7 @@
                                     <label>Nama fasilitas <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-pen"></i></span>
-                                        <input type="text" name="nama" class="form-control" placeholder="Masukan nama fasilitas" required>
+                                        <input type="text" name="nama" value="{{ $edit->nama }}" class="form-control" placeholder="Masukan nama fasilitas" required>
                                     </div>
                                 </div>
                             </div>
@@ -264,7 +263,7 @@
                                     <label>Kode fasilitas <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                        <input type="text" name="kode" value="{{ $nextCode }}" class="form-control" readonly placeholder="Kode otomatis muncul" required>
+                                        <input type="text" name="kode" value="{{ $edit->kode }}" class="form-control" readonly placeholder="Kode otomatis muncul" required>
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +273,7 @@
                                     <label>Harga <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">Rp.</span>
-                                        <input type="text" name="harga" class="form-control input-harga" placeholder="Masukan harga fasilitas" required>
+                                        <input type="text" name="harga" value="{{ number_format($edit->harga, 0, ',', '.') }}" class="form-control input-harga" placeholder="Masukan harga fasilitas" required>
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +283,7 @@
                                     <label>Stok <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-box"></i></span>
-                                        <input type="number" min="0" name="stok" class="form-control" placeholder="masukan stok" required>
+                                        <input type="number" min="0" name="stok" value="{{ $edit->stok }}" class="form-control" placeholder="masukan stok" required>
                                     </div>
                                 </div>
                             </div>
@@ -295,16 +294,16 @@
                                     <label>Foto fasilitas</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-add')">
+                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $edit->id }}')">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Preview</label>
                                     <div class="input-group">
-                                        <img id="preview-add"
-                                            src=""
-                                            style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; display: none;"
+                                        <img id="preview-{{ $edit->id }}"
+                                            src="{{ $edit->foto ? asset('storage/uploads/fasilitas/' . $edit->foto) : '' }}"
+                                            style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $edit->foto ? 'display: block;' : 'display: none;' }}"
                                             class="img-thumbnail"
                                         >
                                     </div>
@@ -317,7 +316,7 @@
                                     <label>Deskripsi</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
+                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ...">{{ $edit->deskripsi }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -335,24 +334,23 @@
             </div>
         </div>
     </div>
-
-</x-admin-layout>
+@endforeach
 
 <script>
     function Delete(id, kode, nama) {
-            Swal.fire({
-                title: 'Hapus fasilitas dengan kode #' + kode + '?',
-                text: "Fasilitas " + nama + " akan dipindahkan ke sampah!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-' + id).submit();
-                }
-            })
-        }
+        Swal.fire({
+            title: 'Hapus fasilitas dengan kode #' + kode + '?',
+            text: "Fasilitas " + nama + " akan dipindahkan ke sampah!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-' + id).submit();
+            }
+        })
+    }
 </script>

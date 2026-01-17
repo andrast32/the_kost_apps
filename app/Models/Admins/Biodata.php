@@ -15,7 +15,7 @@ class Biodata extends Model
         'jenis_kelamin',
         'pekerjaan',
         'alamat',
-        'foto'
+        'foto',
     ];
 
     public function user()

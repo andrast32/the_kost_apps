@@ -1,5 +1,4 @@
 <x-admin-layout>
-
     <div class="card card-outline card-primary">
 
         <div class="card-header">
@@ -39,7 +38,6 @@
 
                 <tbody>
                     @forelse ($kamars as $data)
-
                         <tr align="center">
 
                             <td>{{ $loop->iteration }}</td>
@@ -119,128 +117,6 @@
                             </td>
 
                         </tr>
-
-                        <div class="modal fade" id="Edit-{{ $data->id }}" tabindex="-1" role="dialog" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-
-                                    <div class="modal-header">
-
-                                        <h5 class="modal-title">
-                                            <span class="fw-mediumbold">Rubah kamar dengan kode</span>
-                                            <span class="fw-light">#{{ $data->kode }}</span>
-                                        </h5>
-
-                                        <button class="close" data-dismiss="modal">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-
-                                    </div>
-
-                                    <form action="{{ route('admin.data-kost.kamar.update', $data->id) }}" method="post" enctype="multipart/form-data">
-
-                                        @csrf
-                                        @method('PUT')
-
-                                        <div class="modal-body">
-                                            <div class="row">
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Kamar khusus <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
-                                                            <select name="khusus" class="form-control" required
-                                                                onchange="updateKodeEdit(this, '{{ $data->id }}', '{{ $data->kode }}', '{{ $data->khusus }}')" >
-                                                                <option value="Perempuan" {{ $data->khusus == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-                                                                <option value="Laki-Laki" {{ $data->khusus == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
-                                                                <option value="Keluarga" {{ $data->khusus == 'Keluarga' ? 'selected' : '' }}>Keluarga</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Kode Kamar</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                                            <input type="text" name="kode" id="kode_edit_{{ $data->id }}" class="form-control" value="{{ $data->kode }}" readonly required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Harga <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text">Rp.</span>
-                                                            <input type="text" name="harga" class="form-control input-harga" value="{{ number_format($data->harga, 0, ',', '.') }}" required>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label>Status <span class="text-danger">*</span></label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
-                                                            <select name="status" class="form-control" required>
-                                                                <option value="Kosong" {{ $data->status == 'Kosong' ? 'selected' : '' }}>Kosong</option>
-                                                                <option value="Terisi" {{ $data->status == 'Terisi' ? 'selected' : '' }}>Terisi</option>
-                                                                <option value="Dalam Perbaikan" {{ $data->status == 'Dalam Perbaikan' ? 'selected' : '' }}>Dalam Perbaikan</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-sm-12">
-
-                                                    <div class="form-group">
-                                                        <label>Foto Kamar</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                                                            <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $data->id }}')">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="form-group">
-                                                        <label>Preview</label>
-                                                        <div class="input-group">
-                                                            <img id="preview-{{ $data->id }}"
-                                                                src="{{ $data->foto ? asset('storage/uploads/kamar/' . $data->foto) : '' }}"
-                                                                style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $data->foto ? 'display: block;' : 'display: none;' }}"
-                                                                class="img-thumbnail"
-                                                            >
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-
-                                                <div class="col-sm-12">
-                                                    <div class="form-group">
-                                                        <label>Deskripsi</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                                            <textarea name="deskripsi" class="form-control" rows="3" style="resize: none">{{ $data->deskripsi }}</textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button type="reset" class="btn btn-outline-secondary">Reset</button>
-                                            <button type="submit" class="btn btn-outline-success">Submit</button>
-                                        </div>
-
-                                    </form>
-
-                                </div>
-                            </div>
-                        </div>
-
                     @empty
                         <tr>
                             <td colspan="7" class="text-center p-4">
@@ -267,19 +143,144 @@
         </div>
 
     </div>
+</x-admin-layout>
 
-    <div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah kamar baru</h5>
+                <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+
+            <form action="{{ route('admin.data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">
+
+                @csrf
+
+                <div class="modal-body">
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Kamar khusus <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
+                                    <select name="khusus" id="khusus_tambah" class="form-control" required>
+                                        <option value="" disabled selected>Pilih kategori kamar</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                        <option value="Laki-Laki">Laki-Laki</option>
+                                        <option value="Keluarga">Keluarga</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Kode Kamar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                    <input type="text" name="kode" id="kode_tambah" class="form-control" placeholder="kode otomatis muncul setelah pilih kategori" readonly required>
+                                </div>
+                                <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Harga <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp.</span>
+                                    <input type="text" name="harga" class="form-control input-harga" placeholder="Masukan harga" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                                    <select name="status" class="form-control" required>
+                                        <option value="" selected disabled>Pilih Status Kamar</option>
+                                        <option value="Kosong">Kosong</option>
+                                        <option value="Terisi">Terisi</option>
+                                        <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+
+                            <div class="form-group">
+                                <label>Foto Kamar</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-camera"></i></span>
+                                    <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-add')">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Preview</label>
+                                <div class="input-group">
+                                    <img id="preview-add"
+                                        src=""
+                                        style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; display: none;"
+                                        class="img-thumbnail"
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label>Deskripsi</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-list"></i></span>
+                                    <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                    <button type="submit" class="btn btn-outline-success">Submit</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@foreach ($kamars as $edit)
+    <div class="modal fade" id="Edit-{{ $edit->id }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
 
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalTambahLabel">Tambah kamar baru</h5>
-                    <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                    <h5 class="modal-title">
+                        <span class="fw-mediumbold">Rubah kamar dengan kode</span>
+                        <span class="fw-light">#{{ $edit->kode }}</span>
+                    </h5>
+
+                    <button class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
                 </div>
 
-                <form action="{{ route('admin.data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.data-kost.kamar.update', $edit->id) }}" method="post" enctype="multipart/form-data">
 
                     @csrf
+                    @method('PUT')
 
                     <div class="modal-body">
                         <div class="row">
@@ -289,11 +290,11 @@
                                     <label>Kamar khusus <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-venus-mars"></i></span>
-                                        <select name="khusus" id="khusus_tambah" class="form-control" required>
-                                            <option value="" disabled selected>Pilih kategori kamar</option>
-                                            <option value="Perempuan">Perempuan</option>
-                                            <option value="Laki-Laki">Laki-Laki</option>
-                                            <option value="Keluarga">Keluarga</option>
+                                        <select name="khusus" class="form-control" required
+                                            onchange="updateKodeEdit(this, '{{ $edit->id }}', '{{ $edit->kode }}', '{{ $edit->khusus }}')" >
+                                            <option value="Perempuan" {{ $edit->khusus == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                                            <option value="Laki-Laki" {{ $edit->khusus == 'Laki-Laki' ? 'selected' : '' }}>Laki-Laki</option>
+                                            <option value="Keluarga" {{ $edit->khusus == 'Keluarga' ? 'selected' : '' }}>Keluarga</option>
                                         </select>
                                     </div>
                                 </div>
@@ -304,9 +305,8 @@
                                     <label>Kode Kamar</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-key"></i></span>
-                                        <input type="text" name="kode" id="kode_tambah" class="form-control" placeholder="kode otomatis muncul setelah pilih kategori" readonly required>
+                                        <input type="text" name="kode" id="kode_edit_{{ $edit->id }}" class="form-control" value="{{ $edit->kode }}" readonly required>
                                     </div>
-                                    <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
                                 </div>
                             </div>
 
@@ -315,7 +315,7 @@
                                     <label>Harga <span class="text-danger">*</span></label>
                                     <div class="input-group">
                                         <span class="input-group-text">Rp.</span>
-                                        <input type="text" name="harga" class="form-control input-harga" placeholder="Masukan harga" required>
+                                        <input type="text" name="harga" class="form-control input-harga" value="{{ number_format($edit->harga, 0, ',', '.') }}" required>
                                     </div>
                                 </div>
                             </div>
@@ -326,10 +326,9 @@
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
                                         <select name="status" class="form-control" required>
-                                            <option value="" selected disabled>Pilih Status Kamar</option>
-                                            <option value="Kosong">Kosong</option>
-                                            <option value="Terisi">Terisi</option>
-                                            <option value="Dalam Perbaikan">Dalam Perbaikan</option>
+                                            <option value="Kosong" {{ $edit->status == 'Kosong' ? 'selected' : '' }}>Kosong</option>
+                                            <option value="Terisi" {{ $edit->status == 'Terisi' ? 'selected' : '' }}>Terisi</option>
+                                            <option value="Dalam Perbaikan" {{ $edit->status == 'Dalam Perbaikan' ? 'selected' : '' }}>Dalam Perbaikan</option>
                                         </select>
                                     </div>
                                 </div>
@@ -341,24 +340,20 @@
                                     <label>Foto Kamar</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-camera"></i></span>
-                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-add')">
+                                        <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewImage(this, 'preview-{{ $edit->id }}')">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Preview</label>
                                     <div class="input-group">
-                                        <img id="preview-add"
-                                            src=""
-                                            style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; display: none;"
+                                        <img id="preview-{{ $edit->id }}"
+                                            src="{{ $edit->foto ? asset('storage/uploads/kamar/' . $edit->foto) : '' }}"
+                                            style="max-width: 200px; max-height: 200px; border-radius: 8px; border: 1px solid #ddd; padding: 5px; {{ $edit->foto ? 'display: block;' : 'display: none;' }}"
                                             class="img-thumbnail"
                                         >
                                     </div>
                                 </div>
-
-                            </div>
-
-                            <div class="col-md-6">
 
                             </div>
 
@@ -367,7 +362,7 @@
                                     <label>Deskripsi</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-list"></i></span>
-                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none" placeholder="Deskripsi ..."></textarea>
+                                        <textarea name="deskripsi" class="form-control" rows="3" style="resize: none">{{ $edit->deskripsi }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -385,64 +380,63 @@
             </div>
         </div>
     </div>
+@endforeach
 
-    <script>
+<script>
 
-        const nextCodes = {
-            'Perempuan' : "{{ $nextA ?? '' }}",
-            'Laki-Laki' : "{{ $nextB ?? '' }}",
-            'Keluarga'  : "{{ $nextC ?? '' }}"
-        };
+    const nextCodes = {
+        'Perempuan' : "{{ $nextA ?? '' }}",
+        'Laki-Laki' : "{{ $nextB ?? '' }}",
+        'Keluarga'  : "{{ $nextC ?? '' }}"
+    };
 
-        if(document.getElementById('khusus_tambah')){
-            document.getElementById('khusus_tambah').addEventListener('change', function() {
-                let kategori    = this.value;
-                let inputKode   = document.getElementById('kode_tambah');
-                let info        = document.getElementById('info_kode');
+    if(document.getElementById('khusus_tambah')){
+        document.getElementById('khusus_tambah').addEventListener('change', function() {
+            let kategori    = this.value;
+            let inputKode   = document.getElementById('kode_tambah');
+            let info        = document.getElementById('info_kode');
 
-                if (nextCodes[kategori]) {
-                    inputKode.value = nextCodes[kategori];
-                    info.innerText = "Kode urut otomatis: " + nextCodes[kategori];
-                    info.className = "text-success";
-                } else {
-                    inputKode.value = "";
-                    info.innerText = "Silahkan pilih kategori!";
-                }
-
-            });
-        }
-
-        function updateKodeEdit(selectElement, id, originalKode, originalKategori) {
-            let selectedKategori = selectElement.value;
-            let inputKode = document.getElementById('kode_edit_' + id);
-
-            if (selectedKategori === originalKategori) {
-                inputKode.value = originalKode;
+            if (nextCodes[kategori]) {
+                inputKode.value = nextCodes[kategori];
+                info.innerText = "Kode urut otomatis: " + nextCodes[kategori];
+                info.className = "text-success";
             } else {
-                if (nextCodes[selectedKategori]) {
-                    inputKode.value = nextCodes[selectedKategori];
-                }
+                inputKode.value = "";
+                info.innerText = "Silahkan pilih kategori!";
             }
 
+        });
+    }
+
+    function updateKodeEdit(selectElement, id, originalKode, originalKategori) {
+        let selectedKategori = selectElement.value;
+        let inputKode = document.getElementById('kode_edit_' + id);
+
+        if (selectedKategori === originalKategori) {
+            inputKode.value = originalKode;
+        } else {
+            if (nextCodes[selectedKategori]) {
+                inputKode.value = nextCodes[selectedKategori];
+            }
         }
 
-        function Delete(id, kode) {
-            Swal.fire({
-                title: 'Hapus kamar dengan kode #' + kode + '?',
-                text: "Kamar akan dipindahkan ke sampah!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Ya, Hapus!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('delete-' + id).submit();
-                }
-            })
-        }
+    }
 
-    </script>
+    function Delete(id, kode) {
+        Swal.fire({
+            title: 'Hapus kamar dengan kode #' + kode + '?',
+            text: "Kamar akan dipindahkan ke sampah!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-' + id).submit();
+            }
+        })
+    }
 
-</x-admin-layout>
+</script>
