@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Admins\Biodata;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,6 +52,11 @@ class User extends Authenticatable
                 $user->slug = Str::slug(Str::random(50));
             }
         });
+    }
+
+    public function biodata()
+    {
+        return $this->hasOne(Biodata::class, 'user_id', 'id');
     }
 
 }

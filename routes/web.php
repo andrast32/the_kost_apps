@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\PenyewaController;
 use App\Http\Controllers\Admin\PetugasController;
+use App\Http\Controllers\Admin\BiodataController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman Depan
@@ -72,13 +73,12 @@ Route::prefix('admin')
         //               DATA PENYEWA START
         // =================================================
             Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('admin.data-user.penyewa.sampah');
-            Route::get('data-user/penyewa/biodata/{user}', [PenyewaController::class, 'show'])->name('admin.data-user.penyewa.biodata-');
             Route::get('data-user/laporan', [PenyewaController::class, 'laporan'])->name('admin.data-user.lap-penyewa');
             Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('admin.data-user.penyewa.restore');
             Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('admin.data-user.penyewa.force-delete');
 
             Route::resource('data-user/penyewa', PenyewaController::class)->names('admin.data-user.penyewa');
-        // ================================================
+        // =================================================
         //               DATA PENYEWA END
         // =================================================
 
@@ -94,11 +94,18 @@ Route::prefix('admin')
         //               DATA PETUGAS END
         // =================================================
 
+        // =================================================
+        //               DATA BIODATA PENYEWA START
+        // =================================================
 
-        Route::get('/biodata', function () {
-            view()->share('title', 'Biodata Penyewa');
-            return view('pages.admins.biodata.data-bio');
-        })->name('biodata');
+            Route::get('data-user/biodata/{slug}', [BiodataController::class, 'show'])->name('admin.data-user.biodata');
+            Route::post('data-user/biodata/store/{userId}', [BiodataController::class, 'store'])->name('admin.data-user.biodata.store');
+            Route::put('data-user/biodata/update/{id}', [BiodataController::class, 'update'])->name('admin.data-user.biodata.update');
+            Route::delete('data-user/biodata/delete/{id}', [BiodataController::class, 'destroy'])->name('admin.data-user.biodata.destroy');
+
+        // =================================================
+        //               DATA BIODATA PENYEWA END
+        // =================================================
 
         Route::get('/pembayaran', function () {
             view()->share('title', 'Data Pembayaran');

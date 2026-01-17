@@ -1,7 +1,7 @@
 <!-- jQuery -->
 <script src="{{ asset('UI/dashboard/plugins/jquery/jquery.min.js') }}"></script>
 <!-- jQuery UI 1.11.4 -->
-<script src="{{ asset('UI/dashboard/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
+<script src="{{ asset('UI/dashboard/plugins/jquery-ui/jquery-ui.min.js') }}"></script>ty
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
 $.widget.bridge('uibutton', $.ui.button)
@@ -94,21 +94,6 @@ $.widget.bridge('uibutton', $.ui.button)
             icon                : "{{ session('alert')['icon'] }}",
             title               : "{{ session('alert')['title'] }}",
         })
-    </script>
-@endif
-
-@if ($errors->any())
-    <script>
-
-        let errorMessages = @json($errors->all());
-
-        let combined = errorMessages.json("\n");
-
-        Toast.fire({
-            icon: 'error',
-            title: combined,
-        });
-
     </script>
 @endif
 
