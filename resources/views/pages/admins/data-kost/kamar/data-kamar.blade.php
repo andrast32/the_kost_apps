@@ -183,7 +183,7 @@
                                     <span class="input-group-text"><i class="fas fa-key"></i></span>
                                     <input type="text" name="kode" id="kode_tambah" class="form-control" placeholder="kode otomatis muncul setelah pilih kategori" readonly required>
                                 </div>
-                                <small id="info_kode" class="text-muted">Pilih kategori kamar dulu!</small>
+                                <small class="text-muted">Pilih kategori kamar dulu!</small>
                             </div>
                         </div>
 
@@ -394,12 +394,9 @@
         document.getElementById('khusus_tambah').addEventListener('change', function() {
             let kategori    = this.value;
             let inputKode   = document.getElementById('kode_tambah');
-            let info        = document.getElementById('info_kode');
 
             if (nextCodes[kategori]) {
                 inputKode.value = nextCodes[kategori];
-                info.innerText = "Kode urut otomatis: " + nextCodes[kategori];
-                info.className = "text-success";
             } else {
                 inputKode.value = "";
                 info.innerText = "Silahkan pilih kategori!";

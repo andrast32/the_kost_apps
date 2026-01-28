@@ -61,7 +61,7 @@ class PetugasController extends Controller
 
             do {
                 $random = rand(1, 999);
-                $autoEmail = $first . $random . '@admin_kost.com';
+                $autoEmail = $first . $random . '@admin.kost.com';
                 $exists = User::where('email', $autoEmail)->exists();
             } while ($exists);
 
@@ -87,7 +87,7 @@ class PetugasController extends Controller
         }
     }
 
-    public function update(Request $request, string $id)
+    public function update(string $id)
     {
         try {
 
