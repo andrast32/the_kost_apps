@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admins\{Pemesanan, Kamar, Fasilitas};
-use App\Models\Admins\User;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -13,13 +13,29 @@ class PemesananController extends Controller
 
     public function index()
     {
-        $items      = Pemesanan::with(['user', 'kamar', 'fasilitas'])->latest()->get();
-        $penyewa    = User::where('role', 'penyewa')->get();
-        $fasilitas  = Fasilitas::all();
-        // kirim waktu sekarang
-        $now = now();
+        $data = [
+            $items      = Pemesanan::with(['user', 'kamar', 'fasilitas'])->latest()->get(),
+            $penyewa    = User::where('role', 'User')->get(),
+            $fasilitas  = Fasilitas::all(),
+            $Sampah     = Pemesanan::onlyTrashed()->count(),
+            // kirim waktu sekarang
+            $now = now(),
+        ];
 
-        return view('pages.admins.pemesanan.data-pemesanan', compact('items', 'penyewa', 'fasilitas', 'now'));
+        return view('pages.admins.pemesanan.data-pemesanan', $data);
+    }
+
+    public function trash()
+    {
+
+        view()->share('title', 'Data Sampah Pemesanan');
+
+        $data = [
+            'items'     => Pemesanan::onlyTrashed()->latest()->get(),
+            'Sampah'    => Pemesanan::onlyTrashed()->count(),
+        ];
+
+        return view('pages.admins.pemesanan.sampah-pemesanan', $data);
     }
 
     public function store(Request $request)
@@ -53,6 +69,12 @@ class PemesananController extends Controller
                 $pemesanan->fasilitas()->attach($fId, ['harga_snap' => $f->harga]);
             }
         }
+
+        $kamar->update(['status' => 'Terisi']);
+        return back()->with('alert', [
+            'icon'      => 'Success',
+            'titile'    => 'Pemesanan berhasil ditambahkan'
+        ]);
 
     }
 

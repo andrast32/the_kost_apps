@@ -10,8 +10,12 @@
                     <i class="fas fa-plus"></i> tambah pemesanan
                 </button>
 
-                @if (isset($Sampah) && Sampah > 0)
-                    <a href="" class="btn btm-sm btn-outline-danger ml-2"></a>
+                @if (isset($Sampah) && $Sampah > 0)
+                    <a href="{{ route('admin.pemesanan.sampah') }}" class="btn btm-sm btn-outline-danger ml-2">
+                        <i class="fas fa-trash"></i>
+                        Lihat sampah
+                        <span class="badge badge-danger ml-1">{{ Sampah }}</span>
+                    </a>
                 @endif
 
             </div>

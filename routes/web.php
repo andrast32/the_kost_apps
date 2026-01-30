@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Admin\FasilitasController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\KamarController;
+use App\Http\Controllers\Admin\BiodataController;
 use App\Http\Controllers\Admin\PenyewaController;
 use App\Http\Controllers\Admin\PetugasController;
-use App\Http\Controllers\Admin\BiodataController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\FasilitasController;
+use App\Http\Controllers\Admin\PemesananController;
 
 // Halaman Depan
 Route::get('/', function () {
@@ -107,15 +108,22 @@ Route::prefix('admin')
         //               DATA BIODATA PENYEWA END
         // =================================================
 
+        // =================================================
+        //               DATA BIODATA PENYEWA START
+        // =================================================
+
+            Route::get('pemesanan/sampah', [PemesananController::class, 'trash'])->name('admin.pemesanan.sampah');
+
+            Route::resource('pemesanan/', PemesananController::class)->names('admin.pemesanan');
+
+        // =================================================
+        //               DATA BIODATA PENYEWA START
+        // =================================================
+
         Route::get('/pembayaran', function () {
             view()->share('title', 'Data Pembayaran');
             return view('pages.admins.pembayaran.data-pembayaran');
         })->name('admin.pembayaran');
-
-        Route::get('/pemesanan', function () {
-            view()->share('title', 'Data Pemesanan');
-            return view('pages.admins.pemesanan.data-pemesanan');
-        })->name('admin.pemesanan');
 
     });
 
