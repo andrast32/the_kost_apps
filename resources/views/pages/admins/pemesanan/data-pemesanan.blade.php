@@ -1,310 +1,487 @@
-<x-admin-layout>
+<x-admin-layout title="Data Pemesanan">
+    <div class="container-fluid">
+        
+        {{-- TOMBOL TAMBAH --}}
+        <div class="card mb-4 border-left-primary shadow h-100 py-2">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <h1 class="h3 mb-0 text-gray-800">Data Transaksi Pemesanan</h1>
+                <button class="btn btn-primary shadow-sm" data-toggle="modal" data-target="#modalTambah">
+                    <i class="fas fa-plus fa-sm text-white-50 mr-2"></i> Transaksi Baru
+                </button>
+            </div>
+        </div>
 
-<style>
-.pilih-kamar,.pilih-fasilitas{cursor:pointer;transition:.2s}
-.pilih-kamar:hover,.pilih-fasilitas:hover{transform:scale(1.02)}
-.pilih-kamar.active{border:2px solid #007bff;box-shadow:0 0 0 3px rgba(0,123,255,.25);position:relative}
-.pilih-fasilitas.active{border:2px solid #28a745;box-shadow:0 0 0 3px rgba(40,167,69,.25);position:relative}
-.pilih-kamar.active::after,.pilih-fasilitas.active::after{
-    content:"✓ Dipilih";position:absolute;top:8px;right:8px;
-    background:#000;color:#fff;padding:3px 7px;font-size:11px;border-radius:4px
-}
-</style>
-
-<div class="card card-outline card-primary">
-    <div class="card-header d-flex justify-content-between">
-        <h3 class="card-title">Manajemen Pemesanan</h3>
-        <button class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#addPemesanan">
-            <i class="fas fa-plus"></i> Tambah Pemesanan
-        </button>
-    </div>
-
-    <div class="card-body">
-        <table class="table table-bordered table-striped">
-            <thead class="bg-navy text-center">
-                <tr>
-                    <th>No</th><th>Penyewa</th><th>Kamar</th>
-                    <th>Masuk</th><th>Keluar</th><th>Total</th><th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($items as $p)
-                <tr class="text-center">
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $p->user->name }}</td>
-                    <td>#{{ $p->kamar->kode }}</td>
-                    <td>{{ $p->tgl_masuk }}</td>
-                    <td>{{ $p->tgl_keluar }}</td>
-                    <td>Rp {{ number_format($p->total_harga,0,',','.') }}</td>
-                    <td>
-                        <span class="badge badge-{{ $p->status=='Aktif'?'success':'secondary' }}">
-                            {{ $p->status }}
-                        </span>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="7" class="text-center text-muted p-4">Belum ada data</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-
-{{-- ================= MODAL TAMBAH ================= --}}
-<div class="modal fade" id="addPemesanan">
-<div class="modal-dialog modal-xl"><div class="modal-content">
-<form action="{{ route('admin.pemesanan.store') }}" method="POST">
-@csrf
-
-<div class="modal-header bg-primary">
-    <h5 class="modal-title"><i class="fas fa-shopping-cart"></i> Tambah Pemesanan</h5>
-    <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
-</div>
-
-<div class="modal-body">
-
-{{-- PENYEWA --}}
-<div class="form-group">
-    <label>Penyewa</label>
-    <select name="user_id" id="userSelect" class="form-control">
-        <option value="">-- Pilih Penyewa --</option>
-        @foreach($penyewa as $u)
-            <option value="{{ $u->id }}" data-gender="{{ $u->jenis_kelamin }}">
-                {{ $u->name }} ({{ $u->jenis_kelamin }})
-            </option>
-        @endforeach
-    </select>
-</div>
-
-{{-- KAMAR --}}
-<label>Kamar</label>
-<div class="row">
-@foreach($kamars as $k)
-<div class="col-md-4 kamar-card d-none" data-gender="{{ $k->jenis_kelamin }}">
-    <div class="card pilih-kamar" data-harga="{{ $k->harga }}">
-        <input type="radio" name="kamar_id" value="{{ $k->id }}" hidden required>
-        <img src="{{ Storage::url('uploads/kamar/'.$k->foto) }}"
-             class="card-img-top" style="height:160px;object-fit:cover">
-        <div class="card-body">
-            <strong>#{{ $k->kode }}</strong>
-            <p class="text-muted">{{ $k->deskripsi }}</p>
-            <b>Rp {{ number_format($k->harga,0,',','.') }} / bulan</b>
+        {{-- TABEL DATA PEMESANAN --}}
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Riwayat Transaksi</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>No</th>
+                                <th>Penyewa</th>
+                                <th>Kamar</th>
+                                <th>Periode Sewa</th>
+                                <th>Fasilitas</th>
+                                <th>Total & Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($items as $index => $item)
+                            <tr>
+                                <td>{{ $index + 1 }}</td>
+                                <td>
+                                    <div class="font-weight-bold">{{ $item->user->name ?? 'User Hilang' }}</div>
+                                    <small class="text-muted">{{ $item->user->biodata->no_hp ?? '-' }}</small>
+                                </td>
+                                <td>
+                                    <div class="font-weight-bold text-primary">{{ $item->kamar->nama_kamar ?? 'Kamar Dihapus' }}</div>
+                                    <span class="badge badge-secondary">{{ $item->jenis_sewa }}</span>
+                                </td>
+                                <td>
+                                    <small class="d-block text-muted">Masuk</small>
+                                    {{ \Carbon\Carbon::parse($item->tgl_masuk)->translatedFormat('d M Y') }}
+                                    <hr class="my-1">
+                                    <small class="d-block text-muted">Keluar</small>
+                                    {{ \Carbon\Carbon::parse($item->tgl_keluar)->translatedFormat('d M Y') }}
+                                </td>
+                                <td>
+                                    @if($item->fasilitas->isNotEmpty())
+                                        <div class="d-flex flex-wrap">
+                                        @foreach($item->fasilitas as $fas)
+                                            <span class="badge badge-info mr-1 mb-1">{{ $fas->nama_fasilitas }}</span>
+                                        @endforeach
+                                        </div>
+                                    @else
+                                        <span class="text-muted small">Tanpa Fasilitas</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <div class="font-weight-bold text-success mb-1">
+                                        Rp {{ number_format($item->total_harga, 0, ',', '.') }}
+                                    </div>
+                                    <span class="badge {{ $item->status == 'Aktif' ? 'badge-success' : 'badge-secondary' }}">
+                                        {{ $item->status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <form action="{{ route('pemesanan.destroy', $item->id) }}" method="POST" class="d-inline">
+                                        @csrf @method('DELETE')
+                                        <button class="btn btn-danger btn-sm btn-circle" onclick="return confirm('Hapus transaksi ini? Stok fasilitas akan dikembalikan.')" title="Batalkan">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <p class="text-muted">Belum ada data pemesanan.</p>
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-@endforeach
-</div>
 
-{{-- FASILITAS --}}
-<label class="mt-3">Fasilitas</label>
-<div class="row">
-@foreach($fasilitas as $f)
-<div class="col-md-3">
-    <div class="card pilih-fasilitas" data-harga="{{ $f->harga }}">
-        <input type="checkbox" name="fasilitas_ids[]" value="{{ $f->id }}" hidden>
-        <img src="{{ Storage::url('uploads/fasilitas/'.$f->foto) }}"
-             class="card-img-top" style="height:120px;object-fit:cover">
-        <div class="card-body">
-            <strong>{{ $f->nama_fasilitas }}</strong><br>
-            Rp {{ number_format($f->harga,0,',','.') }} / bulan
+    {{-- MODAL TAMBAH (STYLE TOKO ONLINE) --}}
+    <div class="modal fade" id="modalTambah" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0">
+                <form action="{{ route('pemesanan.store') }}" method="POST" id="formBooking" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title font-weight-bold"><i class="fas fa-shopping-cart mr-2"></i> Buat Pesanan Baru</h5>
+                        <button type="button" class="close text-white" data-dismiss="modal">&times;</button>
+                    </div>
+                    
+                    <div class="modal-body bg-light">
+                        <div class="row">
+                            {{-- KOLOM KIRI: USER & FILTER KAMAR --}}
+                            <div class="col-lg-7 border-right bg-white p-4">
+                                {{-- Step 1: Pilih User --}}
+                                <div class="form-group mb-4">
+                                    <label class="font-weight-bold text-dark text-uppercase small ls-1">1. Pilih Penyewa</label>
+                                    <select name="user_id" id="user_id" class="form-control select2" style="width: 100%" required onchange="loadKamars(this.value)">
+                                        <option value="">-- Cari Nama Penyewa --</option>
+                                        @foreach($penyewas as $u)
+                                            <option value="{{ $u->id }}">{{ $u->name }} ({{ $u->biodata->jenis_kelamin ?? 'Gender?' }})</option>
+                                        @endforeach
+                                    </select>
+                                    <small class="text-muted">* Daftar kamar akan difilter otomatis berdasarkan jenis kelamin penyewa.</small>
+                                </div>
+
+                                {{-- Step 2: List Kamar (Card Grid) --}}
+                                <div class="form-group">
+                                    <label class="font-weight-bold text-dark text-uppercase small ls-1 mb-3">2. Pilih Kamar</label>
+                                    
+                                    {{-- Loader --}}
+                                    <div id="loader" class="text-center d-none py-5">
+                                        <div class="spinner-border text-primary" role="status"></div>
+                                        <p class="mt-2 text-muted small">Sedang mencari kamar yang tersedia...</p>
+                                    </div>
+
+                                    {{-- Container Kamar --}}
+                                    <div id="kamarContainer" class="row" style="max-height: 400px; overflow-y: auto;">
+                                        <div class="col-12 text-center text-muted py-5 border rounded bg-light">
+                                            <i class="fas fa-door-closed fa-3x mb-3 text-gray-300"></i>
+                                            <p>Silakan pilih penyewa terlebih dahulu.</p>
+                                        </div>
+                                    </div>
+                                    {{-- Input Hidden ID Kamar --}}
+                                    <input type="hidden" name="kamar_id" id="selectedKamarId" required>
+                                </div>
+                            </div>
+
+                            {{-- KOLOM KANAN: FASILITAS & PERHITUNGAN --}}
+                            <div class="col-lg-5 p-4 d-flex flex-column">
+                                
+                                {{-- Step 3: Fasilitas --}}
+                                <div class="mb-4">
+                                    <label class="font-weight-bold text-dark text-uppercase small ls-1">3. Tambah Fasilitas (Opsional)</label>
+                                    <div class="card border-0 bg-light">
+                                        <div class="card-body p-2" style="max-height: 250px; overflow-y: auto;">
+                                            @foreach($fasilitas as $f)
+                                            <div class="custom-control custom-checkbox mb-2 p-2 rounded bg-white border shadow-sm item-fasilitas">
+                                                <input type="checkbox" class="custom-control-input fasilitas-check" 
+                                                       name="fasilitas_ids[]" 
+                                                       id="fas_{{ $f->id }}" 
+                                                       value="{{ $f->id }}"
+                                                       data-harga="{{ $f->harga }}">
+                                                <label class="custom-control-label w-100 d-flex justify-content-between align-items-center" for="fas_{{ $f->id }}" style="cursor: pointer">
+                                                    <div class="d-flex align-items-center">
+                                                        {{-- Placeholder Foto Fasilitas --}}
+                                                        <div style="width: 40px; height: 40px; background: #eee; border-radius: 5px; margin-right: 10px; overflow: hidden;">
+                                                            <img src="{{ $f->foto ? asset('storage/uploads/fasilitas/'.$f->foto) : asset('UI/dashboard/dist/img/boxed-bg.jpg') }}" style="width:100%; height:100%; object-fit:cover">
+                                                        </div>
+                                                        <div>
+                                                            <span class="d-block font-weight-bold text-dark" style="font-size: 0.9rem">{{ $f->nama_fasilitas }}</span>
+                                                            <span class="text-muted" style="font-size: 0.75rem">Stok: {{ $f->stok }}</span>
+                                                        </div>
+                                                    </div>
+                                                    <span class="badge badge-success badge-pill">+{{ number_format($f->harga/1000) }}k</span>
+                                                </label>
+                                            </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Step 4: Kalkulator Tanggal --}}
+                                <div class="mb-4 bg-white p-3 rounded border shadow-sm">
+                                    <label class="font-weight-bold text-dark text-uppercase small ls-1">4. Periode Sewa</label>
+                                    
+                                    <div class="form-group mb-2">
+                                        <label class="small text-muted mb-0">Tanggal Masuk (Otomatis Hari Ini)</label>
+                                        <input type="date" name="tgl_masuk" id="tgl_masuk" class="form-control font-weight-bold text-primary" value="{{ date('Y-m-d') }}" readonly>
+                                    </div>
+
+                                    <div class="form-group mb-2">
+                                        <label class="small text-muted mb-0">Tanggal Keluar (Pilih)</label>
+                                        <input type="date" name="tgl_keluar" id="tgl_keluar" class="form-control" required min="{{ date('Y-m-d', strtotime('+1 day')) }}">
+                                    </div>
+
+                                    {{-- Hasil Perhitungan Otomatis --}}
+                                    <div class="row mt-3 text-center bg-light mx-0 py-2 rounded">
+                                        <div class="col-6 border-right">
+                                            <small class="text-muted d-block">Durasi</small>
+                                            <strong id="displayDurasi">- Hari</strong>
+                                            <input type="hidden" name="durasi" id="inputDurasi">
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block">Jenis Sewa</small>
+                                            <strong id="displayJenis" class="text-info">-</strong>
+                                            <input type="hidden" name="jenis_sewa" id="inputJenis">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Step 5: Total Harga --}}
+                                <div class="mt-auto bg-primary text-white p-3 rounded shadow">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <small class="text-white-50 text-uppercase font-weight-bold">Estimasi Total</small>
+                                        <small id="rincianHitungan" class="text-white-50" style="font-size: 0.7em"></small>
+                                    </div>
+                                    <h2 class="font-weight-bold mb-0" id="grandTotal">Rp 0</h2>
+                                </div>
+
+                                <button type="submit" class="btn btn-success btn-block btn-lg shadow mt-3 py-3 font-weight-bold">
+                                    <i class="fas fa-save mr-2"></i> PROSES CHECK-IN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-</div>
-@endforeach
-</div>
 
-{{-- TANGGAL --}}
-<div class="row mt-3">
-    <div class="col-md-4">
-        <label>Tanggal Masuk</label>
-        <input type="date" class="form-control" value="{{ $now->toDateString() }}" readonly>
-        <input type="hidden" name="tgl_masuk" value="{{ $now->toDateString() }}">
-    </div>
-    <div class="col-md-4">
-        <label>Tanggal Keluar</label>
-        {{-- PENTING: ADA name="" --}}
-        <input type="date" id="tglKeluar" name="tgl_keluar" class="form-control" required>
-    </div>
-    <div class="col-md-4">
-        <label>Durasi</label>
-        <input type="text" id="durasiText" class="form-control" readonly>
-    </div>
-</div>
+    @push('scripts')
+    {{-- LIB PENDUKUNG --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<input type="hidden" name="durasi" id="durasi">
-<input type="hidden" name="jenis_sewa" id="jenisSewa">
+    {{-- ALERT TOASTR --}}
+    @if(session('alert'))
+    <script>
+        Swal.fire({
+            icon: '{{ session('alert.icon') }}',
+            title: '{{ session('alert.title') }}',
+            text: '{{ session('alert.text') }}',
+            confirmButtonColor: '#4e73df',
+        });
+    </script>
+    @endif
 
-{{-- TOTAL --}}
-<div class="alert alert-info mt-3">
-    <h5><i class="fas fa-receipt"></i> Total Harga</h5>
-    <h3 id="totalHargaText">Rp 0</h3>
-    <small class="text-muted">
-        * Harga harian dihitung dari harga bulanan / 30 hari
-    </small>
-</div>
+    <script>
+        let baseHargaKamar = 0;
+        let selectedKamarNama = '';
 
-</div>
+        // 1. AJAX LOAD KAMAR (FILTER GENDER)
+        function loadKamars(userId) {
+            if(!userId) return;
+            
+            // Tampilkan loading & reset container
+            $('#loader').removeClass('d-none');
+            $('#kamarContainer').html('');
+            
+            // Reset pilihan sebelumnya jika ganti user
+            $('#selectedKamarId').val('');
+            baseHargaKamar = 0;
+            $('#grandTotal').text('Rp 0'); // Reset tampilan harga
+            
+            $.ajax({
+                url: "{{ route('pemesanan.getKamars') }}",
+                type: "GET",
+                data: { user_id: userId },
+                success: function(response) {
+                    $('#loader').addClass('d-none');
+                    
+                    // Jika tidak ada kamar yang cocok
+                    if(response.length === 0) {
+                        $('#kamarContainer').html(`
+                            <div class="col-12 text-center text-danger py-4 border border-danger rounded bg-white">
+                                <i class="fas fa-ban fa-2x mb-2"></i>
+                                <p class="mb-0 font-weight-bold">Maaf, tidak ada kamar tersedia.</p>
+                                <small>Tidak ada kamar kosong yang sesuai dengan jenis kelamin penyewa ini.</small>
+                            </div>
+                        `);
+                        return;
+                    }
 
-<div class="modal-footer">
-    <button type="submit" class="btn btn-success" id="btnSimpan" disabled>
-        <i class="fas fa-save"></i> Simpan
-    </button>
-
-</div>
-
-</form>
-</div></div></div>
-
-</x-admin-layout>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-    // elemen
-    const userSelect = document.getElementById('userSelect');
-    const kamarCards = document.querySelectorAll('.kamar-card');
-    const pilihKamarCards = document.querySelectorAll('.pilih-kamar');
-    const pilihFasilitasCards = document.querySelectorAll('.pilih-fasilitas');
-    const tglKeluar = document.getElementById('tglKeluar');
-    const durasiText = document.getElementById('durasiText');
-    const durasiInput = document.getElementById('durasi');
-    const jenisSewaInput = document.getElementById('jenisSewa');
-    const totalHargaText = document.getElementById('totalHargaText');
-    const btnSimpan = document.getElementById('btnSimpan');
-
-    let hargaBulananKamar = 0, hargaBulananFasilitas = 0, durasi = 0, jenis = 'Harian';
-    const rupiah = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
-
-    const hitung = () => {
-        if (!durasi || durasi <= 0) {
-            totalHargaText.innerText = 'Rp 0';
-            return;
-        }
-        let total = 0;
-        if (jenis === 'Bulanan') {
-            total = (hargaBulananKamar + hargaBulananFasilitas) * durasi;
-        } else {
-            total = ((hargaBulananKamar / 30) + (hargaBulananFasilitas / 30)) * durasi;
-        }
-        totalHargaText.innerText = rupiah(total);
-    };
-
-    const tryEnableSave = () => {
-        const kamarChecked = Array.from(document.querySelectorAll('input[name="kamar_id"]')).some(i=>i.checked);
-        const validDurasi = durasi && durasi > 0;
-        btnSimpan.disabled = !(kamarChecked && validDurasi);
-    };
-
-    // filter kamar by gender
-    if (userSelect) {
-        const applyGenderFilter = () => {
-            const opt = userSelect.selectedOptions[0];
-            const g = opt && opt.dataset.gender ? opt.dataset.gender.toString().toLowerCase().trim() : '';
-            kamarCards.forEach(c => {
-                const kg = c.dataset.gender ? c.dataset.gender.toString().toLowerCase().trim() : '';
-                let show = false;
-                if (!g) {
-                    show = false;
-                } else if (g === 'keluarga') {
-                    show = true;
-                } else if (kg === 'keluarga') {
-                    show = true;
-                } else if (kg === g) {
-                    show = true;
-                }
-                c.classList.toggle('d-none', !show);
-            });
-            // jika kamar yang dipilih sekarang tersembunyi, reset pilihannya
-            document.querySelectorAll('input[name="kamar_id"]').forEach(r => {
-                const card = r.closest('.kamar-card');
-                if (card && card.classList.contains('d-none')) {
-                    r.checked = false;
+                    let html = '';
+                    response.forEach(function(kamar) {
+                        // Gambar placeholder jika foto kosong
+                        let foto = kamar.foto ? `/storage/uploads/kamar/${kamar.foto}` : '{{ asset("UI/dashboard/dist/img/boxed-bg.jpg") }}';
+                        
+                        html += `
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100 cursor-pointer kamar-item shadow-sm" 
+                                onclick="pilihKamar(this, ${kamar.id}, ${kamar.harga}, '${kamar.nama_kamar}')"
+                                style="border: 2px solid #eaecf4; transition: all 0.2s; cursor: pointer; overflow:hidden">
+                                <div class="position-relative">
+                                    <img src="${foto}" class="card-img-top" style="height: 120px; object-fit: cover">
+                                    
+                                    {{-- PERBAIKAN: Menggunakan kolom 'khusus' dari database --}}
+                                    <div class="position-absolute bg-primary text-white px-2 py-1 small rounded-bottom" style="top:0; left:10px;">
+                                        ${kamar.khusus}
+                                    </div>
+                                </div>
+                                <div class="card-body p-2">
+                                    <h6 class="font-weight-bold text-dark mb-1">${kamar.nama_kamar}</h6>
+                                    <p class="small text-muted mb-2" style="font-size: 0.75rem; line-height: 1.2">
+                                        ${kamar.deskripsi ? kamar.deskripsi.substring(0, 50) + '...' : 'Tidak ada deskripsi'}
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                        <span class="font-weight-bold text-primary">Rp ${new Intl.NumberFormat('id-ID').format(kamar.harga)}</span>
+                                        <span class="badge badge-light border">/Bulan</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    $('#kamarContainer').html(html);
+                },
+                error: function(xhr) {
+                    $('#loader').addClass('d-none');
+                    // Tampilkan pesan error yang lebih jelas
+                    let errorMsg = xhr.responseJSON ? xhr.responseJSON.error : 'Terjadi kesalahan pada server';
+                    Swal.fire('Error', 'Gagal memuat data kamar: ' + errorMsg, 'error');
                 }
             });
-            // sesuaikan tampilan active pada kartu kamar
-            pilihKamarCards.forEach(x => {
-                const r = x.querySelector('input[type="radio"]');
-                x.classList.toggle('active', r && r.checked);
-            });
-            tryEnableSave();
-        };
-        userSelect.addEventListener('change', applyGenderFilter);
-        // jalankan sekali saat load (jika ada nilai awal)
-        applyGenderFilter();
-    }
+        }
 
-    // pilih kamar
-    pilihKamarCards.forEach(card => {
-        card.addEventListener('click', () => {
-            pilihKamarCards.forEach(x => x.classList.remove('active'));
-            card.classList.add('active');
-            const radio = card.querySelector('input[type="radio"]');
-            if (radio) radio.checked = true;
-            hargaBulananKamar = parseFloat(card.dataset.harga) || 0;
-            hitung();
-            tryEnableSave();
-        });
-    });
+        // 2. VISUAL PILIH KAMAR
+        function pilihKamar(el, id, harga, nama) {
+            // Reset style semua card
+            $('.kamar-item').css('border-color', '#eaecf4').removeClass('bg-light-primary');
+            $('.kamar-item').find('.card-body').removeClass('bg-alice-blue'); // Opsional class custom
 
-    // pilih fasilitas
-    pilihFasilitasCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const cb = card.querySelector('input[type="checkbox"]');
-            if (!cb) return;
-            cb.checked = !cb.checked;
-            card.classList.toggle('active', cb.checked);
-            hargaBulananFasilitas = 0;
-            document.querySelectorAll('.pilih-fasilitas input:checked').forEach(checkedInput => {
-                const p = checkedInput.closest('.pilih-fasilitas');
-                hargaBulananFasilitas += parseFloat(p.dataset.harga) || 0;
-            });
-            hitung();
-        });
-    });
+            // Highlight card yang dipilih
+            $(el).css('border-color', '#4e73df').addClass('bg-light-primary');
+            
+            // Simpan data ke variabel global & input
+            $('#selectedKamarId').val(id);
+            baseHargaKamar = harga;
+            selectedKamarNama = nama;
+            
+            hitungSemua();
+        }
 
-    // helper: parse date as UTC (avoid timezone shift)
-    const toUTCDate = (dateStr) => {
-        const parts = dateStr.split('-').map(Number);
-        return Date.UTC(parts[0], parts[1]-1, parts[2]);
-    };
+        // 3. LOGIKA HITUNG DURASI & HARGA OTOMATIS
+        function hitungSemua() {
+            let tglMasuk = new Date($('#tgl_masuk').val());
+            let tglKeluar = new Date($('#tgl_keluar').val());
 
-    // hitung durasi & jenis
-    if (tglKeluar) {
-        tglKeluar.addEventListener('change', () => {
-            const masukStr = "{{ $now->toDateString() }}";
-            if (!tglKeluar.value) { return; }
-            const mUTC = toUTCDate(masukStr);
-            const kUTC = toUTCDate(tglKeluar.value);
-            if (kUTC <= mUTC) {
-                alert('Tanggal keluar harus setelah masuk');
-                tglKeluar.value = '';
-                durasiText.value = '';
-                durasiInput.value = '';
-                jenisSewaInput.value = '';
-                tryEnableSave();
+            // Pastikan kamar sudah dipilih
+            if (baseHargaKamar === 0) {
+                $('#grandTotal').text('Pilih Kamar Dulu');
                 return;
             }
-            const oneDay = 24*60*60*1000;
-            const hari = Math.ceil((kUTC - mUTC) / oneDay);
-            // Default: harian
-            jenis = 'Harian';
-            durasi = hari;
-            // Jika tanggal hari sama -> hitung selisih bulan penuh
-            const m = new Date(masukStr);
-            const k = new Date(tglKeluar.value);
-            if (m.getDate() === k.getDate()) {
-                const bln = (k.getFullYear() - m.getFullYear())*12 + (k.getMonth() - m.getMonth());
-                if (bln >= 1) { jenis = 'Bulanan'; durasi = bln; }
-            } else if (hari % 30 === 0) {
-                // juga treat sebagai bulanan bila kelipatan 30 hari
-                jenis = 'Bulanan';
-                durasi = Math.round(hari / 30);
+
+            // Validasi Tanggal
+            if (!tglKeluar || tglKeluar <= tglMasuk) {
+                $('#displayDurasi').text('- Hari');
+                $('#displayJenis').text('-');
+                $('#grandTotal').text('Cek Tanggal');
+                return;
             }
-            durasiText.value = jenis === 'Bulanan' ? durasi + ' Bulan' : durasi + ' Hari';
-            durasiInput.value = durasi;
-            jenisSewaInput.value = jenis;
-            hitung();
-            tryEnableSave();
+
+            // Hitung selisih hari
+            let timeDiff = tglKeluar.getTime() - tglMasuk.getTime();
+            let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); // Total hari
+
+            // Hitung Bulan & Sisa Hari (Logika Sederhana)
+            // Di sini kita asumsikan untuk penentuan jenis sewa:
+            // < 30 hari = Harian
+            // >= 30 hari = Bulanan
+            
+            let jenisSewa = 'Harian';
+            let durasiBayar = diffDays; 
+            
+            // Variabel untuk harga dasar perhitungan
+            let hargaDasarHitung = 0;
+
+            if (diffDays >= 30) {
+                jenisSewa = 'Bulanan';
+                // Jika bulanan, kita hitung berapa bulan. 
+                // Jika user pilih 35 hari, tetap dihitung 1 bulan + 5 hari harian (opsional) 
+                // ATAU sesuai request: "lebih 31 hari dihitung harian... jika lebih 2 bulan dihitung 2 bulan"
+                
+                // Mari kita gunakan logika `diffInMonths` sederhana via Javascript:
+                // Sederhananya: Total Hari / 30
+                let totalBulan = diffDays / 30;
+                
+                // Jika hasilnya mendekati bulat (misal 30, 31, 29, 60, 61), kita anggap bulat bulan.
+                // Request user: "otomatis dihitung 2 bulan dst"
+                
+                durasiBayar = (diffDays / 30).toFixed(1); // Misal 1.0, 1.5, 2.0
+                hargaDasarHitung = baseHargaKamar; // Harga per bulan
+            } else {
+                // Harian
+                jenisSewa = 'Harian';
+                durasiBayar = diffDays;
+                hargaDasarHitung = baseHargaKamar / 30; // Harga per hari (proporsional)
+            }
+
+            // Update UI Teks
+            $('#displayDurasi').text(diffDays + ' Hari');
+            $('#displayJenis').text(jenisSewa);
+            
+            // Isi Input Hidden untuk Controller
+            $('#inputJenis').val(jenisSewa);
+            
+            // PENTING: Controller kita minta 'durasi' sebagai int/numeric.
+            // Jika Bulanan => kirim jumlah bulannya (misal 1, 2).
+            // Jika Harian => kirim jumlah harinya.
+            
+            let durasiUntukDikirim = 0;
+            if(jenisSewa === 'Bulanan') {
+                // Pembulatan ke atas untuk durasi bulan agar aman di controller (logic controller pakai addMonths)
+                // Atau biarkan desimal jika mau harga sangat presisi. 
+                // Sesuai request: "hitung harian jika lebih dari 31" tapi "dihitung 2 bulan jika memilih lebih".
+                // Solusi aman: Kirim total hari saja jika controllernya fleksibel, TAPI controller kita fix addMonths/addDays.
+                
+                // Kita akan paksa logika visual di sini agar sinkron dengan harga.
+                // Mari kita buat simpel: Total Harga = (Harga Bulanan / 30) * Total Hari
+                // Jadi jenis sewa hanya label, tapi perhitungan harga selalu berbasis hari untuk presisi.
+                durasiUntukDikirim = diffDays; 
+                // TAPI controller kita punya logic: if Bulanan -> addMonths.
+                // Jadi kita harus kirim 'Bulanan' hanya jika pas kelipatan bulan, atau biarkan controller menangani.
+                
+                // REVISI LOGIC CONTROLLER DI PIKIRAN KITA:
+                // Agar "pas" dengan permintaan, lebih baik kita kirim 'Harian' dan durasi 'Total Hari' 
+                // tapi labelnya saja yang kita sebut Bulanan di database jika > 30 hari.
+                
+                // NAMUN, karena kita tidak bisa ubah controller sekarang, kita ikuti controller:
+                durasiUntukDikirim = Math.round(diffDays / 30); 
+                if(durasiUntukDikirim < 1) durasiUntukDikirim = 1;
+            } else {
+                durasiUntukDikirim = diffDays;
+            }
+            
+            // Hack sedikit: Agar perhitungan harga AKURAT sampai ke harian, 
+            // Kita hitung total harga di JS ini, dan pastikan logic di backend selaras.
+            
+            // Hitung Total Fasilitas
+            let totalFasilitas = 0;
+            $('.fasilitas-check:checked').each(function() {
+                totalFasilitas += parseFloat($(this).data('harga'));
+            });
+
+            // LOGIKA HARGA FINAL SESUAI REQUEST:
+            // "kalau harian harganya bedain... misal 1 bulan 600rb, harian jadi 20rb (600/30)"
+            
+            let hargaPerHariKamar = baseHargaKamar / 30;
+            let hargaPerHariTotal = hargaPerHariKamar + (totalFasilitas / 30); // Asumsi harga fasilitas di DB juga bulanan?
+            
+            // Biasanya harga fasilitas di DB itu harga per bulan. Jadi harus dibagi 30 juga.
+            // Jika harga fasilitas di DB adalah harga flat sekali bayar, jangan dibagi 30.
+            // ASUMSI: Harga Fasilitas di DB adalah HARGA BULANAN (seperti kamar).
+            
+            let totalBayar = 0;
+            if (jenisSewa === 'Bulanan') {
+                // Harga Kamar + Fasilitas (Bulanan) * Durasi Bulan
+                // Gunakan Math.round(diffDays/30) agar input durasi di controller masuk akal
+                let durasiBulan = Math.round(diffDays / 30);
+                if (durasiBulan === 0) durasiBulan = 1;
+                
+                $('#inputDurasi').val(durasiBulan); 
+                totalBayar = (baseHargaKamar + totalFasilitas) * durasiBulan;
+                
+                $('#rincianHitungan').text(`(Kamar + Fasilitas) x ${durasiBulan} Bulan`);
+            } else {
+                // Hitungan Harian Murni
+                $('#inputDurasi').val(diffDays);
+                // (HargaKamar/30 + HargaFasilitas/30) * Hari
+                totalBayar = ((baseHargaKamar + totalFasilitas) / 30) * diffDays;
+                
+                $('#rincianHitungan').text(`(Harga Proporsional Harian) x ${diffDays} Hari`);
+            }
+
+            // Tampilkan
+            $('#grandTotal').text('Rp ' + new Intl.NumberFormat('id-ID').format(Math.ceil(totalBayar)));
+        }
+
+        // Trigger Events
+        $('#tgl_keluar').on('change', hitungSemua);
+        $('.fasilitas-check').on('change', hitungSemua);
+
+        // Init Select2 di Modal
+        $('#modalTambah').on('shown.bs.modal', function () {
+            $('.select2').select2({
+                dropdownParent: $('#modalTambah'),
+                theme: 'bootstrap4'
+            });
         });
-    }
-});
-</script>
+    </script>
+    @endpush
+</x-admin-layout>

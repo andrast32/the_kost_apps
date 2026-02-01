@@ -58,4 +58,11 @@ class Kamar extends Model
 
     }
 
+    protected $guarded = [];
+
+    public function pemesanan()
+    {
+        return $this->hasMany(Pemesanan::class);
+    }
+
 }

@@ -11,155 +11,145 @@ use Illuminate\Support\Facades\DB;
 
 class PemesananController extends Controller
 {
-
     public function index()
     {
-        $data = [
-            'items'      => Pemesanan::with(['user', 'kamar', 'fasilitas'])->latest()->get(),
-            'penyewa'    => User::where('role', 'User')->get(),
-            'kamars'     => Kamar::where('status', 'Kosong')->get(), // ⬅️ TAMBAH INI
-            'fasilitas'  => Fasilitas::all(),
-            'Sampah'     => Pemesanan::onlyTrashed()->count(),
-            'now'        => now(),
-        ];
-
-        return view('pages.admins.pemesanan.data-pemesanan', $data);
+        $items = Pemesanan::with(['user', 'kamar', 'fasilitas'])
+            ->where('status', 'Aktif')
+            ->latest()
+            ->get();
+            
+        $penyewas = User::where('role', 'User')->get();
+        $fasilitas = Fasilitas::where('stok', '>', 0)->get();
+        
+        return view('pages.admins.pemesanan.data-pemesanan', compact('items', 'penyewas', 'fasilitas'));
     }
 
-    public function trash()
+    public function getKamars(Request $request)
     {
+        // 1. Validasi User
+        $user = User::with('biodata')->find($request->user_id);
+        
+        if (!$user || !$user->biodata) {
+            return response()->json(['error' => 'User belum melengkapi biodata'], 400);
+        }
 
-        view()->share('title', 'Data Sampah Pemesanan');
+        $gender = $user->biodata->jenis_kelamin; // 'Laki-Laki' atau 'Perempuan'
 
-        $data = [
-            'items'     => Pemesanan::onlyTrashed()->latest()->get(),
-            'Sampah'    => Pemesanan::onlyTrashed()->count(),
-        ];
+        // 2. Filter Kamar (PERBAIKAN STATUS DISINI)
+        // Cari status 'Kosong' (bukan 'Tersedia')
+        $kamars = Kamar::where('status', 'Kosong')
+                    ->where(function($q) use ($gender) {
+                        $q->where('khusus', $gender)
+                            ->orWhere('khusus', 'Keluarga');
+                    })->get();
 
-        return view('pages.admins.pemesanan.sampah-pemesanan', $data);
+        return response()->json($kamars);
     }
 
     public function store(Request $request)
     {
-
         $request->validate([
-            'user_id'    => 'required|exists:users,id',
-            'kamar_id'   => 'required|exists:kamars,id',
-            'tgl_masuk'  => 'required|date',
-            'durasi'     => 'required|integer|min:1',
-            'jenis_sewa' => 'required|in:Bulanan,Harian',
+            'user_id' => 'required',
+            'kamar_id' => 'required',
+            'tgl_masuk' => 'required|date',
+            'durasi' => 'required|numeric|min:1',
+            'jenis_sewa' => 'required'
         ]);
 
-        return DB::transaction(function () use ($request) {
+        try {
+            DB::transaction(function () use ($request) {
+                
+                $kamar = Kamar::findOrFail($request->kamar_id);
+                $tglMasuk = Carbon::parse($request->tgl_masuk);
+                
+                // Hitung Tgl Keluar
+                if ($request->jenis_sewa == 'Bulanan') {
+                    $tglKeluar = $tglMasuk->copy()->addMonths($request->durasi);
+                } else {
+                    $tglKeluar = $tglMasuk->copy()->addDays($request->durasi);
+                }
 
-            $kamar = Kamar::lockForUpdate()->findOrFail($request->kamar_id);
+                // Cek Stok Fasilitas
+                $fasilitasIds = $request->fasilitas_ids ?? [];
+                $totalHargaFasilitas = 0;
+                $fasilitasData = [];
 
-            if ($kamar->status === 'Terisi') {
-                return back()->with('alert', [
-                    'icon' => 'Error',
-                    'titile' => 'Kamar sudah terisi'
-                ]);
-            }
+                if (!empty($fasilitasIds)) {
+                    $fasilitasItems = Fasilitas::whereIn('id', $fasilitasIds)->lockForUpdate()->get();
 
-            $Masuk = Carbon::parse($request->tgl_masuk);
-            $Keluar = $request->jenis_sewa === 'Bulanan'
-                ? $Masuk->copy()->addMonths($request->durasi)
-                : $Masuk->copy()->addDays($request->durasi);
-
-            $fasilitasList = collect();
-            if ($request->fasilitas_ids) {
-                $fasilitasList = Fasilitas::whereIn('id', $request->fasilitas_ids)
-                    ->lockForUpdate()->get();
-
-                foreach ($fasilitasList as $f) {
-                    if ($f->stok <= 0) {
-                        return back()->with('alert', [
-                            'icon' => 'Error',
-                            'titile' => "Stok {$f->nama_fasilitas} habis"
-                        ]);
+                    foreach ($fasilitasItems as $f) {
+                        if ($f->stok < 1) {
+                            throw new \Exception("Stok {$f->nama_fasilitas} habis!");
+                        }
+                        
+                        $fasilitasData[] = ['id' => $f->id, 'harga' => $f->harga];
+                        $totalHargaFasilitas += $f->harga;
+                        $f->decrement('stok');
                     }
                 }
-            }
 
-            $totalFasilitas = $fasilitasList->sum('harga');
-            $harga = ($kamar->harga + $totalFasilitas) * $request->durasi;
+                // Hitung Harga
+                // Jika harian, harga kamar dibagi 30
+                $hargaKamarDasar = ($request->jenis_sewa == 'Harian') ? ($kamar->harga / 30) : $kamar->harga;
+                $hargaFasilitasDasar = ($request->jenis_sewa == 'Harian') ? ($totalHargaFasilitas / 30) : $totalHargaFasilitas;
+                
+                $totalTrans = ($hargaKamarDasar + $hargaFasilitasDasar) * $request->durasi;
 
-            dd($request->all());
-
-            $pemesanan = Pemesanan::create([
-                'user_id'     => $request->user_id,
-                'kamar_id'    => $kamar->id,
-                'tgl_masuk'   => $Masuk,
-                'tgl_keluar'  => $Keluar,
-                'jenis_sewa'  => $request->jenis_sewa,
-                'total_harga' => $harga,
-                'status'      => 'Aktif'
-            ]);
-
-            foreach ($fasilitasList as $f) {
-                $f->decrement('stok');
-                $pemesanan->fasilitas()->attach($f->id, [
-                    'harga_snap' => $f->harga
+                // Simpan Pemesanan
+                $pemesanan = Pemesanan::create([
+                    'user_id'       => $request->user_id,
+                    'kamar_id'      => $request->kamar_id,
+                    'tgl_masuk'     => $tglMasuk,
+                    'tgl_keluar'    => $tglKeluar,
+                    'jenis_sewa'    => $request->jenis_sewa,
+                    'total_harga'   => $totalTrans,
+                    'status'        => 'Aktif'
                 ]);
-            }
 
-            $kamar->update(['status' => 'Terisi']);
+                foreach ($fasilitasData as $fd) {
+                    $pemesanan->fasilitas()->attach($fd['id'], ['harga_snap' => $fd['harga']]);
+                }
 
-            return back()->with('alert', [
-                'icon' => 'Success',
-                'titile' => 'Pemesanan berhasil ditambahkan'
+                // PERBAIKAN: Ubah status jadi 'Terisi' (bukan 'Penuh')
+                $kamar->update(['status' => 'Terisi']);
+            });
+
+            return redirect()->back()->with('alert', [
+                'icon' => 'success',
+                'title' => 'Berhasil',
+                'text' => 'Pemesanan berhasil disimpan.'
             ]);
-        });
 
-    }
-
-    public function update(Request $request, Pemesanan $pemesanan)
-    {
-        if (!$pemesanan->masihBisaEdit()) {
-            return back()->with('alert', [
-                'icon' => 'Error',
-                'titile' => 'Waktu edit sudah habis (2×24 jam)'
+        } catch (\Exception $e) {
+            return redirect()->back()->with('alert', [
+                'icon' => 'error',
+                'title' => 'Gagal',
+                'text' => $e->getMessage()
             ]);
         }
-
-        return DB::transaction(function () use ($request, $pemesanan) {
-
-            // balikin stok lama
-            foreach ($pemesanan->fasilitas as $f) {
-                $f->increment('stok');
-            }
-
-            $pemesanan->fasilitas()->detach();
-
-            $fasilitasList = Fasilitas::whereIn('id', $request->fasilitas_ids ?? [])
-                ->lockForUpdate()->get();
-
-            foreach ($fasilitasList as $f) {
-                if ($f->stok <= 0) {
-                    return back()->with('alert', [
-                        'icon' => 'Error',
-                        'titile' => "Stok {$f->nama_fasilitas} habis"
-                    ]);
-                }
-            }
-
-            foreach ($fasilitasList as $f) {
-                $f->decrement('stok');
-                $pemesanan->fasilitas()->attach($f->id, [
-                    'harga_snap' => $f->harga
-                ]);
-            }
-
-            return back()->with('alert', [
-                'icon' => 'Success',
-                'titile' => 'Pemesanan berhasil diperbarui'
-            ]);
-        });
     }
 
-    public function destroy(Pemesanan $pemesanan)
+    public function destroy($id)
     {
-        //
+        try {
+            DB::transaction(function () use ($id) {
+                $pemesanan = Pemesanan::with('fasilitas')->findOrFail($id);
+
+                // Balikin Stok
+                foreach ($pemesanan->fasilitas as $f) {
+                    $f->increment('stok');
+                }
+
+                // PERBAIKAN: Ubah status jadi 'Kosong' (bukan 'Tersedia')
+                $pemesanan->kamar->update(['status' => 'Kosong']);
+
+                $pemesanan->delete();
+            });
+
+            return back()->with('alert', ['icon' => 'success', 'title' => 'Dihapus', 'text' => 'Data dipindahkan ke sampah.']);
+
+        } catch (\Exception $e) {
+            return back()->with('alert', ['icon' => 'error', 'title' => 'Error', 'text' => $e->getMessage()]);
+        }
     }
-    
 }

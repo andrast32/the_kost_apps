@@ -44,7 +44,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.pemesanan.index') }}" class="nav-link {{ request()->routeIs('admin.pemesanan.*') ? 'active' : '' }}">
+                    <a href="{{ route('pemesanan.index') }}" class="nav-link {{ request()->routeIs('pemesanan.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>
                             Data Pemesanan

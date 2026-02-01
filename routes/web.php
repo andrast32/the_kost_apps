@@ -109,15 +109,20 @@ Route::prefix('admin')
         // =================================================
 
         // =================================================
-        //               DATA BIODATA PENYEWA START
+        //               DATA PEMESANAN START
         // =================================================
 
-            Route::get('pemesanan/sampah', [PemesananController::class, 'trash'])->name('admin.pemesanan.sampah');
-
-            Route::resource('pemesanan/', PemesananController::class)->names('admin.pemesanan');
+            Route::group(['prefix' => 'pemesanan', 'as' => 'pemesanan.'], function () {
+                Route::get('/', [PemesananController::class, 'index'])->name('index');
+                Route::post('/store', [PemesananController::class, 'store'])->name('store');
+                Route::delete('/destroy/{id}', [PemesananController::class, 'destroy'])->name('destroy');
+                
+                // Route khusus AJAX untuk ambil data kamar di Modal
+                Route::get('/get-kamars', [PemesananController::class, 'getKamars'])->name('getKamars');
+            });
 
         // =================================================
-        //               DATA BIODATA PENYEWA START
+        //               DATA PEMESANAN END
         // =================================================
 
         Route::get('/pembayaran', function () {

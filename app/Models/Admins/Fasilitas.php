@@ -58,4 +58,16 @@ class Fasilitas extends Model
 
     }
 
+    protected $guarded = [];
+
+    public function pemesanan()
+    {
+        return $this->belongsToMany(
+            Pemesanan::class,
+            'pemesanan_fasilitas',
+            'fasilitas_id',
+            'pemesanan_id'
+        );
+    }
+
 }
