@@ -63,6 +63,8 @@
 
         <x-admin.script-admin />
 
+        @stack('scripts')
+
     </body>
 
 </html>

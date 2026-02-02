@@ -59,4 +59,11 @@ class User extends Authenticatable
         return $this->hasOne(Biodata::class, 'user_id', 'id');
     }
 
+    public function pemesanan()
+    {
+        return $this->hasMany(
+            \App\Models\Admins\Pemesanan::class
+        );
+    }
+
 }
