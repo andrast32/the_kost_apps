@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('kode', 50)->unique();
             $table->text('deskripsi')->nullable();
             $table->decimal('harga', 10, 2);
-            $table->enum('status', ['Kosong', 'Terisi', 'Dalam Perbaikan'])->default('Kosong');
+            $table->enum('status', ['Kosong', 'Dipesan', 'Terisi', 'Dalam Perbaikan'])->default('Kosong');
             $table->enum('khusus', ['Laki-Laki', 'Perempuan', 'Keluarga']);
             $table->string('foto')->nullable();
             $table->text('slug');

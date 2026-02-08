@@ -11,7 +11,7 @@
                 </button>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
-                    <a href="{{ route('admin.data-kost.kamar.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
+                    <a href="{{ route('data-kost.kamar.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat sampah
                         <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
@@ -48,6 +48,11 @@
                                 @if ($data->status == 'Kosong')
                                     <span class="badge badge-success">
                                         <i class="fas fa-door-open"></i>
+                                        {{ $data->status }}
+                                    </span>
+                                @elseif ($data->status == 'Dipesan')
+                                    <span class="badge badge-warning">
+                                        <i class="fas fa-cart-plus"></i>
                                         {{ $data->status }}
                                     </span>
                                 @elseif ($data->status == 'Terisi')
@@ -109,7 +114,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-kost.kamar.destroy', $data->id) }}" method="post">
+                                    <form id="delete-{{ $data->id }}" action="{{ route('data-kost.kamar.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE')
                                     </form>
 
@@ -154,7 +159,7 @@
                 <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
-            <form action="{{ route('admin.data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('data-kost.kamar.store') }}" method="POST" enctype="multipart/form-data">
 
                 @csrf
 
@@ -277,7 +282,7 @@
 
                 </div>
 
-                <form action="{{ route('admin.data-kost.kamar.update', $edit->id) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('data-kost.kamar.update', $edit->id) }}" method="post" enctype="multipart/form-data">
 
                     @csrf
                     @method('PUT')

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('tgl_keluar');
             $table->string('jenis_sewa');
             $table->decimal('total_harga', 15, 2);
-            $table->enum('status' , ['Aktif', 'Selesai'])->default('Aktif');
+            $table->enum('status' , ['Aktif', 'Menunggu Pembayaran', 'Selesai', 'Batal'])->default('Menunggu Pembayaran');
             $table->softDeletes();
             $table->timestamps();
         });

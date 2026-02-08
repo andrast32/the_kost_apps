@@ -11,7 +11,7 @@
                 </button>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
-                    <a href="{{ route('admin.data-kost.fasilitas.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
+                    <a href="{{ route('data-kost.fasilitas.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat Sampah
                         <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
@@ -83,7 +83,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-kost.fasilitas.destroy', $data->id) }}" method="post">
+                                    <form id="delete-{{ $data->id }}" action="{{ route('data-kost.fasilitas.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE')
                                     </form>
 
@@ -128,7 +128,7 @@
                 <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
-            <form action="{{ route('admin.data-kost.fasilitas.store') }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('data-kost.fasilitas.store') }}" method="post" enctype="multipart/form-data">
 
                 @csrf
 
@@ -240,7 +240,7 @@
 
                 </div>
 
-                <form action="{{ route('admin.data-kost.fasilitas.update', $edit->id) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('data-kost.fasilitas.update', $edit->id) }}" method="post" enctype="multipart/form-data">
 
                     @csrf
                     @method('PUT')

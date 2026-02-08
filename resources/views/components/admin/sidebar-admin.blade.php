@@ -52,9 +52,9 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('admin.data-kost.*') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ request()->routeIs('data-kost.*') ? 'menu-open' : '' }}">
 
-                    <a href="#" class="nav-link {{ request()->routeIs('admin.data-kost.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('data-kost.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-building"></i>
                         <p>
                             Data Kost
@@ -65,14 +65,14 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-kost.kamar.index') }}" class="nav-link {{ request()->routeIs('admin.data-kost.kamar.*') ? 'active' : '' }}">
+                            <a href="{{ route('data-kost.kamar.index') }}" class="nav-link {{ request()->routeIs('data-kost.kamar.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Kamar</p>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-kost.fasilitas.index') }}" class="nav-link {{ request()->routeIs('admin.data-kost.fasilitas.*') ? 'active' : '' }}">
+                            <a href="{{ route('data-kost.fasilitas.index') }}" class="nav-link {{ request()->routeIs('data-kost.fasilitas.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Fasilitas</p>
                             </a>
@@ -81,9 +81,9 @@
                     </ul>
                 </li>
 
-                <li class="nav-item {{ request()->routeIs('admin.data-user.*') ? 'menu-open' : '' }}">
+                <li class="nav-item {{ request()->routeIs('data-user.*') ? 'menu-open' : '' }}">
 
-                    <a href="#" class="nav-link {{ request()->routeIs('admin.data-user.*') ? 'active' : '' }}">
+                    <a href="#" class="nav-link {{ request()->routeIs('data-user.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-users"></i>
                         <p>
                             Data User
@@ -94,7 +94,7 @@
                     <ul class="nav nav-treeview">
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-user.penyewa.index') }}" class="nav-link {{ request()->routeIs('admin.data-user.penyewa.*') ? 'active' : '' }}">
+                            <a href="{{ route('data-user.penyewa.index') }}" class="nav-link {{ request()->routeIs('data-user.penyewa.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Penyewa</p>
                             </a>

@@ -10,7 +10,7 @@
                     <span class="fw-light">{{ $user->name }}</span>
                 </h3>
 
-                <a href="{{ route('admin.data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info right ml-auto">
+                <a href="{{ route('data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info right ml-auto">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 

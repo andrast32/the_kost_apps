@@ -11,12 +11,12 @@
                     <i class="fas fa-plus"></i> Tambah penyewa
                 </button>
 
-                <a href="{{ route('admin.data-user.lap-penyewa') }}" class="btn btn-sm btn-outline-secondary ml-2">
+                <a href="{{ route('data-user.penyewa.lap-penyewa') }}" class="btn btn-sm btn-outline-secondary ml-2">
                     <i class="fas fa-print"></i> Print data penyewa
                 </a>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
-                    <a href="{{ route('admin.data-user.penyewa.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
+                    <a href="{{ route('data-user.penyewa.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat sampah
                         <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
@@ -68,11 +68,11 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form id="reset-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.update', $data->id) }}" method="post">
+                                    <form id="reset-{{ $data->id }}" action="{{ route('data-user.penyewa.update', $data->id) }}" method="post">
                                         @csrf @method('PUT') 
                                     </form>
 
-                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-user.penyewa.destroy', $data->id) }}" method="post">
+                                    <form id="delete-{{ $data->id }}" action="{{ route('data-user.penyewa.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE') 
                                     </form>
 
@@ -113,7 +113,7 @@
 
                 <div class="modal-header"></div>
 
-                <form action="{{ route('admin.data-user.penyewa.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('data-user.penyewa.store') }}" method="post" enctype="multipart/form-data">
 
                     @csrf
 

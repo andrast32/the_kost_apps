@@ -46,11 +46,15 @@ Route::prefix('admin')
         //                DATA KAMAR START
         // =================================================
 
-            Route::get('data-kost/kamar/sampah', [KamarController::class, 'trash'])->name('admin.data-kost.kamar.sampah');
-            Route::put('data-kost/kamar/restore/{id}', [KamarController::class, 'restore'])->name('admin.data-kost.kamar.restore');
-            Route::delete('data-kost/kamar/force-delete/{id}', [KamarController::class, 'forceDelete'])->name('admin.data-kost.kamar.force-delete');
-
-            Route::resource('data-kost/kamar', KamarController::class)->names('admin.data-kost.kamar');
+            Route::group(['prefix' => 'kamar', 'as' => 'data-kost.kamar.'], function () {
+                Route::get('/', [KamarController::class, 'index'])->name('index');
+                Route::get('/sampah', [KamarController::class, 'trash'])->name('sampah');
+                Route::post('/store', [KamarController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [KamarController::class, 'update'])->name('update');
+                Route::delete('/destroy/{id}', [KamarController::class, 'destroy'])->name('destroy');
+                Route::put('/restore/{id}', [KamarController::class, 'restore'])->name('restore');
+                Route::delete('/force-delete/{id}', [KamarController::class, 'force-delete'])->name('force-delete');
+            });
 
         // =================================================
         //                DATA KAMAR END
@@ -60,11 +64,15 @@ Route::prefix('admin')
         //               DATA FASILITAS START
         // =================================================
 
-            Route::get('data-kost/fasilitas/sampah', [FasilitasController::class, 'trash'])->name('admin.data-kost.fasilitas.sampah');
-            Route::put('data-kost/fasilitas/restore/{id}', [FasilitasController::class, 'restore'])->name('admin.data-kost.fasilitas.restore');
-            Route::delete('data-kost/fasilitas/force-delete', [FasilitasController::class, 'forceDelete'])->name('admin.data-kost.fasilitas.force-delete');
-
-            Route::resource('data-kost/fasilitas', FasilitasController::class)->names('admin.data-kost.fasilitas')->parameters(['fasilitas' => 'fasilitas']);
+            Route::group(['prefix' => 'fasilitas', 'as' => 'data-kost.fasilitas.'], function () {
+                Route::get('/', [FasilitasController::class, 'index'])->name('index');
+                Route::get('/sampah', [FasilitasController::class, 'trash'])->name('sampah');
+                Route::post('/store', [FasilitasController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [FasilitasController::class, 'update'])->name('update');
+                Route::delete('/destroy/{id}', [FasilitasController::class, 'destroy'])->name('destroy');
+                Route::put('/restore/{id}', [FasilitasController::class, 'restore'])->name('restore');
+                Route::delete('/force-delete/{id}', [FasilitasController::class, 'force-delete'])->name('force-delete');
+            });
 
         // =================================================
         //               DATA FASILITAS END
@@ -73,12 +81,18 @@ Route::prefix('admin')
         // =================================================
         //               DATA PENYEWA START
         // =================================================
-            Route::get('data-user/penyewa/sampah', [PenyewaController::class, 'trash'])->name('admin.data-user.penyewa.sampah');
-            Route::get('data-user/laporan', [PenyewaController::class, 'laporan'])->name('admin.data-user.lap-penyewa');
-            Route::put('data-user/penyewa/restore/{id}', [PenyewaController::class, 'restore'])->name('admin.data-user.penyewa.restore');
-            Route::delete('data-user/penyewa/force-delete/{id}', [PenyewaController::class, 'forceDelete'])->name('admin.data-user.penyewa.force-delete');
 
-            Route::resource('data-user/penyewa', PenyewaController::class)->names('admin.data-user.penyewa');
+            Route::group(['prefix' => 'penyewa', 'as' => 'data-user.penyewa.'], function () {
+                Route::get('/', [PenyewaController::class, 'index'])->name('index');
+                Route::get('/lap-penyewa', [PenyewaController::class, 'laporan'])->name('lap-penyewa');
+                Route::get('/sampah', [PenyewaController::class, 'trash'])->name('sampah');
+                Route::post('/store', [PenyewaController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [PenyewaController::class, 'update'])->name('update');
+                Route::delete('/destroy/{id}', [PenyewaController::class, 'destroy'])->name('destroy');
+                Route::put('/restore/{id}', [PenyewaController::class, 'restore'])->name('restore');
+                Route::delete('/force-delete/{id}', [PenyewaController::class, 'force-delete'])->name('force-delete');
+            });
+            
         // =================================================
         //               DATA PENYEWA END
         // =================================================

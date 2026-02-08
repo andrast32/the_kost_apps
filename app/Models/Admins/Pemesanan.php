@@ -34,4 +34,15 @@ class Pemesanan extends Model
         return $this->belongsToMany(Fasilitas::class, 'pemesanan_fasilitas', 'pemesanan_id', 'fasilitas_id')
                     ->withPivot('harga_snap');
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
+    public function masihBisaEdit(): bool
+    {
+        return $this->created_at->addHours(4)->isFuture();
+    }
+
 }
