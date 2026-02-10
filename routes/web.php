@@ -98,28 +98,36 @@ Route::prefix('admin')
         // =================================================
 
         // =================================================
-        //               DATA PETUGAS START
-        // =================================================
-            Route::get('data-user/petugas/sampah', [PetugasController::class, 'trash'])->name('admin.data-user.petugas.sampah');
-            Route::put('data-user/petugas/restore/{id}', [PetugasController::class, 'restore'])->name('admin.data-user.petugas.restore');
-            Route::delete('data-user/petugas/force-delete/{id}', [PetugasController::class, 'forceDelete'])->name('admin.data-user.petugas.force-delete');
-
-            Route::resource('data-user/petugas', PetugasController::class)->names('admin.data-user.petugas')->parameters(['petugas' => 'petugas']);
-        // =================================================
-        //               DATA PETUGAS END
-        // =================================================
-
-        // =================================================
         //               DATA BIODATA PENYEWA START
         // =================================================
 
-            Route::get('data-user/biodata/{slug}', [BiodataController::class, 'show'])->name('admin.data-user.biodata');
-            Route::post('data-user/biodata/store/{userId}', [BiodataController::class, 'store'])->name('admin.data-user.biodata.store');
-            Route::put('data-user/biodata/update/{id}', [BiodataController::class, 'update'])->name('admin.data-user.biodata.update');
-            Route::delete('data-user/biodata/delete/{id}', [BiodataController::class, 'destroy'])->name('admin.data-user.biodata.destroy');
+            Route::group(['prefix' => 'data-user/biodata', 'as' => 'data-user.biodata.'], function () {
+                Route::get('/{slug}', [BiodataController::class, 'show'])->name('show');
+                Route::post('/store/{userId}', [BiodataController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [BiodataController::class, 'update'])->name('update');
+                Route::delete('/destroy/{id}', [BiodataController::class, 'destroy'])->name('destroy');
+            });
 
         // =================================================
         //               DATA BIODATA PENYEWA END
+        // =================================================
+
+        // =================================================
+        //               DATA PETUGAS START
+        // =================================================
+
+            Route::group(['prefix' => 'petugas', 'as' => 'data-user.petugas.'], function () {
+                Route::get('/', [PetugasController::class, 'index'])->name('index');
+                Route::get('/sampah', [PetugasController::class, 'trash'])->name('sampah');
+                Route::post('/store', [PetugasController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [PetugasController::class, 'update'])->name('update');
+                Route::delete('/destroy/{id}', [PetugasController::class, 'destroy'])->name('destroy');
+                Route::put('/restore/{id}', [PetugasController::class, 'restore'])->name('restore');
+                Route::delete('/force-delete/{id}', [PetugasController::class, 'force-delete'])->name('force-delete');
+            });
+
+        // =================================================
+        //               DATA PETUGAS END
         // =================================================
 
         // =================================================
@@ -128,8 +136,11 @@ Route::prefix('admin')
 
             Route::group(['prefix' => 'pemesanan', 'as' => 'pemesanan.'], function () {
                 Route::get('/', [PemesananController::class, 'index'])->name('index');
+                Route::get('/sampah', [PemesananController::class, 'trash'])->name('sampah');
                 Route::post('/store', [PemesananController::class, 'store'])->name('store');
                 Route::delete('/destroy/{id}', [PemesananController::class, 'destroy'])->name('destroy');
+                Route::put('/restore/{id}', [PemesananController::class, 'restore'])->name('restore');
+                Route::delete('/force/{id}', [PemesananController::class, 'force'])->name('force');
                 
                 // Route khusus AJAX untuk ambil data kamar di Modal
                 Route::get('/get-kamars', [PemesananController::class, 'getKamars'])->name('getKamars');

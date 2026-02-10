@@ -11,8 +11,8 @@
                     <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
                 </h3>
 
-                <a href="{{ route('admin.data-kost.fasilitas.index') }}" class="btn btn-outline-primary btn-round ml-auto">
-                    <i class="fas fa-aroow-left"></i> Kembali
+                <a href="{{ route('data-kost.fasilitas.index') }}" class="btn btn-outline-primary btn-round ml-auto">
+                    <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 
             </div>
@@ -69,7 +69,7 @@
                                         <i class="fas fa-trash-restore"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.fasilitas.restore', $data->id) }}" id="restore-form-{{ $data->id }}" method="post" style="display: none;">
+                                    <form action="{{ route('data-kost.fasilitas.restore', $data->id) }}" id="restore-form-{{ $data->id }}" method="post" style="display: none;">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -78,7 +78,7 @@
                                         <i class="fas fa-times-circle"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.fasilitas.force-delete', $data->id) }}" id="force-delete-form-{{ $data->id }}" method="POST" style="display: none">
+                                    <form action="{{ route('data-kost.fasilitas.force-delete', $data->id) }}" id="force-delete-form-{{ $data->id }}" method="POST" style="display: none">
                                         @csrf
                                         @method('DELETE')
                                     </form>

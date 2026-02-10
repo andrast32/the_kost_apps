@@ -101,7 +101,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{ route('admin.data-user.petugas.index') }}" class="nav-link {{ request()->routeIs('admin.data-user.petugas.*') ? 'active' : '' }}">
+                            <a href="{{ route('data-user.petugas.index') }}" class="nav-link {{ request()->routeIs('data-user.petugas.*') ? 'active' : '' }}">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Data Petugas</p>
                             </a>

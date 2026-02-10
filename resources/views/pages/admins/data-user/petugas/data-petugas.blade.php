@@ -12,7 +12,7 @@
                 </button>
 
                 @if (isset($jumlahSampah) && $jumlahSampah > 0)
-                    <a href="{{ route('admin.data-user.petugas.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
+                    <a href="{{ route('data-user.petugas.sampah') }}" class="btn btn-sm btn-outline-danger ml-2">
                         <i class="fas fa-trash-alt"></i>
                         Lihat sampah
                         <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
@@ -54,11 +54,11 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
 
-                                    <form id="reset-{{ $data->id }}" action="{{ route('admin.data-user.petugas.update', $data->id) }}" method="post">
+                                    <form id="reset-{{ $data->id }}" action="{{ route('data-user.petugas.update', $data->id) }}" method="post">
                                         @csrf @method('PUT')
                                     </form>
 
-                                    <form id="delete-{{ $data->id }}" action="{{ route('admin.data-user.petugas.destroy', $data->id) }}" method="post">
+                                    <form id="delete-{{ $data->id }}" action="{{ route('data-user.petugas.destroy', $data->id) }}" method="post">
                                         @csrf @method('DELETE')
                                     </form>
 
@@ -97,7 +97,7 @@
 
                 <div class="modal-header"></div>
 
-                <form action="{{ route('admin.data-user.petugas.store') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('data-user.petugas.store') }}" method="post" enctype="multipart/form-data">
 
                     @csrf
 

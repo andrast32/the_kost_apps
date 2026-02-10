@@ -11,7 +11,11 @@
                 </button>
 
                 @if (isset($Sampah) && $Sampah > 0)
-                    <a href="{{ route('pemesanan.sampah') }}" class="btn btn-sm btn-round btn-outline-danger ml-2"></a>
+                    <a href="{{ route('pemesanan.sampah') }}" class="btn btn-sm btn-round btn-outline-danger ml-2">
+                        <i class="fas fa-trash-alt"></i> 
+                        lihat sampah
+                        <span class="badge badge-danger ml-1">{{ $Sampah }}</span>
+                    </a>
                 @endif
 
             </div>
@@ -23,6 +27,7 @@
                 <thead class="bg-navy">
                     <tr align="center">
                         <th width="5%">No</th>
+                        <th width="5%">Kode</th>
                         <th>penyewa</th>
                         <th>Tipe & kode kamar</th>
                         <th>Tipe Sewa</th>
@@ -39,6 +44,8 @@
 
                             <td align="center">{{ $loop->iteration }}</td>
 
+                            <td align="center">#{{ $data->kode_pemesanan }}</td>
+
                             <td>
                                 <div class="font-weight-bold text-dark">{{ $data->user->name }}</div>
                                 <small class="badge badge-light border text-muted">{{ $data->user->biodata->jenis_kelamin }}</small>
@@ -54,15 +61,11 @@
                             </td>
 
                             <td>
-                                <div class="small">
-                                    <span class="text-success font-weight-bold">In:</span> {{ \Carbon\Carbon::parse($data->tgl_masuk)->format('d/m/Y') }}<br>
-                                </div>
+                                {{ \Carbon\Carbon::parse($data->tgl_masuk)->format('d/m/Y') }}
                             </td>
 
                             <td>
-                                <div class="small">
-                                    <span class="text-danger font-weight-bold">Out:</span> {{ \Carbon\Carbon::parse($data->tgl_keluar)->format('d/m/Y') }}
-                                </div>
+                                {{ \Carbon\Carbon::parse($data->tgl_keluar)->format('d/m/Y') }}
                             </td>
 
                             <td align="center">
@@ -77,13 +80,19 @@
 
                             <td align="center">
 
+                                <button class="btn btn-link text-info" data-toggle="modal" data-target="#invoice-{{ $data->id }}">
+                                    <i class="far fa-file-alt"></i>
+                                </button>
+
                                 <button class="btn btn-link text-info" data-toggle="modal" data-target="#info-{{ $data->id }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
 
-                                <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '$data')">
+                                <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode_pemesanan }}')">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
+
+                                <form id="delete-{{ $data->id }}" action="{{ route('pemesanan.destroy', $data->id) }}" method="post">@csrf @method('DELETE')</form>
 
                             </td>
 
@@ -240,6 +249,7 @@
     </div>
 
     @foreach ($items as $info)
+
         <div class="modal fade" id="info-{{ $info->id }}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -339,6 +349,27 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="invoice-{{ $info->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">Invoice #{{ $info->kode_pemesanan }}</h5>
+                        <button class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
     @endforeach
 
     @push('scripts')
@@ -346,18 +377,8 @@
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-        @if(session('alert'))
         <script>
-            Swal.fire({
-                icon: '{{ session("alert.icon") }}',
-                title: '{{ session("alert.title") }}',
-                text: '{{ session("alert.text") }}',
-                showConfirmButton: false, timer: 3000
-            });
-        </script>
-        @endif
 
-        <script>
             let hargaKamarDipilih = 0;
 
             function loadKamarTersedia(userId) {
@@ -416,7 +437,6 @@
                     }
                 });
             }
-
 
             function pilihKamar(el, id, harga) {
                 $('.card-kamar').css({'border':'none', 'background':'white'}).find('.card-body').css('color','inherit');
@@ -482,6 +502,24 @@
             $('#add').on('shown.bs.modal', function () {
                 $('.select2').select2({ dropdownParent: $('#add') });
             });
+
+            function Delete(id, kode) {
+                Swal.fire({
+                    title: 'Hapus pemesanan dengan kode #'+kode+'?',
+                    text: 'pemesanan tersebut akan dihapus!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Ya, Hapus!',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('delete-' + id).submit();
+                    }
+                })
+            }
+
         </script>
     @endpush
 

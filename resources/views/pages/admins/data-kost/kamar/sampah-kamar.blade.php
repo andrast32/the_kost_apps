@@ -11,7 +11,7 @@
                     <span class="badge badge-danger ml-1">{{ $jumlahSampah }}</span>
                 </h3>
 
-                <a href="{{ route('admin.data-kost.kamar.index') }}" class="btn btn-outline-primary btn-round ml-auto">
+                <a href="{{ route('data-kost.kamar.index') }}" class="btn btn-outline-primary btn-round ml-auto">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 
@@ -60,7 +60,7 @@
                                         <i class="fas fa-trash-restore"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.kamar.restore', $data->id) }}" id="restore-form-{{ $data->id }}" method="post" style="display: none;">
+                                    <form action="{{ route('data-kost.kamar.restore', $data->id) }}" id="restore-form-{{ $data->id }}" method="post" style="display: none;">
                                         @csrf
                                         @method('PUT')
                                     </form>
@@ -69,7 +69,7 @@
                                         <i class="fas fa-times-circle"></i>
                                     </button>
 
-                                    <form action="{{ route('admin.data-kost.kamar.force-delete', $data->id) }}" id="force-delete-form-{{ $data->id }}" method="POST" style="display: none">
+                                    <form action="{{ route('data-kost.kamar.force-delete', $data->id) }}" id="force-delete-form-{{ $data->id }}" method="POST" style="display: none">
                                         @csrf
                                         @method('DELETE')
                                     </form>

@@ -7,7 +7,7 @@
 
                 <h3 class="card-title">Manajemen data penyewa</h3>
 
-                <a href="{{ route('admin.data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info ml-2">
+                <a href="{{ route('data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info ml-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 

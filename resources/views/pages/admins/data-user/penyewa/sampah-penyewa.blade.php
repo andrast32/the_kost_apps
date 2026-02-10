@@ -7,7 +7,7 @@
 
                 <h3 class="card-title">Sampah data penyewa</h3>
 
-                <a href="{{ route('admin.data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info ml-2">
+                <a href="{{ route('data-user.penyewa.index') }}" class="btn btn-sm btn-outline-info ml-2">
                     <i class="fas fa-arrow-left"></i> Kembali
                 </a>
 
@@ -52,12 +52,12 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                     
-                                    <form action="{{ route('admin.data-user.penyewa.restore', $data->id) }}" id="restore-{{ $data->id }}" method="post" style="display: none">
+                                    <form action="{{ route('data-user.penyewa.restore', $data->id) }}" id="restore-{{ $data->id }}" method="post" style="display: none">
                                         @csrf
                                         @method('PUT')
                                     </form>
 
-                                    <form action="{{ route('admin.data-user.penyewa.force-delete', $data->id) }}" id="delete-{{ $data->id }}" method="post" style="display: none">
+                                    <form action="{{ route('data-user.penyewa.force-delete', $data->id) }}" id="delete-{{ $data->id }}" method="post" style="display: none">
                                         @csrf
                                         @method('DELETE')
                                     </form>

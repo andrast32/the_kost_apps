@@ -101,7 +101,7 @@
                         <i class="fas fa-trash"></i> Hapus Data
                     </button>
 
-                    <form id="delete-{{ $user->biodata->id }}" action="{{ route('admin.data-user.biodata.destroy', $user->biodata->id) }}" method="post">
+                    <form id="delete-{{ $user->biodata->id }}" action="{{ route('data-user.biodata.destroy', $user->biodata->id) }}" method="post">
                         @csrf @method('DELETE')
                     </form>
 
@@ -130,7 +130,7 @@
                 <button class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             </div>
 
-            <form action="{{ route('admin.data-user.biodata.store', $user->id) }}" method="post" enctype="multipart/form-data">
+            <form action="{{ route('data-user.biodata.store', $user->id) }}" method="post" enctype="multipart/form-data">
 
                 @csrf
 
@@ -236,7 +236,7 @@
 
                 </div>
 
-                <form action="{{ route('admin.data-user.biodata.update', $user->biodata->id) }}" method="post" enctype="multipart/form-data">
+                <form action="{{ route('data-user.biodata.update', $user->biodata->id) }}" method="post" enctype="multipart/form-data">
 
                     @csrf 
                     @method('PUT')

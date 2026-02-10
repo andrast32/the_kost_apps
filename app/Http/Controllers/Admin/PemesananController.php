@@ -14,24 +14,54 @@ use Illuminate\Support\Str;
 
 class PemesananController extends Controller
 {
+
     public function index()
     {
 
         view()->share('title', 'Data Pemesanan kamar dan fasilitas');
 
-        $items = Pemesanan::with(['user', 'kamar', 'fasilitas'])
-            ->latest()
-            ->get();
-            
-        $penyewas = User::with('biodata')
-            ->where('role', 'User')
-            ->whereDoesntHave('pemesanan', function (Builder $q) {
-                $q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);
-            })
-            ->get();
-        $fasilitas = Fasilitas::where('stok', '>', 0)->get();
+        $data = [
+            'items'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+                        ->latest()
+                        ->get(),
+
+            'penyewas'  => User::with('biodata')
+                        ->where('role', 'User')
+                        ->whereDoesntHave('pemesanan', function (Builder $q) 
+                            {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
+                        ->get(),
+
+            'fasilitas' => Fasilitas::where('stok', '>', 0)->get(),
+
+            'Sampah'    => Pemesanan::onlyTrashed()->count()
+        ];
         
-        return view('pages.admins.pemesanan.data-pemesanan', compact('items', 'penyewas', 'fasilitas'));
+        return view('pages.admins.pemesanan.data-pemesanan', $data);
+    }
+
+    public function trash()
+    {
+
+        view()->share('title', 'Sampah Data Pemesanan kamar dan fasilitas');
+
+        $data = [
+            'items'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+                        -> onlyTrashed()
+                        ->latest()
+                        ->get(),
+
+            'penyewas'  => User::with('biodata')
+                        ->where('role', 'User')
+                        ->whereDoesntHave('pemesanan', function (Builder $q) 
+                            {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
+                        ->get(),
+
+            'fasilitas' => Fasilitas::where('stok', '>', 0)->get(),
+
+            'Sampah'    => Pemesanan::onlyTrashed()->count()
+        ];
+        
+        return view('pages.admins.pemesanan.sampah-pemesanan', $data);
     }
 
     public function getKamars(Request $request)
@@ -171,8 +201,7 @@ class PemesananController extends Controller
 
             return redirect()->back()->with('alert', [
                 'icon'  => 'success',
-                'title' => 'Berhasil',
-                'text'  => 'Pemesanan berhasil disimpan'
+                'title' => 'Berhasil Pemesanan berhasil disimpan'
             ]);
 
         } catch (\Throwable $e) {
@@ -181,8 +210,7 @@ class PemesananController extends Controller
 
             return redirect()->back()->with('alert', [
                 'icon'  => 'error',
-                'title' => 'Gagal',
-                'text'  => $e->getMessage()
+                'title' => 'Gagal menambahkan pemesanan'
             ]);
         }
     }
@@ -190,6 +218,25 @@ class PemesananController extends Controller
     public function destroy($id)
     {
         try {
+            Pemesanan::findOrFail($id)->delete();
+
+            return back()->with('alert', [
+                'icon' => 'success', 
+                'title' => 'Data berhasil dihapus dan dipindahkan ke sampah.'
+            ]);
+
+        } catch (\Exception $e) {
+            return back()->with('alert', [
+                'icon' => 'error', 
+                'title' => 'Data gagal dihapus.'
+            ]);
+        }
+    }
+
+    public function restore(string $id)
+    {
+        try {
+
             DB::transaction(function () use ($id) {
                 $pemesanan = Pemesanan::with('fasilitas')->findOrFail($id);
 
@@ -204,10 +251,41 @@ class PemesananController extends Controller
                 $pemesanan->delete();
             });
 
-            return back()->with('alert', ['icon' => 'success', 'title' => 'Dihapus', 'text' => 'Data dipindahkan ke sampah.']);
+            Pemesanan::onlyTrashed()->findOrFail($id)->restore();
 
-        } catch (\Exception $e) {
-            return back()->with('alert', ['icon' => 'error', 'title' => 'Error', 'text' => $e->getMessage()]);
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Pemesanan telah berhasil dikembalikan'
+            ]);
+
+        } catch (Exception $e) {
+            Log::error("Gagal restore pemesanan dengan ID $id: " . $e->getMessage());
+
+            return redirect()->back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Pemesanan gagal dikembalikan'
+            ]);
         }
     }
+
+    public function force(string $id)
+    {
+        try {
+            Pemesanan::onlyTrashed()->findOrFail($id)->forceDelete();
+
+            return redirect()->back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Pemesanan telah berhasil dihapus permananen'
+            ]);
+
+        } catch (Exception $e) {
+            Log::error("Gagal hapus pemesanan dengan ID $id: " . $e->getMessage());
+
+            return redirect()->back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Pemesanan gagal dihapus'
+            ]);
+        }
+    }
+
 }
