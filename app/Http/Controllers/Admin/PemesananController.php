@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admins\{Pemesanan, Kamar, Fasilitas};
-use App\Models\Admins\Invoice;
+use App\Models\Admins\Fasilitas;
+use App\Models\Admins\Kamar;
+use App\Models\Admins\Pemesanan;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class PemesananController extends Controller
 {
@@ -21,15 +22,20 @@ class PemesananController extends Controller
         view()->share('title', 'Data Pemesanan kamar dan fasilitas');
 
         $data = [
-            'items'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
-                        ->latest()
+            'item'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+                        ->orderBy('status', 'ASC')
+                        ->orderBy('kode_pemesanan', 'ASC')
                         ->get(),
 
-            'penyewas'  => User::with('biodata')
+            'penyewa'  => User::with('biodata')
                         ->where('role', 'User')
                         ->whereDoesntHave('pemesanan', function (Builder $q) 
                             {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
                         ->get(),
+
+            'kamars' => Kamar::whereIn('status', ['Kosong','Dipesan'])
+                ->orderBy('kode')
+                ->get(),
 
             'fasilitas' => Fasilitas::where('stok', '>', 0)->get(),
 
@@ -39,18 +45,45 @@ class PemesananController extends Controller
         return view('pages.admins.pemesanan.data-pemesanan', $data);
     }
 
+    public function invoice($id)
+    {
+
+        view()->share('title', 'Invoice Pemesanan kamar dan fasilitas');
+
+        $data = [
+            'item'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+                        ->orderBy('status', 'ASC')
+                        ->orderBy('kode_pemesanan', 'ASC')
+                        ->get()
+                        ->findOrFail($id),
+
+            'penyewa'  => User::with('biodata')
+                        ->where('role', 'User')
+                        ->whereDoesntHave('pemesanan', function (Builder $q) 
+                            {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
+                        ->get(),
+
+            'kamars' => Kamar::whereIn('status', ['Kosong','Dipesan'])
+                ->orderBy('kode')
+                ->get(),
+
+        ];
+        
+        return view('pages.admins.pemesanan.invoice', $data);
+    }
+
     public function trash()
     {
 
         view()->share('title', 'Sampah Data Pemesanan kamar dan fasilitas');
 
         $data = [
-            'items'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+            'item'      => Pemesanan::with(['user', 'kamar', 'fasilitas'])
                         -> onlyTrashed()
                         ->latest()
                         ->get(),
 
-            'penyewas'  => User::with('biodata')
+            'penyewa'   => User::with('biodata')
                         ->where('role', 'User')
                         ->whereDoesntHave('pemesanan', function (Builder $q) 
                             {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
@@ -68,29 +101,17 @@ class PemesananController extends Controller
     {
         $user = User::with('biodata')->find($request->user_id);
 
-        if (!$user || !$user->biodata || !$user->biodata->jenis_kelamin) {
+        if (!$user || !$user->biodata) {
             return response()->json([]);
         }
 
         // Normalisasi gender
         $gender = strtolower(trim($user->biodata->jenis_kelamin));
-        $gender = str_replace(' ', '-', $gender);
 
-        $kamars = Kamar::whereRaw('LOWER(TRIM(status)) = ?', ['kosong'])
-            ->where(function ($q) use ($gender) {
-                $q->whereRaw(
-                    'REPLACE(LOWER(TRIM(khusus)), " ", "-") = ?',
-                    [$gender]
-                )->orWhereRaw('LOWER(TRIM(khusus)) = ?', ['keluarga']);
-            })
-            ->get([
-                'id',
-                'kode',
-                'harga',
-                'foto',
-                'status',
-                'khusus'
-            ]);
+        $kamars = Kamar::whereRaw('LOWER(status) = ?', ['kosong'])->where(function ($q) use ($gender) {
+            $q->whereRaw('LOWER(khusus) = ?', [$gender])
+            ->orWhereRaw('LOWER(khusus) = ?', ['keluarga']);
+        })->get(['id','kode','harga','foto','status','khusus']);
 
         return response()->json($kamars);
     }
@@ -215,6 +236,129 @@ class PemesananController extends Controller
         }
     }
 
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'kamar_id'      => 'required|exists:kamars,id',
+            'fasilitas_ids' => 'nullable|array'
+        ]);
+
+        try {
+
+            DB::beginTransaction();
+
+            $pemesanan = Pemesanan::with(['kamar', 'fasilitas'])
+                            ->lockForUpdate()
+                            ->findOrFail($id);
+
+            // 🔒 Hanya bisa edit jika masih boleh
+            if (!$pemesanan->masihBisaEdit()) {
+                return back()->with('alert', [
+                    'icon' => 'error',
+                    'title' => 'Pemesanan tidak bisa diedit lagi'
+                ]);
+            }
+
+            $kamarLama = $pemesanan->kamar;
+            $kamarBaru = Kamar::lockForUpdate()->findOrFail($request->kamar_id);
+
+            /* ============================================
+            1. HANDLE GANTI KAMAR
+            ============================================ */
+
+            if ($kamarLama->id != $kamarBaru->id) {
+
+                // Kosongkan kamar lama
+                $kamarLama->update(['status' => 'Kosong']);
+
+                // Set kamar baru jadi Dipesan
+                $kamarBaru->update(['status' => 'Dipesan']);
+
+                $pemesanan->kamar_id = $kamarBaru->id;
+            }
+
+            /* ============================================
+            2. BALIKIN STOK FASILITAS LAMA
+            ============================================ */
+
+            foreach ($pemesanan->fasilitas as $fas) {
+                $fas->increment('stok');
+            }
+
+            $pemesanan->fasilitas()->detach();
+
+            /* ============================================
+            3. PROSES FASILITAS BARU
+            ============================================ */
+
+            $totalHargaFasilitas = 0;
+
+            if ($request->fasilitas_ids) {
+
+                $fasilitasBaru = Fasilitas::whereIn('id', $request->fasilitas_ids)
+                                    ->lockForUpdate()
+                                    ->get();
+
+                foreach ($fasilitasBaru as $fas) {
+
+                    if ($fas->stok < 1) {
+                        throw new \Exception("Stok {$fas->nama} habis");
+                    }
+
+                    $pemesanan->fasilitas()->attach($fas->id, [
+                        'harga_snap' => $fas->harga
+                    ]);
+
+                    $totalHargaFasilitas += $fas->harga;
+                    $fas->decrement('stok');
+                }
+            }
+
+            /* ============================================
+            4. HITUNG ULANG TOTAL
+            ============================================ */
+
+            $jenis  = $pemesanan->jenis_sewa;
+
+            $tglMasuk  = Carbon::parse($pemesanan->tgl_masuk);
+            $tglKeluar = Carbon::parse($pemesanan->tgl_keluar);
+
+            if ($jenis === 'Bulanan') {
+                $durasi = $tglMasuk->diffInMonths($tglKeluar);
+            } else {
+                $durasi = $tglMasuk->diffInDays($tglKeluar);
+            }
+
+            $hargaKamar = $kamarBaru->harga;
+
+            if ($jenis === 'Bulanan') {
+                $total = ($hargaKamar + $totalHargaFasilitas) * $durasi;
+            } else {
+                $total = (($hargaKamar + $totalHargaFasilitas) / 30) * $durasi;
+            }
+
+            $pemesanan->total_harga = ceil($total);
+
+            $pemesanan->save();
+
+            DB::commit();
+
+            return back()->with('alert', [
+                'icon'  => 'success',
+                'title' => 'Pemesanan berhasil diperbarui'
+            ]);
+
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return back()->with('alert', [
+                'icon'  => 'error',
+                'title' => 'Gagal memperbarui pemesanan'
+            ]);
+        }
+    }
+
     public function destroy($id)
     {
         try {
@@ -258,7 +402,7 @@ class PemesananController extends Controller
                 'title' => 'Pemesanan telah berhasil dikembalikan'
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Gagal restore pemesanan dengan ID $id: " . $e->getMessage());
 
             return redirect()->back()->with('alert', [
@@ -278,7 +422,7 @@ class PemesananController extends Controller
                 'title' => 'Pemesanan telah berhasil dihapus permananen'
             ]);
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Gagal hapus pemesanan dengan ID $id: " . $e->getMessage());
 
             return redirect()->back()->with('alert', [

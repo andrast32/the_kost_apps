@@ -39,7 +39,7 @@
                 </thead>
 
                 <tbody>
-                    @foreach ($items as $data)
+                    @foreach ($item as $data)
                         <tr>
 
                             <td align="center">{{ $loop->iteration }}</td>
@@ -73,20 +73,33 @@
                                     <span class="badge badge-success">{{ $data->status }}</span>
                                 @elseif ($data->status == 'Menunggu Pembayaran')
                                     <span class="badge badge-warning">{{ $data->status }}</span>
+                                @elseif ($data->status == 'Selesai')
+                                    <span class="badge badge-danger">{{ $data->status }}</span> <br>
+                                    <button class="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#pesan-{{ $data->id }}">
+                                        <i class="fas fa-redo"></i> Pesan ulang
+                                    </button>
                                 @else
-                                    <span class="badge badge-danger">{{ $data->status }}</span>
+                                    <span class="badge badge-secondary">{{ $data->status }}</span>
                                 @endif
                             </td>
 
                             <td align="center">
 
-                                <button class="btn btn-link text-info" data-toggle="modal" data-target="#invoice-{{ $data->id }}">
-                                    <i class="far fa-file-alt"></i>
-                                </button>
+                                <a href="{{ route('pemesanan.invoice', $data->id) }}" class="btn btn-link text-primary">
+                                    <i class="fas fa-file-invoice"></i>
+                                </a>
 
                                 <button class="btn btn-link text-info" data-toggle="modal" data-target="#info-{{ $data->id }}">
                                     <i class="fas fa-eye"></i>
                                 </button>
+
+                                @if($data->masihBisaEdit())
+                                    <button class="btn btn-link text-warning"
+                                        data-toggle="modal"
+                                        data-target="#edit-{{ $data->id }}">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                @endif
 
                                 <button class="btn btn-link text-danger" onclick="Delete({{ $data->id }}, '{{ $data->kode_pemesanan }}')">
                                     <i class="fas fa-trash-alt"></i>
@@ -130,7 +143,7 @@
 
                                     <select name="user_id" id="user_id" class="form-control" required onchange="loadKamarTersedia(this.value)">
                                         <option value=""> Pilih Penyewa </option>
-                                        @foreach ($penyewas as $p)
+                                        @foreach ($penyewa as $p)
                                             <option value="{{ $p->id }}">{{ $p->name }} ({{ $p->biodata->jenis_kelamin ?? 'Belum mempunyai biodata' }})</option>
                                         @endforeach
                                     </select>
@@ -248,7 +261,334 @@
         </div>
     </div>
 
-    @foreach ($items as $info)
+    @foreach ($item as $info)
+
+        @if($info->masihBisaEdit())
+            <div class="modal fade" id="edit-{{ $info->id }}" tabindex="-1" role="dialog" data-backdrop="static">
+                <div class="modal-dialog modal-xl" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-info text-white">
+                            <h5 class="modal-title font-weight-bold">
+                                <i class="fas fa-edit mr-2"></i>
+                                Edit Pemesanan #{{ $info->kode_pemesanan }}
+                            </h5>
+                            <button class="close text-white" data-dismiss="modal">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+
+                        <form action="{{ route('pemesanan.update',$info->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <div class="modal-body bg-light">
+                                <div class="row">
+
+                                    {{-- ===================== --}}
+                                    {{-- SISI KIRI (KAMAR) --}}
+                                    {{-- ===================== --}}
+                                    <div class="col-lg-8 border-right p-4 bg-white">
+
+                                        <label class="font-weight-bold">
+                                            <i class="fas fa-bed"></i> Pilih Kamar
+                                        </label>
+
+                                        @php
+                                            $gender = strtolower(trim($info->user->biodata->jenis_kelamin ?? ''));
+                                        @endphp
+
+                                        <div class="row">
+
+                                            @foreach($kamars as $kamar)
+
+                                                @php
+                                                    $khusus = strtolower(trim($kamar->khusus));
+                                                    $boleh = ($khusus === $gender || $khusus === 'keluarga');
+                                                @endphp
+
+                                                @if($boleh)
+
+                                                    <div class="col-md-6 mb-3">
+                                                        <div class="card card-kamar shadow-sm 
+                                                            {{ $info->kamar_id == $kamar->id ? 'border-primary' : '' }}"
+                                                            onclick="pilihKamarEdit(this, {{ $kamar->id }}, {{ $kamar->harga }}, {{ $info->id }})"
+                                                            style="cursor:pointer">
+
+                                                            <img src="{{ $kamar->foto 
+                                                                    ? Storage::url('uploads/kamar/'.$kamar->foto) 
+                                                                    : asset('UI/dashboard/dist/img/boxed-bg.jpg') }}"
+                                                                class="card-img-top"
+                                                                style="height:150px;object-fit:cover">
+
+                                                            <div class="card-body p-2">
+                                                                <div class="font-weight-bold">
+                                                                    #{{ $kamar->kode }}
+                                                                </div>
+
+                                                                <div class="text-success font-weight-bold">
+                                                                    Rp {{ number_format($kamar->harga) }}
+                                                                    <small>/bulan</small>
+                                                                </div>
+
+                                                                <small class="badge badge-primary">
+                                                                    {{ $kamar->khusus }}
+                                                                </small>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                @endif
+
+                                            @endforeach
+
+                                        </div>
+
+                                        <input type="hidden" 
+                                            name="kamar_id" 
+                                            id="edit_kamar_id_{{ $info->id }}"
+                                            value="{{ $info->kamar_id }}">
+
+                                    </div>
+
+                                    {{-- ===================== --}}
+                                    {{-- SISI KANAN --}}
+                                    {{-- ===================== --}}
+                                    <div class="col-lg-4 p-4 d-flex flex-column bg-white">
+
+                                        {{-- FASILITAS --}}
+                                        <div class="mb-4">
+                                            <label class="font-weight-bold">
+                                                <i class="fas fa-box"></i> Edit Fasilitas
+                                            </label>
+
+                                            <div class="list-group list-group-flush border rounded shadow-sm bg-white">
+
+                                                @foreach($fasilitas as $fas)
+
+                                                    @php
+                                                        $selected = $info->fasilitas->contains($fas->id);
+                                                    @endphp
+
+                                                    <div class="list-group-item p-2">
+                                                        <div class="custom-control custom-checkbox d-flex align-items-center">
+
+                                                            <input type="checkbox"
+                                                                class="custom-control-input check-fasilitas-edit"
+                                                                id="edit_fas_{{ $info->id }}_{{ $fas->id }}"
+                                                                name="fasilitas_ids[]"
+                                                                value="{{ $fas->id }}"
+                                                                data-harga="{{ $fas->harga }}"
+                                                                {{ $selected ? 'checked' : '' }}>
+
+                                                            <label class="custom-control-label w-100 pl-2"
+                                                                for="edit_fas_{{ $info->id }}_{{ $fas->id }}"
+                                                                style="cursor:pointer">
+
+                                                                <div class="d-flex align-items-center">
+
+                                                                    <div class="rounded mr-2 overflow-hidden"
+                                                                        style="width:40px;height:40px;background:#f4f4f4">
+
+                                                                        <img src="{{ $fas->foto ? asset('storage/uploads/fasilitas/'.$fas->foto) : asset('UI/dashboard/dist/img/boxed-bg.jpg') }}"
+                                                                            style="width:100%;height:100%;object-fit:cover">
+
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <span class="d-block font-weight-bold text-dark small">
+                                                                            {{ $fas->nama }}
+                                                                        </span>
+                                                                        <span class="text-success small">
+                                                                            +Rp {{ number_format($fas->harga) }}
+                                                                        </span>
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                @endforeach
+
+                                            </div>
+                                        </div>
+
+
+                                        {{-- TANGGAL (READONLY) --}}
+                                        <div class="mb-3 bg-light p-3 border rounded">
+                                            <small class="text-muted">Tanggal Masuk</small>
+                                            <input type="text"
+                                                class="form-control mb-2"
+                                                value="{{ \Carbon\Carbon::parse($info->tgl_masuk)->format('d/m/Y') }}"
+                                                readonly>
+
+                                            <small class="text-muted">Tanggal Keluar</small>
+                                            <input type="text"
+                                                class="form-control"
+                                                value="{{ \Carbon\Carbon::parse($info->tgl_keluar)->format('d/m/Y') }}"
+                                                readonly>
+                                        </div>
+
+
+                                        {{-- TOTAL --}}
+                                        <div class="mt-auto bg-dark text-white p-3 rounded shadow-lg">
+                                            <div class="d-flex justify-content-between">
+                                                <small>Total Bayar</small>
+                                                <i class="fas fa-receipt"></i>
+                                            </div>
+                                            <h4 class="font-weight-bold text-success mb-0"
+                                                id="editTotal-{{ $info->id }}">
+                                                Rp {{ number_format($info->total_harga) }}
+                                            </h4>
+                                        </div>
+
+
+                                        <button type="submit"
+                                            class="btn btn-success btn-block btn-lg mt-3">
+                                            <i class="fas fa-save mr-2"></i>
+                                            Simpan Perubahan
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        @endif
+
+        <div class="modal fade" id="pesan-{{ $info->id }}" tabindex="-1" role="dialog" data-backdrop="static">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title text-white">
+                            <i class="fas fa-redo"></i> Pesan Ulang #{{ $info->kode_pemesanan }}
+                        </h5>
+                        <button class="close text-white" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <form action="{{ route('pemesanan.store') }}" method="POST">
+                        @csrf
+
+                        <div class="modal-body">
+                            <div class="row">
+
+                                {{-- KIRI --}}
+                                <div class="col-lg-8 border-right">
+
+                                    {{-- USER (LOCKED) --}}
+                                    <div class="form-group">
+                                        <label>Penyewa</label>
+                                        <input type="text"
+                                            class="form-control"
+                                            value="{{ $info->user->name }} ({{ $info->user->biodata->jenis_kelamin ?? '-' }})"
+                                            readonly>
+                                        <input type="hidden" name="user_id" value="{{ $info->user->id }}">
+                                    </div>
+
+                                    {{-- KAMAR (LOCKED) --}}
+                                    <div class="card shadow-sm">
+                                        <img src="{{ $info->kamar->foto ? Storage::url('uploads/kamar/'.$info->kamar->foto) : asset('UI/dashboard/dist/img/boxed-bg.jpg') }}"
+                                            style="height:180px;object-fit:cover">
+                                        <div class="card-body">
+                                            <h5>#{{ $info->kamar->kode }}</h5>
+                                            <p>{{ $info->kamar->khusus }}</p>
+                                            <p class="text-success font-weight-bold">
+                                                Rp {{ number_format($info->kamar->harga,0,',','.') }}/bulan
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" name="kamar_id" value="{{ $info->kamar->id }}">
+
+                                </div>
+
+                                {{-- KANAN --}}
+                                <div class="col-lg-4">
+
+                                    {{-- FASILITAS --}}
+                                    <label>Fasilitas</label>
+                                    <div class="list-group">
+
+                                        @foreach($fasilitas as $f)
+                                            @php
+                                                $checked = $info->fasilitas->contains($f->id);
+                                            @endphp
+
+                                            <div class="list-group-item">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox"
+                                                        class="custom-control-input fasilitas-ulang-{{ $info->id }}"
+                                                        id="ulang_{{ $info->id }}_{{ $f->id }}"
+                                                        name="fasilitas_ids[]"
+                                                        value="{{ $f->id }}"
+                                                        data-harga="{{ $f->harga }}"
+                                                        {{ $checked ? 'checked' : '' }}>
+
+                                                    <label class="custom-control-label"
+                                                        for="ulang_{{ $info->id }}_{{ $f->id }}">
+                                                        {{ $f->nama }}
+                                                        <span class="text-success">
+                                                            (+Rp {{ number_format($f->harga) }})
+                                                        </span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        @endforeach
+
+                                    </div>
+
+                                    {{-- TANGGAL --}}
+                                    <div class="mt-3">
+                                        <label>Tanggal Masuk</label>
+                                        <input type="date"
+                                            name="tgl_masuk"
+                                            class="form-control"
+                                            value="{{ now()->format('Y-m-d') }}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <label>Tanggal Keluar</label>
+                                        <input type="date"
+                                            name="tgl_keluar"
+                                            class="form-control tgl-ulang"
+                                            data-id="{{ $info->id }}"
+                                            required>
+                                    </div>
+
+                                    <input type="hidden" name="durasi" class="durasi-ulang-{{ $info->id }}">
+                                    <input type="hidden" name="jenis_sewa" class="jenis-ulang-{{ $info->id }}">
+
+                                    {{-- TOTAL --}}
+                                    <div class="alert alert-success mt-3">
+                                        <h5>Total</h5>
+                                        <h4 id="total-ulang-{{ $info->id }}">
+                                            Rp 0
+                                        </h4>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success btn-block">
+                                        Simpan Pesanan Baru
+                                    </button>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
 
         <div class="modal fade" id="info-{{ $info->id }}" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -379,12 +719,27 @@
 
         <script>
 
+            /* ======================================================
+            GLOBAL VARIABLE
+            ====================================================== */
+
             let hargaKamarDipilih = 0;
+            let hargaKamarEdit = {};
+            let durasiEdit = {};
+
+            @foreach($item as $info)
+                hargaKamarEdit[{{ $info->id }}] = {{ $info->kamar->harga }};
+                durasiEdit[{{ $info->id }}] = {{ $info->durasi ?? 1 }};
+            @endforeach
+
+
+            /* ======================================================
+            LOAD KAMAR (ADD BOOKING)
+            ====================================================== */
 
             function loadKamarTersedia(userId) {
                 if (!userId) return;
 
-                $('#kamarLoader').removeClass('d-none');
                 $('#kamarGrid').html('');
 
                 $.ajax({
@@ -392,7 +747,6 @@
                     method: "GET",
                     data: { user_id: userId },
                     success: function (res) {
-                        $('#kamarLoader').addClass('d-none');
 
                         if (!res.length) {
                             $('#kamarGrid').html(`
@@ -406,6 +760,7 @@
 
                         let html = '';
                         res.forEach(k => {
+
                             let foto = k.foto
                                 ? `/storage/uploads/kamar/${k.foto}`
                                 : '{{ asset("UI/dashboard/dist/img/boxed-bg.jpg") }}';
@@ -430,46 +785,46 @@
                         });
 
                         $('#kamarGrid').html(html);
-                    },
-                    error: function () {
-                        $('#kamarLoader').addClass('d-none');
-                        alert('Gagal memuat kamar');
                     }
                 });
             }
 
             function pilihKamar(el, id, harga) {
-                $('.card-kamar').css({'border':'none', 'background':'white'}).find('.card-body').css('color','inherit');
-                $(el).css({'border':'3px solid #4e73df', 'background':'#f8f9fc'});
+
+                $('.card-kamar').css({'border':'1px solid #dee2e6'});
+                $(el).css({'border':'3px solid #4e73df'});
+
                 $('#input_kamar_id').val(id);
                 hargaKamarDipilih = harga;
+
                 hitungLogikaSewa();
             }
 
+
+            /* ======================================================
+            HITUNG TOTAL ADD BOOKING
+            ====================================================== */
+
             function hitungLogikaSewa() {
+
                 let masuk = new Date($('#tgl_masuk').val());
                 let keluar = new Date($('#tgl_keluar').val());
 
                 if (!keluar || keluar <= masuk) return;
 
-                // Hitung selisih hari
-                let timeDiff = keluar.getTime() - masuk.getTime();
-                let diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                let diffDays = Math.ceil((keluar - masuk) / (1000 * 3600 * 24));
 
                 let tipe = 'Harian';
                 let durasiFinal = diffDays;
 
-                // Logika "Real Bulan"
-                // Jika tanggal keluar sama dengan tanggal masuk di bulan berikutnya, dihitung 1 bulan.
                 let isSameDay = masuk.getDate() === keluar.getDate();
-                let diffMonths = (keluar.getFullYear() - masuk.getFullYear()) * 12 + (keluar.getMonth() - masuk.getMonth());
+                let diffMonths = (keluar.getFullYear() - masuk.getFullYear()) * 12 +
+                                (keluar.getMonth() - masuk.getMonth());
 
                 if (isSameDay && diffMonths > 0) {
                     tipe = 'Bulanan';
                     durasiFinal = diffMonths;
                 } else if (diffDays >= 30) {
-                    // Alternatif: jika lebih dari 30 hari tapi tanggal tidak sama, hitung bulanan (pembulatan)
-                    // Sesuai request: "jika 30 hari maka nilainya bulanan"
                     tipe = 'Bulanan';
                     durasiFinal = Math.floor(diffDays / 30);
                 }
@@ -479,29 +834,132 @@
                 $('#input_durasi').val(durasiFinal);
                 $('#input_jenis_sewa').val(tipe);
 
-                // Hitung Harga
                 let hargaFasilitas = 0;
                 $('.check-fasilitas:checked').each(function() {
                     hargaFasilitas += parseFloat($(this).data('harga'));
                 });
 
                 let total = 0;
+
                 if (tipe === 'Bulanan') {
                     total = (hargaKamarDipilih + hargaFasilitas) * durasiFinal;
                 } else {
-                    // Harga harian proporsional sesuai database (Harga/30)
-                    let hargaPerHari = (hargaKamarDipilih + hargaFasilitas) / 30;
-                    total = hargaPerHari * diffDays;
+                    total = ((hargaKamarDipilih + hargaFasilitas) / 30) * diffDays;
                 }
 
-                $('#textGrandTotal').text('Rp ' + new Intl.NumberFormat('id-ID').format(Math.ceil(total)));
+                $('#textGrandTotal').text(
+                    'Rp ' + new Intl.NumberFormat('id-ID').format(Math.ceil(total))
+                );
             }
 
             $(document).on('change', '.check-fasilitas', hitungLogikaSewa);
 
-            $('#add').on('shown.bs.modal', function () {
-                $('.select2').select2({ dropdownParent: $('#add') });
+
+
+            /* ======================================================
+            EDIT BOOKING
+            ====================================================== */
+
+            function pilihKamarEdit(el, id, harga, pemesananId) {
+
+                let modal = $('#edit-' + pemesananId);
+
+                modal.find('.card-kamar')
+                    .css({'border':'1px solid #dee2e6'});
+
+                $(el).css({'border':'3px solid #17a2b8'});
+
+                modal.find('input[name="kamar_id"]').val(id);
+
+                hargaKamarEdit[pemesananId] = harga;
+
+                hitungTotalEdit(pemesananId);
+            }
+
+
+            function hitungTotalEdit(pemesananId) {
+
+                let modal = $('#edit-' + pemesananId);
+
+                let hargaKamar = hargaKamarEdit[pemesananId] ?? 0;
+                let durasi = durasiEdit[pemesananId] ?? 1;
+
+                let hargaFasilitas = 0;
+
+                modal.find('.check-fasilitas-edit:checked').each(function () {
+                    hargaFasilitas += parseFloat($(this).data('harga'));
+                });
+
+                let total = (hargaKamar + hargaFasilitas) * durasi;
+
+                modal.find('#editTotal-' + pemesananId)
+                    .text('Rp ' + new Intl.NumberFormat('id-ID').format(Math.ceil(total)));
+            }
+
+            $(document).on('change', '.check-fasilitas-edit', function () {
+                let modal = $(this).closest('.modal');
+                let id = modal.attr('id').replace('edit-','');
+                hitungTotalEdit(id);
             });
+
+
+
+            /* ======================================================
+            PESAN ULANG
+            ====================================================== */
+
+            $('.tgl-ulang').on('change', function(){
+
+                let id = $(this).data('id');
+
+                let kamarHarga = hargaKamarEdit[id] ?? 0;
+
+                let masuk = new Date();
+                let keluar = new Date($(this).val());
+
+                if (!keluar || keluar <= masuk) return;
+
+                let diffDays = Math.ceil((keluar - masuk) / (1000*3600*24));
+
+                let tipe = 'Harian';
+                let durasi = diffDays;
+
+                let isSameDay = masuk.getDate() === keluar.getDate();
+                let diffMonths = (keluar.getFullYear()-masuk.getFullYear())*12 +
+                                (keluar.getMonth()-masuk.getMonth());
+
+                if (isSameDay && diffMonths > 0) {
+                    tipe = 'Bulanan';
+                    durasi = diffMonths;
+                }
+
+                $('.durasi-ulang-'+id).val(durasi);
+                $('.jenis-ulang-'+id).val(tipe);
+
+                let fasilitasTotal = 0;
+
+                $('.fasilitas-ulang-'+id+':checked').each(function(){
+                    fasilitasTotal += parseFloat($(this).data('harga'));
+                });
+
+                let total = 0;
+
+                if(tipe === 'Bulanan'){
+                    total = (kamarHarga + fasilitasTotal) * durasi;
+                } else {
+                    total = ((kamarHarga + fasilitasTotal) / 30) * diffDays;
+                }
+
+                $('#total-ulang-'+id).text(
+                    'Rp ' + new Intl.NumberFormat('id-ID').format(Math.ceil(total))
+                );
+            });
+
+
+
+            /* ======================================================
+            DELETE CONFIRM
+            ====================================================== */
 
             function Delete(id, kode) {
                 Swal.fire({
@@ -521,6 +979,7 @@
             }
 
         </script>
+
     @endpush
 
 </x-admin-layout>

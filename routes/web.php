@@ -135,12 +135,18 @@ Route::prefix('admin')
         // =================================================
 
             Route::group(['prefix' => 'pemesanan', 'as' => 'pemesanan.'], function () {
+
                 Route::get('/', [PemesananController::class, 'index'])->name('index');
+                Route::get('/invoice/{id}', [PemesananController::class, 'invoice'])->name('invoice');
                 Route::get('/sampah', [PemesananController::class, 'trash'])->name('sampah');
+
                 Route::post('/store', [PemesananController::class, 'store'])->name('store');
+                Route::put('/update/{id}', [PemesananController::class, 'update'])->name('update');
                 Route::delete('/destroy/{id}', [PemesananController::class, 'destroy'])->name('destroy');
                 Route::put('/restore/{id}', [PemesananController::class, 'restore'])->name('restore');
                 Route::delete('/force/{id}', [PemesananController::class, 'force'])->name('force');
+
+                Route::post('/bayar/{id}', [PemesananController::class, 'bayar'])->name('bayar');
                 
                 // Route khusus AJAX untuk ambil data kamar di Modal
                 Route::get('/get-kamars', [PemesananController::class, 'getKamars'])->name('getKamars');
