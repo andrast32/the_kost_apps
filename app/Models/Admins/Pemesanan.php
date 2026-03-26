@@ -58,7 +58,7 @@ class Pemesanan extends Model
     {
         return $this->status === 'Menunggu Pembayaran'
             && $this->created_at
-            && $this->created_at->diffInHours(now()) <= 48;
+            && $this->created_at->diffInHours(now()) <= 24;
     }
 
     public function isExpired(): bool

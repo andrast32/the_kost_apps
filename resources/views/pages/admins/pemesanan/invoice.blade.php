@@ -179,23 +179,10 @@
                         Kembali
                     </a>
 
-                    @if($item->status == 'Menunggu Pembayaran')
-
-                        <form action="{{ route('pemesanan.bayar', $item->id) }}" 
-                              method="POST" 
-                              class="d-inline">
-
-                            @csrf
-
-                            <button type="submit" 
-                                    class="btn btn-success">
-                                <i class="fas fa-money-bill-wave"></i>
-                                Bayar Sekarang
-                            </button>
-
-                        </form>
-
-                    @endif
+                    <button class="btn btn-success">
+                        <i class="fas fa-print"></i>
+                        Print / Unduh Invoice
+                    </button>
 
                 </div>
 

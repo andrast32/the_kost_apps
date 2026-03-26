@@ -45,6 +45,35 @@ class PemesananController extends Controller
         return view('pages.admins.pemesanan.data-pemesanan', $data);
     }
 
+    public function lap()
+    {
+
+        view()->share('title', 'Laporan data Pemesanan kamar dan fasilitas');
+
+        $data = [
+            'item'     => Pemesanan::with(['user', 'kamar', 'fasilitas'])
+                        ->orderBy('status', 'ASC')
+                        ->orderBy('kode_pemesanan', 'ASC')
+                        ->get(),
+
+            'penyewa'  => User::with('biodata')
+                        ->where('role', 'User')
+                        ->whereDoesntHave('pemesanan', function (Builder $q) 
+                            {$q->whereIn('status', ['Menunggu Pembayaran', 'Aktif']);})
+                        ->get(),
+
+            'kamars' => Kamar::whereIn('status', ['Kosong','Dipesan'])
+                ->orderBy('kode')
+                ->get(),
+
+            'fasilitas' => Fasilitas::where('stok', '>', 0)->get(),
+
+            'Sampah'    => Pemesanan::onlyTrashed()->count()
+        ];
+        
+        return view('pages.admins.pemesanan.laporan-pemesanan', $data);
+    }
+
     public function invoice($id)
     {
 

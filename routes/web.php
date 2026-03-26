@@ -139,6 +139,7 @@ Route::prefix('admin')
                 Route::get('/', [PemesananController::class, 'index'])->name('index');
                 Route::get('/invoice/{id}', [PemesananController::class, 'invoice'])->name('invoice');
                 Route::get('/sampah', [PemesananController::class, 'trash'])->name('sampah');
+                Route::get('/laporan', [PemesananController::class, 'lap'])->name('laporan');
 
                 Route::post('/store', [PemesananController::class, 'store'])->name('store');
                 Route::put('/update/{id}', [PemesananController::class, 'update'])->name('update');
