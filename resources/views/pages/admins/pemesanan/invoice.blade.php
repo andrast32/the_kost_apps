@@ -179,10 +179,17 @@
                         Kembali
                     </a>
 
-                    <button class="btn btn-success">
+                    <button class="btn btn-info">
                         <i class="fas fa-print"></i>
                         Print / Unduh Invoice
                     </button>
+
+                    @if ($item->status == 'Menunggu Pembayaran')
+                        <button class="btn btn-success" onclick="Bayar({{ $item->id }}, '{{ $item->user->name }}')">
+                            <i class="fas fa-wallet"></i>
+                            Bayar Sekarang
+                        </button>
+                    @endif
 
                 </div>
 
@@ -193,3 +200,9 @@
     </div>
 
 </x-admin-layout>
+
+<script>
+    function bayar(id, name) {
+        
+    }
+</script>

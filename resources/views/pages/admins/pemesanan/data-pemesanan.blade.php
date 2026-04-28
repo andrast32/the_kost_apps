@@ -79,18 +79,23 @@
                             </td>
 
                             <td align="center">
+
                                 @if ($data->status == 'Aktif')
                                     <span class="badge badge-success">{{ $data->status }}</span>
+
                                 @elseif ($data->status == 'Menunggu Pembayaran')
-                                    <span class="badge badge-warning">{{ $data->status }}</span>
+                                    <span class="badge badge-warning">{{ $data->status }}</span> <br>
+
                                 @elseif ($data->status == 'Selesai')
                                     <span class="badge badge-danger">{{ $data->status }}</span> <br>
                                     <button class="btn btn-sm btn-link text-primary" data-toggle="modal" data-target="#pesan-{{ $data->id }}">
                                         <i class="fas fa-redo"></i> Pesan ulang
                                     </button>
+
                                 @else
                                     <span class="badge badge-secondary">{{ $data->status }}</span>
                                 @endif
+
                             </td>
 
                             <td align="center">
@@ -734,9 +739,18 @@
                     </div>
 
                     <div class="modal-footer">
+
                         <a href="{{ route('pemesanan.invoice', $data->id) }}" class="btn btn-secondary">
                             <i class="fas fa-file-invoice"></i> Print kwitansi
                         </a>
+
+                        @if ($info->status == "Menunggu Pembayaran")
+                            <button class="btn btn-info" onclick="Bayar({{ $data->id }})">
+                                <i class="fas fa-wallet"></i>
+                                Bayar Sewa
+                            </button>
+                        @endif
+
                     </div>
 
                 </div>
@@ -989,6 +1003,23 @@
                     Swal.fire({
                         title: 'Hapus pemesanan dengan kode #'+kode+'?',
                         text: 'pemesanan tersebut akan dihapus!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            document.getElementById('delete-' + id).submit();
+                        }
+                    })
+                }
+
+                function Bayar(id) {
+                    Swal.fire({
+                        title: 'Lakukan pembayaran untuk pemesanan dengan kode #'+id+'?',
+                        text: 'pemesanan kamar dengan kode tersebut akan dibayar'
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
