@@ -95,19 +95,19 @@ class Pemesanan extends Model
 
             \DB::transaction(function () use ($order) {
 
-                // 1️⃣ Ubah status
+                // 1️ Ubah status
                 $order->update([
                     'status' => 'Dibatalkan'
                 ]);
 
-                // 2️⃣ Kosongkan kamar
+                // 2️ Kosongkan kamar
                 if ($order->kamar) {
                     $order->kamar->update([
                         'status' => 'Kosong'
                     ]);
                 }
 
-                // 3️⃣ Kembalikan stok fasilitas
+                // 3 Kembalikan stok fasilitas
                 foreach ($order->fasilitas as $f) {
 
                     $jumlah = $f->pivot->jumlah ?? 1;
