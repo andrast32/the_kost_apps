@@ -779,11 +779,12 @@
                     durasiEdit[{{ $info->id }}] = {{ $info->durasi ?? 1 }};
                 @endforeach
 
-            /* ======================================================
-            LOAD KAMAR (ADD BOOKING)
-            ====================================================== */
+                /* ======================================================
+                LOAD KAMAR (ADD BOOKING)
+                ====================================================== */
 
-                function loadKamarTersedia(userId) {
+                window.loadKamarTersedia = function(userId) {
+
                     if (!userId) return;
 
                     $('#kamarGrid').html('');
@@ -791,49 +792,79 @@
                     $.ajax({
                         url: "{{ route('pemesanan.getKamars') }}",
                         method: "GET",
-                        data: { user_id: userId },
-                        success: function (res) {
+                        data: {
+                            user_id: userId
+                        },
+
+                        success: function(res) {
 
                             if (!res.length) {
                                 $('#kamarGrid').html(`
                                     <div class="col-12 text-center py-5 text-muted">
-                                        <i class="fas fa-bed fa-3x mb-3"></i>
-                                        <p>Tidak ada kamar tersedia</p>
+                                        <i class="fas fa-bed fa-3x mb-3 opacity-25"></i>
+                                        <p>Tidak ada kamar yang sesuai dengan penyewa.</p>
                                     </div>
                                 `);
+
+                                $('#input_kamar_id').val('');
                                 return;
                             }
 
                             let html = '';
-                            res.forEach(k => {
 
-                                let foto = k.foto
-                                    ? `/storage/uploads/kamar/${k.foto}`
-                                    : '{{ asset("UI/dashboard/dist/img/boxed-bg.jpg") }}';
+                            res.forEach(function(kamar) {
+
+                                let foto = kamar.foto
+                                    ? "{{ asset('storage/uploads/kamar') }}/" + kamar.foto
+                                    : "{{ asset('UI/dashboard/dist/img/boxed-bg.jpg') }}";
 
                                 html += `
-                                <div class="col-md-6 mb-3">
-                                    <div class="card card-kamar shadow-sm"
-                                        onclick="pilihKamar(this, ${k.id}, ${k.harga})"
-                                        style="cursor:pointer">
-                                        <img src="${foto}" class="card-img-top"
-                                            style="height:150px;object-fit:cover">
-                                        <div class="card-body p-2">
-                                            <div class="font-weight-bold">#${k.kode}</div>
-                                            <div class="text-success font-weight-bold">
-                                                Rp ${new Intl.NumberFormat('id-ID').format(k.harga)}
-                                                <small>/bulan</small>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="card card-kamar shadow-sm"
+                                            onclick="pilihKamar(this, ${kamar.id}, ${kamar.harga})"
+                                            style="cursor:pointer">
+
+                                            <img src="${foto}"
+                                                class="card-img-top"
+                                                style="height:150px;object-fit:cover">
+
+                                            <div class="card-body p-2">
+
+                                                <div class="font-weight-bold">
+                                                    #${kamar.kode}
+                                                </div>
+
+                                                <div class="text-success font-weight-bold">
+                                                    Rp ${Number(kamar.harga).toLocaleString('id-ID')}
+                                                    <small>/bulan</small>
+                                                </div>
+
+                                                <small class="badge badge-primary">
+                                                    ${kamar.khusus}
+                                                </small>
+
                                             </div>
-                                            <small class="badge badge-primary">${k.khusus}</small>
                                         </div>
                                     </div>
-                                </div>`;
+                                `;
                             });
 
                             $('#kamarGrid').html(html);
+                        },
+
+                        error: function(xhr) {
+
+                            console.error('Gagal mengambil data kamar:', xhr);
+
+                            $('#kamarGrid').html(`
+                                <div class="col-12 text-center py-5 text-danger">
+                                    <i class="fas fa-exclamation-triangle fa-3x mb-3"></i>
+                                    <p>Gagal mengambil data kamar.</p>
+                                </div>
+                            `);
                         }
                     });
-                }
+                };
 
                 function pilihKamar(el, id, harga) {
 
@@ -1019,7 +1050,7 @@
                 function Bayar(id) {
                     Swal.fire({
                         title: 'Lakukan pembayaran untuk pemesanan dengan kode #'+id+'?',
-                        text: 'pemesanan kamar dengan kode tersebut akan dibayar'
+                        text: 'pemesanan kamar dengan kode tersebut akan dibayar',
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
