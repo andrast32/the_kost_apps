@@ -7,16 +7,8 @@
                 <h3 class="card-title">Manajemen pemesanan kamar dan fasilitas</h3>
 
                 <a href="{{ route('pemesanan.index') }}" class="btn btn-sm btn-round btn-outline-secondary ml-2">
-                    <i class="fas fa-left-arrot"></i> Kembali
+                    <i class="fas fa-arrow-left"></i> Kembali
                 </a>
-
-                @if (isset($Sampah) && $Sampah > 0)
-                    <a href="{{ route('pemesanan.sampah') }}" class="btn btn-sm btn-round btn-outline-danger ml-2">
-                        <i class="fas fa-trash-alt"></i> 
-                        lihat sampah
-                        <span class="badge badge-danger ml-1">{{ $Sampah }}</span>
-                    </a>
-                @endif
 
             </div>
         </div>

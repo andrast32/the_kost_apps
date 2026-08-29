@@ -174,7 +174,7 @@
                 <div class="mt-4 text-right">
 
                     <a href="{{ route('pemesanan.index') }}" 
-                       class="btn btn-secondary">
+                        class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i>
                         Kembali
                     </a>
