@@ -35,7 +35,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{ route('admin.pembayaran') }}" class="nav-link {{ request()->routeIs('admin.pembayaran') ? 'active' : '' }}">
+                    <a href="{{ route('pembayaran.index') }}" class="nav-link {{ request()->routeIs('pembayaran.*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-wallet"></i>
                         <p>
                             Data Pembayaran

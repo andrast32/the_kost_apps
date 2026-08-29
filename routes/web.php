@@ -1,13 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\KamarController;
 use App\Http\Controllers\Admin\BiodataController;
+use App\Http\Controllers\Admin\FasilitasController;
+use App\Http\Controllers\Admin\KamarController;
+use App\Http\Controllers\Admin\PembayaranController;
+use App\Http\Controllers\Admin\PemesananController;
 use App\Http\Controllers\Admin\PenyewaController;
 use App\Http\Controllers\Admin\PetugasController;
-use App\Http\Controllers\Admin\FasilitasController;
-use App\Http\Controllers\Admin\PemesananController;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Support\Facades\Route;
 
 // Halaman Depan
 Route::get('/', function () {
@@ -147,7 +148,7 @@ Route::prefix('admin')
                 Route::put('/restore/{id}', [PemesananController::class, 'restore'])->name('restore');
                 Route::delete('/force/{id}', [PemesananController::class, 'force'])->name('force');
 
-                Route::post('/bayar/{id}', [PemesananController::class, 'bayar'])->name('bayar');
+                Route::post('/bayar/{id}', [PembayaranController::class, 'bayar'])->name('bayar');
                 
                 // Route khusus AJAX untuk ambil data kamar di Modal
                 Route::get('/get-kamars', [PemesananController::class, 'getKamars'])->name('getKamars');
@@ -157,10 +158,20 @@ Route::prefix('admin')
         //               DATA PEMESANAN END
         // =================================================
 
-        Route::get('/pembayaran', function () {
-            view()->share('title', 'Data Pembayaran');
-            return view('pages.admins.pembayaran.data-pembayaran');
-        })->name('admin.pembayaran');
+        // =================================================
+        //               DATA PEMBAYARAN START
+        // =================================================
+
+            Route::group(['prefix' => 'pembayaran', 'as' => 'pembayaran.'], function () {
+
+                Route::get('/', [PembayaranController::class, 'index'])->name('index');
+                Route::post('/bayar/{id}', [PembayaranController::class, 'bayar'])->name('bayar');
+
+            });
+
+        // =================================================
+        //               DATA PEMBAYARAN END
+        // =================================================
 
     });
 

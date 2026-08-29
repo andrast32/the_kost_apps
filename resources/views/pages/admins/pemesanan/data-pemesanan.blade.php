@@ -34,7 +34,7 @@
                         <th width="10%">Kode Kamar</th>
                         <th>penyewa</th>
                         <th>Tipe & kode kamar</th>
-                        <th>Tipe Sewa</th>
+                        <th>Tipe Sewa & Total bayar</th>
                         <th>Tanggal Masuk</th>
                         <th>Tanggal Keluar</th>
                         <th>Status</th>
@@ -62,12 +62,15 @@
                             <td align="center">
                                 @if ($data->jenis_sewa == 'Bulanan')
                                     <span class="badge badge-success mt-1">{{ $data->jenis_sewa }}</span>
+                                    <br>
                                 @elseif ($data->jenis_sewa == 'Harian')
                                     <span class="badge badge-info mt-1">{{ $data->jenis_sewa }}</span>
-                                    
+                                    <br>
                                 @else
                                     <span class="badge badge-secondary mt-1">Jenis Sewa Tidak Diketahui</span>
+                                    <br>
                                 @endif
+                                <span class="badge badge-light border">Rp. {{ number_format($data->total_harga, 0, ',', '.') }}</span>
                             </td>
 
                             <td>
@@ -123,6 +126,10 @@
                                 @endif
 
                                 <form id="delete-{{ $data->id }}" action="{{ route('pemesanan.destroy', $data->id) }}" method="post">@csrf @method('DELETE')</form>
+
+                                <form id="bayar-{{ $data->id }}" action="{{ route('pemesanan.bayar', $data->id) }}" method="POST">
+                                    @csrf
+                                </form>
 
                             </td>
 
@@ -1055,11 +1062,11 @@
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
                         cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Ya, Hapus!',
+                        confirmButtonText: 'Bayar sekarang!',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            document.getElementById('delete-' + id).submit();
+                            document.getElementById('bayar-' + id).submit();
                         }
                     })
                 }

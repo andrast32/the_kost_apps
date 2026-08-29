@@ -2,11 +2,12 @@
 
 namespace App\Models\Admins;
 
+use App\Models\Admins\Fasilitas;
+use App\Models\Admins\Kamar;
+use App\Models\Admins\Pembayaran;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User;
-use App\Models\Admins\Kamar;
-use App\Models\Admins\Fasilitas;
 
 class Pemesanan extends Model
 {
@@ -46,6 +47,13 @@ class Pemesanan extends Model
                 'fasilitas_id'
             )
             ->withPivot(['harga_snap']);
+    }
+
+    public function pembayaran()
+    {
+        return $this->hasMany(
+            Pembayaran::class, 'id_pemesanan'
+        );
     }
 
     /*
